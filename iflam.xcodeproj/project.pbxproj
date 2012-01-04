@@ -1,0 +1,473 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		322FDCC314B3F37D003DB166 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322FDCC214B3F37D003DB166 /* Cocoa.framework */; };
+		322FDCCD14B3F37D003DB166 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCCB14B3F37D003DB166 /* InfoPlist.strings */; };
+		322FDCD014B3F37D003DB166 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCCF14B3F37D003DB166 /* main.m */; };
+		322FDCD314B3F37E003DB166 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCD114B3F37E003DB166 /* Credits.rtf */; };
+		322FDCD614B3F37E003DB166 /* iflamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */; };
+		322FDCD914B3F37E003DB166 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCD714B3F37E003DB166 /* MainMenu.xib */; };
+		322FDCDC14B3F37E003DB166 /* iflam.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */; };
+		322FDCE314B3F37F003DB166 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322FDCC214B3F37D003DB166 /* Cocoa.framework */; };
+		322FDCEB14B3F37F003DB166 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCE914B3F37F003DB166 /* InfoPlist.strings */; };
+		322FDCEE14B3F37F003DB166 /* iflamTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCED14B3F37F003DB166 /* iflamTests.h */; };
+		322FDCF014B3F37F003DB166 /* iflamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCEF14B3F37F003DB166 /* iflamTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		322FDCE414B3F37F003DB166 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 322FDCB514B3F37B003DB166 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 322FDCBD14B3F37C003DB166;
+			remoteInfo = iflam;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		322FDCBE14B3F37D003DB166 /* iflam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iflam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		322FDCC214B3F37D003DB166 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		322FDCC514B3F37D003DB166 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		322FDCC614B3F37D003DB166 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		322FDCC714B3F37D003DB166 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		322FDCCA14B3F37D003DB166 /* iflam-Info.plist */ = {isa = PBXFileReference; path = "iflam-Info.plist"; sourceTree = "<group>"; };
+		322FDCCC14B3F37D003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		322FDCCE14B3F37D003DB166 /* iflam-Prefix.pch */ = {isa = PBXFileReference; path = "iflam-Prefix.pch"; sourceTree = "<group>"; };
+		322FDCCF14B3F37D003DB166 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		322FDCD214B3F37E003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */ = {isa = PBXFileReference; path = iflamAppDelegate.h; sourceTree = "<group>"; };
+		322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iflamAppDelegate.m; sourceTree = "<group>"; };
+		322FDCD814B3F37E003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		322FDCDB14B3F37E003DB166 /* iflam.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = iflam.xcdatamodel; sourceTree = "<group>"; };
+		322FDCE214B3F37F003DB166 /* iflamTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iflamTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		322FDCE814B3F37F003DB166 /* iflamTests-Info.plist */ = {isa = PBXFileReference; path = "iflamTests-Info.plist"; sourceTree = "<group>"; };
+		322FDCEA14B3F37F003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		322FDCEC14B3F37F003DB166 /* iflamTests-Prefix.pch */ = {isa = PBXFileReference; path = "iflamTests-Prefix.pch"; sourceTree = "<group>"; };
+		322FDCED14B3F37F003DB166 /* iflamTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iflamTests.h; sourceTree = "<group>"; };
+		322FDCEF14B3F37F003DB166 /* iflamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iflamTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		322FDCBB14B3F37C003DB166 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322FDCC314B3F37D003DB166 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		322FDCDE14B3F37F003DB166 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322FDCE314B3F37F003DB166 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		322FDCB314B3F37B003DB166 = {
+			isa = PBXGroup;
+			children = (
+				322FDCC814B3F37D003DB166 /* iflam */,
+				322FDCE614B3F37F003DB166 /* iflamTests */,
+				322FDCC114B3F37D003DB166 /* Frameworks */,
+				322FDCBF14B3F37D003DB166 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		322FDCBF14B3F37D003DB166 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCBE14B3F37D003DB166 /* iflam.app */,
+				322FDCE214B3F37F003DB166 /* iflamTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		322FDCC114B3F37D003DB166 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCC214B3F37D003DB166 /* Cocoa.framework */,
+				322FDCC414B3F37D003DB166 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		322FDCC414B3F37D003DB166 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCC514B3F37D003DB166 /* AppKit.framework */,
+				322FDCC614B3F37D003DB166 /* CoreData.framework */,
+				322FDCC714B3F37D003DB166 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		322FDCC814B3F37D003DB166 /* iflam */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */,
+				322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */,
+				322FDCD714B3F37E003DB166 /* MainMenu.xib */,
+				322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */,
+				322FDCC914B3F37D003DB166 /* Supporting Files */,
+			);
+			path = iflam;
+			sourceTree = "<group>";
+		};
+		322FDCC914B3F37D003DB166 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCCA14B3F37D003DB166 /* iflam-Info.plist */,
+				322FDCCB14B3F37D003DB166 /* InfoPlist.strings */,
+				322FDCCE14B3F37D003DB166 /* iflam-Prefix.pch */,
+				322FDCCF14B3F37D003DB166 /* main.m */,
+				322FDCD114B3F37E003DB166 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		322FDCE614B3F37F003DB166 /* iflamTests */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCED14B3F37F003DB166 /* iflamTests.h */,
+				322FDCEF14B3F37F003DB166 /* iflamTests.m */,
+				322FDCE714B3F37F003DB166 /* Supporting Files */,
+			);
+			path = iflamTests;
+			sourceTree = "<group>";
+		};
+		322FDCE714B3F37F003DB166 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCE814B3F37F003DB166 /* iflamTests-Info.plist */,
+				322FDCE914B3F37F003DB166 /* InfoPlist.strings */,
+				322FDCEC14B3F37F003DB166 /* iflamTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		322FDCBD14B3F37C003DB166 /* iflam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 322FDCF314B3F37F003DB166 /* Build configuration list for PBXNativeTarget "iflam" */;
+			buildPhases = (
+				322FDCBA14B3F37C003DB166 /* Sources */,
+				322FDCBB14B3F37C003DB166 /* Frameworks */,
+				322FDCBC14B3F37C003DB166 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iflam;
+			productName = iflam;
+			productReference = 322FDCBE14B3F37D003DB166 /* iflam.app */;
+			productType = "com.apple.product-type.application";
+		};
+		322FDCE114B3F37F003DB166 /* iflamTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 322FDCF614B3F37F003DB166 /* Build configuration list for PBXNativeTarget "iflamTests" */;
+			buildPhases = (
+				322FDCDD14B3F37F003DB166 /* Sources */,
+				322FDCDE14B3F37F003DB166 /* Frameworks */,
+				322FDCDF14B3F37F003DB166 /* Resources */,
+				322FDCE014B3F37F003DB166 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				322FDCE514B3F37F003DB166 /* PBXTargetDependency */,
+			);
+			name = iflamTests;
+			productName = iflamTests;
+			productReference = 322FDCE214B3F37F003DB166 /* iflamTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		322FDCB514B3F37B003DB166 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 322FDCB814B3F37B003DB166 /* Build configuration list for PBXProject "iflam" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 322FDCB314B3F37B003DB166;
+			productRefGroup = 322FDCBF14B3F37D003DB166 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				322FDCBD14B3F37C003DB166 /* iflam */,
+				322FDCE114B3F37F003DB166 /* iflamTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		322FDCBC14B3F37C003DB166 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322FDCCD14B3F37D003DB166 /* InfoPlist.strings in Resources */,
+				322FDCD314B3F37E003DB166 /* Credits.rtf in Resources */,
+				322FDCD914B3F37E003DB166 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		322FDCDF14B3F37F003DB166 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322FDCEB14B3F37F003DB166 /* InfoPlist.strings in Resources */,
+				322FDCEE14B3F37F003DB166 /* iflamTests.h in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		322FDCE014B3F37F003DB166 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		322FDCBA14B3F37C003DB166 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322FDCD014B3F37D003DB166 /* main.m in Sources */,
+				322FDCD614B3F37E003DB166 /* iflamAppDelegate.m in Sources */,
+				322FDCDC14B3F37E003DB166 /* iflam.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		322FDCDD14B3F37F003DB166 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322FDCF014B3F37F003DB166 /* iflamTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		322FDCE514B3F37F003DB166 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 322FDCBD14B3F37C003DB166 /* iflam */;
+			targetProxy = 322FDCE414B3F37F003DB166 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		322FDCCB14B3F37D003DB166 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				322FDCCC14B3F37D003DB166 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		322FDCD114B3F37E003DB166 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				322FDCD214B3F37E003DB166 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		322FDCD714B3F37E003DB166 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				322FDCD814B3F37E003DB166 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		322FDCE914B3F37F003DB166 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				322FDCEA14B3F37F003DB166 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		322FDCF114B3F37F003DB166 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		322FDCF214B3F37F003DB166 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		322FDCF414B3F37F003DB166 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iflam/iflam-Prefix.pch";
+				INFOPLIST_FILE = "iflam/iflam-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		322FDCF514B3F37F003DB166 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iflam/iflam-Prefix.pch";
+				INFOPLIST_FILE = "iflam/iflam-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		322FDCF714B3F37F003DB166 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/iflam.app/Contents/MacOS/iflam";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iflamTests/iflamTests-Prefix.pch";
+				INFOPLIST_FILE = "iflamTests/iflamTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		322FDCF814B3F37F003DB166 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/iflam.app/Contents/MacOS/iflam";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iflamTests/iflamTests-Prefix.pch";
+				INFOPLIST_FILE = "iflamTests/iflamTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SenTestingKit,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		322FDCB814B3F37B003DB166 /* Build configuration list for PBXProject "iflam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				322FDCF114B3F37F003DB166 /* Debug */,
+				322FDCF214B3F37F003DB166 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		322FDCF314B3F37F003DB166 /* Build configuration list for PBXNativeTarget "iflam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				322FDCF414B3F37F003DB166 /* Debug */,
+				322FDCF514B3F37F003DB166 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		322FDCF614B3F37F003DB166 /* Build configuration list for PBXNativeTarget "iflamTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				322FDCF714B3F37F003DB166 /* Debug */,
+				322FDCF814B3F37F003DB166 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				322FDCDB14B3F37E003DB166 /* iflam.xcdatamodel */,
+			);
+			currentVersion = 322FDCDB14B3F37E003DB166 /* iflam.xcdatamodel */;
+			path = iflam.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 322FDCB514B3F37B003DB166 /* Project object */;
+}
