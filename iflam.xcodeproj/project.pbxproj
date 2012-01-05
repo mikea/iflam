@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32160C1B14B3FCA000E2408D /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32160C1914B3FCA000E2408D /* renderer.cpp */; };
 		322FDCC314B3F37D003DB166 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322FDCC214B3F37D003DB166 /* Cocoa.framework */; };
 		322FDCCD14B3F37D003DB166 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCCB14B3F37D003DB166 /* InfoPlist.strings */; };
 		322FDCD014B3F37D003DB166 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCCF14B3F37D003DB166 /* main.m */; };
@@ -18,6 +19,7 @@
 		322FDCEB14B3F37F003DB166 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCE914B3F37F003DB166 /* InfoPlist.strings */; };
 		322FDCEE14B3F37F003DB166 /* iflamTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCED14B3F37F003DB166 /* iflamTests.h */; };
 		322FDCF014B3F37F003DB166 /* iflamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCEF14B3F37F003DB166 /* iflamTests.m */; };
+		322FDCFB14B3F5A4003DB166 /* FlamView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFA14B3F5A4003DB166 /* FlamView.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,26 +33,30 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		32160C1914B3FCA000E2408D /* renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderer.cpp; sourceTree = "<group>"; };
+		32160C1A14B3FCA000E2408D /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderer.h; sourceTree = "<group>"; };
 		322FDCBE14B3F37D003DB166 /* iflam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iflam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		322FDCC214B3F37D003DB166 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		322FDCC514B3F37D003DB166 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		322FDCC614B3F37D003DB166 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		322FDCC714B3F37D003DB166 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		322FDCCA14B3F37D003DB166 /* iflam-Info.plist */ = {isa = PBXFileReference; path = "iflam-Info.plist"; sourceTree = "<group>"; };
+		322FDCCA14B3F37D003DB166 /* iflam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iflam-Info.plist"; sourceTree = "<group>"; };
 		322FDCCC14B3F37D003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		322FDCCE14B3F37D003DB166 /* iflam-Prefix.pch */ = {isa = PBXFileReference; path = "iflam-Prefix.pch"; sourceTree = "<group>"; };
+		322FDCCE14B3F37D003DB166 /* iflam-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iflam-Prefix.pch"; sourceTree = "<group>"; };
 		322FDCCF14B3F37D003DB166 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		322FDCD214B3F37E003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */ = {isa = PBXFileReference; path = iflamAppDelegate.h; sourceTree = "<group>"; };
+		322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iflamAppDelegate.h; sourceTree = "<group>"; };
 		322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iflamAppDelegate.m; sourceTree = "<group>"; };
 		322FDCD814B3F37E003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		322FDCDB14B3F37E003DB166 /* iflam.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = iflam.xcdatamodel; sourceTree = "<group>"; };
 		322FDCE214B3F37F003DB166 /* iflamTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iflamTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		322FDCE814B3F37F003DB166 /* iflamTests-Info.plist */ = {isa = PBXFileReference; path = "iflamTests-Info.plist"; sourceTree = "<group>"; };
+		322FDCE814B3F37F003DB166 /* iflamTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iflamTests-Info.plist"; sourceTree = "<group>"; };
 		322FDCEA14B3F37F003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		322FDCEC14B3F37F003DB166 /* iflamTests-Prefix.pch */ = {isa = PBXFileReference; path = "iflamTests-Prefix.pch"; sourceTree = "<group>"; };
+		322FDCEC14B3F37F003DB166 /* iflamTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iflamTests-Prefix.pch"; sourceTree = "<group>"; };
 		322FDCED14B3F37F003DB166 /* iflamTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iflamTests.h; sourceTree = "<group>"; };
 		322FDCEF14B3F37F003DB166 /* iflamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iflamTests.m; sourceTree = "<group>"; };
+		322FDCF914B3F5A4003DB166 /* FlamView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlamView.h; sourceTree = "<group>"; };
+		322FDCFA14B3F5A4003DB166 /* FlamView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamView.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +122,10 @@
 			children = (
 				322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */,
 				322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */,
+				322FDCF914B3F5A4003DB166 /* FlamView.h */,
+				322FDCFA14B3F5A4003DB166 /* FlamView.mm */,
+				32160C1914B3FCA000E2408D /* renderer.cpp */,
+				32160C1A14B3FCA000E2408D /* renderer.h */,
 				322FDCD714B3F37E003DB166 /* MainMenu.xib */,
 				322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */,
 				322FDCC914B3F37D003DB166 /* Supporting Files */,
@@ -263,6 +273,8 @@
 				322FDCD014B3F37D003DB166 /* main.m in Sources */,
 				322FDCD614B3F37E003DB166 /* iflamAppDelegate.m in Sources */,
 				322FDCDC14B3F37E003DB166 /* iflam.xcdatamodeld in Sources */,
+				322FDCFB14B3F5A4003DB166 /* FlamView.mm in Sources */,
+				32160C1B14B3FCA000E2408D /* renderer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,8 +373,11 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iflam/iflam-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "iflam/iflam-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -376,8 +391,11 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iflam/iflam-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "iflam/iflam-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				USER_HEADER_SEARCH_PATHS = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -445,6 +463,7 @@
 				322FDCF514B3F37F003DB166 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		322FDCF614B3F37F003DB166 /* Build configuration list for PBXNativeTarget "iflamTests" */ = {
 			isa = XCConfigurationList;
@@ -453,6 +472,7 @@
 				322FDCF814B3F37F003DB166 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
