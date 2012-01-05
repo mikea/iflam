@@ -106,15 +106,21 @@ public class FlamComponent extends JComponent {
     }
 
     private void updateHistogram(double x, double y, double cc) {
-        x -= genome.center[0];
-        y -= genome.center[0];
+        double top = 1, bottom = -1, left = -1, right = 1;
 
-        if (x < -1 || x > 1 || y < -1 || y > 1) {
+        if (x < left || x > right || y < bottom || y > top) {
             return;
         }
 
-        float x1 = (float) ((x + 1) * WIDTH / 2);
-        float y1 = (float) ((y + 1) * HEIGHT / 2);
+        x -= genome.center[0];
+        y -= genome.center[0];
+
+        double height = top - bottom;
+        double width = right - left;
+
+
+        double x1 = (x - left) * WIDTH / width;
+        double y1 = (y - bottom) * HEIGHT / height;
 
         int offset = (int) x1 + HEIGHT * (int) y1;
 
