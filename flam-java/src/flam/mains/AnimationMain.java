@@ -1,5 +1,9 @@
-package flam;
+package flam.mains;
 
+import flam.AnimationProvider;
+import flam.FlamComponent;
+import flam.FlamGenome;
+import flam.GenomeProvider;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -17,16 +21,6 @@ public class AnimationMain {
         
         frame.getContentPane().setLayout(new BorderLayout());
 
-        GenomeProvider staticProvider = new GenomeProvider() {
-            @Override
-            public FlamGenome getGenome() {
-                return genome1;
-            }
-
-            @Override
-            public void reset() {
-            }
-        };
         frame.getContentPane().add(new FlamComponent(new AnimationProvider(genome1)), BorderLayout.CENTER);
         
         frame.pack();

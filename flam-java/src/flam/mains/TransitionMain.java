@@ -1,5 +1,8 @@
-package flam;
+package flam.mains;
 
+import flam.FlamComponent;
+import flam.FlamGenome;
+import flam.GenomeProvider;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
