@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class TransitionMain {
     public static void main(String[] args) throws IOException, SAXException {
-        final FlamGenome genome1 = FlamGenome.parse("flams/e_1.flam3");
+        final FlamGenome genome1 = FlamGenome.parse("flams/e_4.flam3");
         final FlamGenome genome2 = FlamGenome.parse("flams/e_6.flam3");
 
         final JFrame frame = new JFrame();

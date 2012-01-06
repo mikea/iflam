@@ -50,11 +50,9 @@ public class FlamComponent extends JComponent {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        FlamGenome newGenome = provider.getGenome();
-        if (state == null || state.width != getWidth() || state.height != getHeight() || state.genome != newGenome) {
-            resetState(newGenome);
-        }
+        updateGenome();
 
+        state.reseed();
         long start = System.nanoTime();
 
         double rotate1 = 0;
@@ -67,9 +65,23 @@ public class FlamComponent extends JComponent {
 
         double[] xyc2 = new double[3];
 
-        for (int i = 0; i < batchSize; ++i, ++state.samples) {
-            FlamGenome.Xform xform = pickRandomXform();
-            state.applyXform(xform);
+        int fuse = 5;
+        int consequentErrors = 0;
+
+        genome.createXformDistrib();
+
+        for (int i = -4 * fuse; i < batchSize; ++i, ++state.samples) {
+            FlamGenome.Xform xform = state.pickRandomXform();
+            if (!state.applyXform(xform)) {
+                consequentErrors++;
+                System.out.println("consequentErrors = " + consequentErrors);
+
+                if (consequentErrors < 5) {
+                    continue;
+                }
+            }
+
+            consequentErrors = 0;
 
             double[] xyc = state.xyc;
             double opacity = xform.opacity;
@@ -80,18 +92,24 @@ public class FlamComponent extends JComponent {
 
             if (genome.finalxform != null) {
                 genome.finalxform.applyTo(xyc, xyc2);
-                xyc = xyc2;
+            } else {
+                xyc2[0] = xyc[0];
+                xyc2[1] = xyc[1];
+                xyc2[2] = xyc[2];
             }
+            xyc = xyc2;
 
             if (genome.rotate != 0) {
                 //todo: optimize
-                double x = rotate1 * xyc[0] - rotate2 * xyc[1];
-                double y = rotate2 * xyc[0] + rotate1 * xyc[1];
+                double x1 = xyc[0] - genome.center[0];
+                double y1 = xyc[1] - genome.center[1];
+                double x = rotate1 * x1 - rotate2 * y1 + genome.center[0];
+                double y = rotate2 * x1 + rotate1 * y1 + genome.center[1];
                 xyc[0] = x;
                 xyc[1] = y;
             }
 
-            if (state.samples > 20) {
+            if (i > 20) {
                 updateHistogram(xyc[0], xyc[1], xyc[2], opacity);
             }
         }
@@ -105,13 +123,10 @@ public class FlamComponent extends JComponent {
         repaint();
     }
 
-    private FlamGenome.Xform pickRandomXform() {
-        while (true) {
-            int k = Math.abs(random.nextInt() % genome.xforms.size());
-            FlamGenome.Xform xform = genome.xforms.get(k);
-            if (xform.weight != 0.0) {
-                return xform;
-            }
+    private void updateGenome() {
+        FlamGenome newGenome = provider.getGenome();
+        if (state == null || state.width != getWidth() || state.height != getHeight() || state.genome != newGenome) {
+            resetState(newGenome);
         }
     }
 
@@ -126,6 +141,8 @@ public class FlamComponent extends JComponent {
     private void updateHistogram(double x, double y, double cc, double opacity) {
         int x1 = (int) ((x - state.viewLeft) * state.width / state.viewWidth + 0.5);
         int y1 = (int) ((y - state.viewBottom) * state.height / state.viewHeight + 0.5);
+
+//        System.out.println("(" + x1 + "," + y1 + ")");
 
         if (x1 < 0 || x1 >= state.width || y1 < 0 || y1 >= state.height) {
             return;
@@ -168,15 +185,12 @@ public class FlamComponent extends JComponent {
         private double viewWidth;
         private double viewLeft;
         private double viewBottom;
+        private int lastxf = 0;
 
         public RenderState(FlamGenome genome, int width, int height) {
             this.genome = genome;
             this.width = width;
             this.height = height;
-
-            xyc[0] = crnd();
-            xyc[1] = crnd();
-            xyc[2] = rnd();
 
             image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
             freqHistogram = new double[this.width * this.height];
@@ -191,7 +205,27 @@ public class FlamComponent extends JComponent {
 
             viewHeight = height / ppuy;
             viewWidth = width / ppux;
+
+            reseed();
         }
+
+        public void reseed() {
+            xyc[0] = crnd();
+            xyc[1] = crnd();
+            xyc[2] = rnd();
+        }
+
+        private FlamGenome.Xform pickRandomXform() {
+            int k;
+            if (genome.chaosEnabled) {
+                k = genome.xformDistrib[lastxf][random.nextInt(FlamGenome.CHOOSE_XFORM_GRAIN)];
+                lastxf = k + 1;
+            } else {
+                k = genome.xformDistrib[0][random.nextInt(FlamGenome.CHOOSE_XFORM_GRAIN)];
+            }
+            return genome.xforms.get(k);
+        }
+
 
         private void renderHistogram() {
             {
@@ -275,8 +309,8 @@ public class FlamComponent extends JComponent {
             }
         }
 
-        public void applyXform(FlamGenome.Xform xform) {
-            xform.applyTo(xyc, xyc);
+        public boolean applyXform(FlamGenome.Xform xform) {
+            return xform.applyTo(xyc, xyc);
         }
     }
 

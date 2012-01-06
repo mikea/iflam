@@ -118,6 +118,7 @@ public class FlamGenome implements Serializable {
     };
 
     static final Set<String> variationNameSet = new HashSet<String>();
+    public static final double EPS = 1e-10;
 
     static {
         Collections.addAll(variationNameSet, variationNames);
@@ -162,6 +163,10 @@ public class FlamGenome implements Serializable {
     public int nbatches = 1;
     private String brood;
     private String genebank;
+    static final int CHOOSE_XFORM_GRAIN = 16384;
+    private double[][] chaos;
+    boolean chaosEnabled;
+    int[][] xformDistrib;
 
     public FlamGenome() {
         for (int i = 0; i < colors.length; i++) {
@@ -218,7 +223,7 @@ public class FlamGenome implements Serializable {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        
+
         result.append("FlamGenome[\n");
         result.append("  xforms=[\n");
         for (Xform xform : xforms) {
@@ -241,7 +246,7 @@ public class FlamGenome implements Serializable {
         // colors
         // background
         result.append("]\n");
-        
+
         return result.toString();
     }
 
@@ -412,6 +417,84 @@ public class FlamGenome implements Serializable {
         }
     }
 
+    public void createXformDistrib() {
+        chaos = new double[xforms.size()][];
+        
+        for (int i = 0; i < xforms.size(); ++i) {
+            chaos[i] = new double[xforms.size()];
+            
+            for (int j = 0; j < xforms.size(); ++j) {
+                chaos[i][j] = 1;
+            }
+        }
+        
+        xformDistrib = new int[xforms.size()][];
+        for (int i = 0; i < xformDistrib.length; ++i) {
+            xformDistrib[i] = new int[CHOOSE_XFORM_GRAIN];
+        }
+
+        createChaosDist(-1, xformDistrib[0]);
+        chaosEnabled = isChaosEnabled();
+        if (chaosEnabled) {
+            for (int i = 0; i < xforms.size(); i++) {
+                createChaosDist(i, xformDistrib[i]);
+            }
+        }
+    }
+
+    private boolean isChaosEnabled() {
+        for (int i = 0; i < xforms.size(); i++) {
+            for (int j = 0; j < xforms.size(); j++) {
+                if (abs(chaos[i][j] - 1.0) > EPS)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void createChaosDist(int xi, int[] xform_distrib) {
+        int xformsSize = xforms.size();
+
+        double weightSum = 0.0;
+        {
+            for (int i = 0; i < xformsSize; i++) {
+                double d = xforms.get(i).weight;
+                if (xi >= 0)
+                    d *= chaos[xi][i];
+                if (d < 0.0) {
+                    throw new IllegalStateException("xform weight must be non-negative, not " + d);
+                }
+                weightSum += d;
+            }
+        }
+
+        if (weightSum == 0.0) {
+            throw new IllegalStateException("cannot iterate empty flame");
+        }
+
+        double step = weightSum / CHOOSE_XFORM_GRAIN;
+
+        int j = 0;
+        double t = xforms.get(0).weight;
+        if (xi >= 0)
+            t *= chaos[xi][0];
+        double r = 0.0;
+        for (int i = 0; i < CHOOSE_XFORM_GRAIN; i++) {
+            while (r >= t) {
+                j++;
+
+                if (xi >= 0)
+                    t += xforms.get(j).weight * chaos[xi][j];
+                else
+                    t += xforms.get(j).weight;
+
+            }
+            xform_distrib[i] = j;
+            r += step;
+        }
+    }
+
     static class Xform implements Serializable {
         double[] coefs = new double[6];
         double[] variations = new double[variationNames.length];
@@ -427,6 +510,7 @@ public class FlamGenome implements Serializable {
         private double perspective_angle;
         private double perspective_dist;
         public static final Xform IDENTITY = new Xform();
+        private double chaos = 1;
 
         static {
             IDENTITY.coefs[0] = 1;
@@ -434,7 +518,7 @@ public class FlamGenome implements Serializable {
             IDENTITY.variations[0] = 1;
             IDENTITY.init();
         }
-        
+
         Xform() {
         }
 
@@ -458,7 +542,7 @@ public class FlamGenome implements Serializable {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            
+
             builder.append("Xform[");
             builder.append("coefs=");
             for (double coef : coefs) {
@@ -476,7 +560,7 @@ public class FlamGenome implements Serializable {
                 builder.append(", ");
             }
             builder.append("]");
-            
+
             return builder.toString();
         }
 
@@ -514,7 +598,7 @@ public class FlamGenome implements Serializable {
                 perspective_dist = interpolate(t, f1.perspective_dist, f2.perspective_dist);
                 opacity = interpolate(t, f1.opacity, f2.opacity);
             }
-            
+
             init();
         }
 
@@ -553,6 +637,8 @@ public class FlamGenome implements Serializable {
                     perspective_angle = parseDouble(node.getNodeValue());
                 } else if (attrName.equals("perspective_dist")) {
                     perspective_dist = parseDouble(node.getNodeValue());
+//                } else if (attrName.equals("chaos")) {
+//                    chaos = parseDouble(node.getNodeValue());
                 } else if (variationNameSet.contains(attrName)) {
                     for (int j = 0; j < variationNames.length; j++) {
                         if (variationNames[j].equals(attrName)) {
@@ -570,7 +656,7 @@ public class FlamGenome implements Serializable {
         }
 
 
-        public void applyTo(double[] in, double[] out) {
+        public boolean applyTo(double[] in, double[] out) {
             double x = in[0];
             double y = in[1];
             double cc = in[2];
@@ -658,8 +744,8 @@ public class FlamGenome implements Serializable {
                             break;
                         }
                         case 15: // waves
-                            dx = x + b * sin(y / (c * c));
-                            dy = y + e * sin(x / (f * f));
+                            dx = x + b * sin(y / (c * c + EPS));
+                            dy = y + e * sin(x / (f * f + EPS));
                             break;
                         case 27: // eyefish
                             dx = 2 * x / (r + 1);
@@ -705,9 +791,22 @@ public class FlamGenome implements Serializable {
 
             cc = cc * (1 - colorSpeed) + color * colorSpeed;
 
+            boolean good = true;
+
+            if (badvalue(x) || badvalue(y)) {
+                x = FlamComponent.crnd();
+                y = FlamComponent.crnd();
+                good = false;
+            }
+
             out[0] = x;
             out[1] = y;
             out[2] = cc;
+            return good;
+        }
+
+        private static boolean badvalue(double x) {
+            return ((x) != (x)) || ((x) > 1e10) || ((x) < -1e10);
         }
     }
 
