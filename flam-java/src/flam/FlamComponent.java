@@ -194,35 +194,88 @@ public class FlamComponent extends JComponent {
 );
 */
 
-            double k1 = 1.0;
-            double k2 = 1.0;
+            int vib_gam_n = 1;
+            double vibrancy = genome.vibrancy;
+            vibrancy /= vib_gam_n;
+            double linrange = genome.gammaLinearThreshold;
+            double g = 1.0 / (genome.gamma / vib_gam_n);
+            double highpow = genome.highlightPower;
 
+            int nchan = 3;
+            int transp = 0;
 
-            double maxFreqLog = Math.log(maxFreq);
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     int offset = x + width * y;
                     int freq = freqHistogram[offset];
-                    if (freq == 0) continue;
-                    double alpha = Math.log(1 + freq) / maxFreqLog;
-                    alpha = Math.pow(alpha, 1 / GAMMA);
-                    double r = colorHistogram[offset * 3];
-                    double g = colorHistogram[offset * 3 + 1];
-                    double b = colorHistogram[offset * 3 + 2];
+                    double cr = colorHistogram[offset * 3];
+                    double cg = colorHistogram[offset * 3 + 1];
+                    double cb = colorHistogram[offset * 3 + 2];
 
-                    r = calcColor(r, freq, maxFreq);
-                    g = calcColor(g, freq, maxFreq);
-                    b = calcColor(b, freq, maxFreq);
-                    r = Math.min(Math.max(r, 0), 1);
-                    g = Math.min(Math.max(g, 0), 1);
-                    b = Math.min(Math.max(b, 0), 1);
+                    double tmp = freq / PREFILTER_WHITE;
+                    double alpha, ls;
 
-                    int rgb = ((int) (r * 255) << 16) |
-                            ((int) (g * 255) << 8) |
-                            (int) (b * 255);
+                    if (freq <= 0) {
+                        alpha = 0.0;
+                        ls = 0.0;
+                    } else {
+                        alpha = flam3.flam3_calc_alpha(tmp, g, linrange);
+                        ls = vibrancy * 256.0 * alpha / tmp;
+                        if (alpha < 0.0) alpha = 0.0;
+                        if (alpha > 1.0) alpha = 1.0;
+                    }
+
+                    double[] t = {cr, cg, cb, freq};
+                    double[] newrgb = new double[4];
+                    flam3.flam3_calc_newrgb(
+                            t, ls, highpow, newrgb);
+
+                    for (int rgbi=0;rgbi<3;rgbi++) {
+                       double a = newrgb[rgbi];
+                       a += (1.0-vibrancy) * 256.0 * pow( t[rgbi] / PREFILTER_WHITE, g);
+                       if (nchan<=3 || transp==0)
+                          a += ((1.0 - alpha) * genome.background[rgbi]);
+                       else {
+                          if (alpha>0)
+                             a /= alpha;
+                          else
+                             a = 0;
+                       }
+
+                       /* Clamp here to ensure proper filter functionality */
+                       if (a>255) a = 255;
+                       if (a<0) a = 0;
+
+                       /* Replace values in accumulation buffer with these new ones */
+                       t[rgbi] = a;
+                    }
+                    t[3] = alpha;
+
+                    int rgb = ((int) (t[0]) << 16) |
+                            ((int) (t[1]) << 8) |
+                            (int) (t[2]);
 
 
                     image.setRGB(x, y, rgb);
+
+                    /*
+            if (freq == 0) continue;
+            double alpha = Math.log(1 + freq) / maxFreqLog;
+            alpha = Math.pow(alpha, 1 / GAMMA);
+
+            r = calcColor(r, freq, maxFreq);
+            g = calcColor(g, freq, maxFreq);
+            b = calcColor(b, freq, maxFreq);
+            r = Math.min(Math.max(r, 0), 1);
+            g = Math.min(Math.max(g, 0), 1);
+            b = Math.min(Math.max(b, 0), 1);
+
+            int rgb = ((int) (r * 255) << 16) |
+                    ((int) (g * 255) << 8) |
+                    (int) (b * 255);
+
+
+            image.setRGB(x, y, rgb);      */
                 }
             }
         }

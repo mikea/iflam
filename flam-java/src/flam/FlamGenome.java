@@ -131,7 +131,7 @@ public class FlamGenome {
         Collections.addAll(variationNameSet, variationNames);
     }
 
-    private double[] background = new double[3];
+    double[] background = new double[3];
     double brightness = 1.0;
     double[] center = new double[2];
     private double estimatorCurve = 0;
@@ -139,7 +139,7 @@ public class FlamGenome {
     private double estimatorRadius = 0;
     private double filter = 0;
     private String filterShape;
-    private double gamma;
+    double gamma = 4.0;
     private double gammaThreshold;
     private String interpolationType;
     private String name;
@@ -157,15 +157,16 @@ public class FlamGenome {
     private double temporalSamples;
     private double time;
     private String url;
-    private double vibrancy;
+    double vibrancy = 1.0;
     List<Xform> xforms = new ArrayList<Xform>();
     Xform finalxform;
     double[][] colors = new double[256][];
     double pixelsPerUnit = 50;
     private String version;
-    private double highlightPower;
+    double highlightPower = 1;
     double zoom = 1.0;
     double contrast = 1.0;
+    double gammaLinearThreshold = 0.01;
 
     public FlamGenome() {
         for (int i = 0; i < colors.length; i++) {
