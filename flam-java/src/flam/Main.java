@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException, SAXException {
-        FlamGenome flamGenome = FlamGenome.parse("flams/e_3.flam3");
+        FlamGenome flamGenome = FlamGenome.parse("flams/e_4.flam3");
 
         JFrame frame = new JFrame();
 

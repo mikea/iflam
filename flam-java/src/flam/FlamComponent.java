@@ -223,13 +223,14 @@ public class FlamComponent extends JComponent {
                         cg *= ls;
                         cb *= ls;
                     }
-                    double tmp = freq / PREFILTER_WHITE;
+
                     double alpha, ls;
 
                     if (freq <= 0) {
                         alpha = 0.0;
                         ls = 0.0;
                     } else {
+                        double tmp = freq / PREFILTER_WHITE;
                         alpha = flam3.flam3_calc_alpha(tmp, g, linrange);
                         ls = vibrancy * 256.0 * alpha / tmp;
                         if (alpha < 0.0) alpha = 0.0;
@@ -238,35 +239,23 @@ public class FlamComponent extends JComponent {
 
                     double[] t = {cr, cg, cb, freq};
                     double[] newrgb = new double[4];
-                    flam3.flam3_calc_newrgb(
-                            t, ls, highpow, newrgb);
+                    flam3.flam3_calc_newrgb(t, ls, highpow, newrgb);
 
                     for (int rgbi = 0; rgbi < 3; rgbi++) {
                         double a = newrgb[rgbi];
                         a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / PREFILTER_WHITE, g);
-                        if (nchan <= 3 || transp == 0)
-                            a += ((1.0 - alpha) * genome.background[rgbi]);
-                        else {
-                            if (alpha > 0)
-                                a /= alpha;
-                            else
-                                a = 0;
-                        }
 
-                        /* Clamp here to ensure proper filter functionality */
+                        a += ((1.0 - alpha) * genome.background[rgbi]);
+
+
                         if (a > 255) a = 255;
                         if (a < 0) a = 0;
-
-                        /* Replace values in accumulation buffer with these new ones */
                         t[rgbi] = a;
                     }
+
+
                     t[3] = alpha;
-
-                    int rgb = ((int) (t[0]) << 16) |
-                            ((int) (t[1]) << 8) |
-                            (int) (t[2]);
-
-                    line[x] = rgb;
+                    line[x] = ((int) (t[0]) << 16) | ((int) (t[1]) << 8) | (int) (t[2]);
                 }
 
                 image.setRGB(0, y, width, 1, line, 0, 1);
