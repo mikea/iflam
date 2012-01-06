@@ -196,21 +196,20 @@ public class FlamComponent extends JComponent {
             return;
         }
 
-        int offset = x1 + buffer.width * y1;
+        int offset = (x1 + buffer.width * y1) * 4;
 
-        buffer.freqHistogram[offset] += opacity;
 
         double[] color = genome.colors[((int) Math.min(Math.max(cc * 255.0, 0), 255))];
-        buffer.colorHistogram[offset * 3] += color[0];
-        buffer.colorHistogram[offset * 3 + 1] += color[1];
-        buffer.colorHistogram[offset * 3 + 2] += color[2];
+        buffer.accum[offset] += color[0];
+        buffer.accum[offset + 1] += color[1];
+        buffer.accum[offset + 2] += color[2];
+        buffer.accum[offset + 3] += opacity;
     }
 
     private static class RenderBuffer {
         private final int width;
         private final int height;
-        private final double[] freqHistogram;
-        private final double[] colorHistogram;
+        private final double[] accum; // (r, g, b, alpha)
         private final BufferedImage image;
 
         private RenderBuffer(int width, int height) {
@@ -218,13 +217,11 @@ public class FlamComponent extends JComponent {
             this.height = height;
 
             image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
-            freqHistogram = new double[this.width * this.height];
-            colorHistogram = new double[this.width * this.height * 3];
+            accum = new double[this.width * this.height * 4];
         }
 
         public void reset() {
-            Arrays.fill(freqHistogram, 0);
-            Arrays.fill(colorHistogram, 0);
+            Arrays.fill(accum, 0);
         }
     }
     
@@ -282,8 +279,7 @@ public class FlamComponent extends JComponent {
             BufferedImage image = buffer.image;
             int width = buffer.width;
             int height = buffer.height;
-            double[] freqHistogram = buffer.freqHistogram;
-            double[] colorHistogram = buffer.colorHistogram;
+            double[] accum = buffer.accum;
 
             {
                 Graphics bg = image.getGraphics();
@@ -317,11 +313,11 @@ public class FlamComponent extends JComponent {
 
             for (int y = 0; y < height; ++y) {
                 for (int x = 0; x < width; ++x) {
-                    int offset = x + width * y;
-                    double freq = freqHistogram[offset];
-                    double cr = colorHistogram[offset * 3];
-                    double cg = colorHistogram[offset * 3 + 1];
-                    double cb = colorHistogram[offset * 3 + 2];
+                    int offset = (x + width * y) * 4;
+                    double cr = accum[offset];
+                    double cg = accum[offset + 1];
+                    double cb = accum[offset + 2];
+                    double freq = accum[offset + 3];
 
                     if (freq != 0) {
                         double ls = (k1 * log(1.0 + freq * k2)) / freq;
