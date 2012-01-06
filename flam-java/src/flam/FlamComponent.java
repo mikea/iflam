@@ -43,7 +43,7 @@ public class FlamComponent extends JComponent {
     }
 
     private void resetState() {
-        state = new RenderState(getWidth(), getHeight());
+        state = new RenderState(genome, getWidth(), getHeight());
 
     }
 
@@ -64,7 +64,7 @@ public class FlamComponent extends JComponent {
                 genome.finalxform.applyTo(xyc, xyc2);
                 xyc = xyc2;
             }
-            
+
             if (genome.rotate != 0) {
                 //todo: optimize
                 double c = cos(genome.rotate * 2 * PI / 360.0);
@@ -99,14 +99,10 @@ public class FlamComponent extends JComponent {
     }
 
     private void updateHistogram(double x, double y, double cc) {
-        double scale = Math.pow(2.0, genome.zoom);
-        double ppux = genome.pixelsPerUnit * scale;
-        double ppuy = genome.pixelsPerUnit * scale;
+        double cornerX = genome.center[0] - state.width / state.ppux / 2.0;
+        double cornerY = genome.center[1] - state.height / state.ppuy / 2.0;
 
-        double cornerX = genome.center[0] - state.width / ppux / 2.0;
-        double cornerY = genome.center[1] - state.height / ppuy / 2.0;
-
-        double top = cornerY + state.height / ppuy, bottom = cornerY, left = cornerX, right = cornerX + state.width / ppux;
+        double top = cornerY + state.height / state.ppuy, bottom = cornerY, left = cornerX, right = cornerX + state.width / state.ppux;
 
         double height = top - bottom;
         double width = right - left;
@@ -123,9 +119,10 @@ public class FlamComponent extends JComponent {
         ++state.freqHistogram[offset];
 
         double[] color = genome.colors[((int) Math.min(Math.max(cc * 255.0, 0), 255))];
-        state.colorHistogram[offset * 3] = (state.colorHistogram[(offset * 3)] + color[0]) / 2;
-        state.colorHistogram[offset * 3 + 1] = (state.colorHistogram[offset * 3 + 1] + color[1]) / 2;
-        state.colorHistogram[offset * 3 + 2] = (state.colorHistogram[offset * 3 + 2] + color[2]) / 2;
+        state.colorHistogram[offset * 3] = (state.colorHistogram[(offset * 3)] + color[0]);
+        state.colorHistogram[offset * 3 + 1] = (state.colorHistogram[offset * 3 + 1] + color[1]);
+        state.colorHistogram[offset * 3 + 2] = (state.colorHistogram[offset * 3 + 2] + color[2]);
+        state.samples++;
     }
 
     private void blt(Graphics graphics) {
@@ -136,13 +133,20 @@ public class FlamComponent extends JComponent {
 
     private static class RenderState {
         private double[] xyc = new double[3];
+        private final FlamGenome genome;
         private final int width;
         private final int height;
         private final int[] freqHistogram;
         private final double[] colorHistogram;
         private final BufferedImage image;
+        private static final double PREFILTER_WHITE = 255;
+        private final double scale;
+        private final double ppux;
+        private final double ppuy;
+        public long samples = 0;
 
-        public RenderState(int width, int height) {
+        public RenderState(FlamGenome genome, int width, int height) {
+            this.genome = genome;
             this.width = width;
             this.height = height;
 
@@ -153,6 +157,10 @@ public class FlamComponent extends JComponent {
             image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
             freqHistogram = new int[this.width * this.height];
             colorHistogram = new double[this.width * this.height * 3];
+
+            scale = Math.pow(2.0, genome.zoom);
+            ppux = genome.pixelsPerUnit * scale;
+            ppuy = genome.pixelsPerUnit * scale;
         }
 
         private void renderHistogram() {
@@ -169,26 +177,60 @@ public class FlamComponent extends JComponent {
                 }
             }
 
+            double maxColor = 0;
+            for (double c : colorHistogram) {
+                maxColor = Math.max(c, maxColor);
+            }
+            double maxColorLog = log(maxColor);
+/*
+            double k1 = (genome.contrast * genome.brightness *
+                    PREFILTER_WHITE * 268.0 */
+/* * batch_filter[batch_num] *//*
+) / 256;
+            double area = width * height / (ppux * ppuy);
+            double k2 = samples /
+                    (genome.contrast * area * 255 */
+/* * sumfilt *//*
+);
+*/
+
+            double k1 = 1.0;
+            double k2 = 1.0;
+
+
             double maxFreqLog = Math.log(maxFreq);
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     int offset = x + width * y;
-                    if (freqHistogram[offset] == 0) continue;
-
-                    double alpha = Math.log(freqHistogram[offset]) / maxFreqLog;
+                    int freq = freqHistogram[offset];
+                    if (freq == 0) continue;
+                    double alpha = Math.log(1 + freq) / maxFreqLog;
                     alpha = Math.pow(alpha, 1 / GAMMA);
                     double r = colorHistogram[offset * 3];
                     double g = colorHistogram[offset * 3 + 1];
                     double b = colorHistogram[offset * 3 + 2];
 
-                    int rgb = ((int) (r * alpha * 255) << 16) |
-                            ((int) (g * alpha * 255) << 8) |
-                            (int) (b * alpha * 255);
+                    r = calcColor(r, freq, maxFreq);
+                    g = calcColor(g, freq, maxFreq);
+                    b = calcColor(b, freq, maxFreq);
+                    r = Math.min(Math.max(r, 0), 1);
+                    g = Math.min(Math.max(g, 0), 1);
+                    b = Math.min(Math.max(b, 0), 1);
+
+                    int rgb = ((int) (r * 255) << 16) |
+                            ((int) (g * 255) << 8) |
+                            (int) (b * 255);
 
 
                     image.setRGB(x, y, rgb);
                 }
             }
+        }
+
+        private double calcColor(double color, double freq, double maxFreq) {
+            double alpha = Math.log(1 + freq) / log(maxFreq);
+            alpha = Math.pow(alpha, 1 / GAMMA);
+            return color * alpha;
         }
 
         public void applyXform(FlamGenome.Xform xform) {

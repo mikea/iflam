@@ -132,7 +132,7 @@ public class FlamGenome {
     }
 
     private double[] background = new double[3];
-    private double brightness = 1.0;
+    double brightness = 1.0;
     double[] center = new double[2];
     private double estimatorCurve = 0;
     private double estimatorMinimum = 0;
@@ -146,12 +146,12 @@ public class FlamGenome {
     private String nick;
     private String notes;
     private String paletteMode;
-    private int passes = 1;
-    private double quality;
+    int passes = 1;
+    double quality = 1;
     double rotate;
     private double scale;
     private int[] size = new int[]{1024, 1024};
-    private int supersample;
+    int oversample = 1;
     private String temporalFilterType;
     private double temporalFilterWidth;
     private double temporalSamples;
@@ -165,6 +165,7 @@ public class FlamGenome {
     private String version;
     private double highlightPower;
     double zoom = 1.0;
+    double contrast = 1.0;
 
     public FlamGenome() {
         for (int i = 0; i < colors.length; i++) {
@@ -235,7 +236,7 @@ public class FlamGenome {
             } else if (attrName.equals("size")) {
                 parseIntoIntVector(node, size);
             } else if (attrName.equals("supersample")) {
-                supersample = parseInt(node.getNodeValue());
+                oversample = parseInt(node.getNodeValue());
             } else if (attrName.equals("temporal_filter_type")) {
                 temporalFilterType = node.getNodeValue();
             } else if (attrName.equals("temporal_filter_width")) {
