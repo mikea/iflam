@@ -1,24 +1,15 @@
 package flam;
 
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.lang.Math.*;
-import static java.lang.Math.sin;
 
 /**
  */
@@ -347,7 +338,6 @@ public class FlamGenome {
         private double perspective_angle;
         private double perspective_dist;
 
-
         public void parse(Node xformNode) {
             if (!xformNode.getNodeName().equals("xform") && !xformNode.getNodeName().equals("finalxform")) {
                 throw new IllegalArgumentException("Can't find xform element");
@@ -395,13 +385,15 @@ public class FlamGenome {
                     throw new IllegalArgumentException("Unsupported attribute: " + node);
                 }
             }
+
+
         }
-        
+
         public void applyTo(double[] in, double[] out) {
             double x = in[0];
             double y = in[1];
             double cc = in[2];
-            
+
             final double a = coefs[0];
             final double b = coefs[2];
             final double c = coefs[4];
@@ -423,8 +415,6 @@ public class FlamGenome {
 
                 double r2 = x * x + y * y;
                 double r = Math.sqrt(r2);
-                double theta = Math.atan2(x, y);
-                double phi = Math.atan2(y, x);
 
                 for (int j = 0; j < FlamGenome.variationNames.length; ++j) {
                     double dx;
@@ -452,26 +442,41 @@ public class FlamGenome {
                             dy = x * cos(r2) + y * sin(r2);
                             break;
                         case 5: // polar
+                        {
+                            double theta = atan2(x, y);
                             dx = theta / PI;
                             dy = r - 1;
                             break;
+                        }
                         case 6: // handkerchief
+                        {
+                            double theta = atan2(x, y);
                             dx = r * sin(theta + r);
                             dy = r * cos(theta - r);
                             break;
+                        }
                         case 8: // disc
+                        {
+                            double theta = atan2(x, y);
                             dx = theta * sin(PI * r) / PI;
                             dy = theta * cos(PI * r) / PI;
                             break;
+                        }
                         case 11: // diamond
+                        {
+                            double theta = atan2(x, y);
                             dx = sin(theta) * cos(r);
                             dy = cos(theta) * sin(r);
                             break;
+                        }
                         case 13: // julia
+                        {
+                            double theta = atan2(x, y);
                             double omega = FlamComponent.random.nextBoolean() ? 0 : PI;
                             dx = sqrt(r) * cos(theta / 2 + omega);
                             dy = sqrt(r) * sin(theta / 2 + omega);
                             break;
+                        }
                         case 15: // waves
                             dx = x + b * sin(y / (c * c));
                             dy = y + e * sin(x / (f * f));
@@ -498,11 +503,12 @@ public class FlamGenome {
                         }
                         case 32: // julian
                         {
+                            double phi = atan2(y, x);
                             double p1 = julian_power;
                             double p2 = julian_dist;
                             double p3 = floor(abs(p1) * FlamComponent.random.nextDouble());
                             double t = (phi + 2 * PI * p3) / p1;
-                            double z = pow(r, p2/p1);
+                            double z = pow(r, p2 / p1);
                             dx = z * cos(t);
                             dy = z * sin(t);
                             break;
@@ -523,5 +529,33 @@ public class FlamGenome {
             out[1] = y;
             out[2] = cc;
         }
+    }
+
+    private static double atan2(double x, double y) {
+//        return Math.atan2(x, y);
+        return fastAtan2(x, y);
+    }
+
+
+    //http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization
+    static double fastAtan2(double x, double y) {
+        double coeff_1 = PI / 4;
+        double coeff_2 = 3 * coeff_1;
+        double abs_y = abs(x) + 1e-10;      // kludge to prevent 0/0 condition
+
+        double r;
+        double angle;
+
+        if (y >= 0) {
+            r = (y - abs_y) / (y + abs_y);
+            angle = coeff_1 - coeff_1 * r;
+        } else {
+            r = (y + abs_y) / (abs_y - y);
+            angle = coeff_2 - coeff_1 * r;
+        }
+        if (x < 0)
+            return (-angle);     // negate if in quad III or IV
+        else
+            return (angle);
     }
 }
