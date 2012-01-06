@@ -5,6 +5,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 import static java.lang.Double.parseDouble;
@@ -13,7 +14,7 @@ import static java.lang.Math.*;
 
 /**
  */
-public class FlamGenome {
+public class FlamGenome implements Serializable {
     static final String[] variationNames = {
             "linear",
             "sinusoidal",
@@ -168,6 +169,56 @@ public class FlamGenome {
         }
     }
 
+    public FlamGenome(FlamGenome g1, FlamGenome g2, double t) {
+        for (int i = 0; i < 3; ++i) {
+            background[i] = interpolate(t, g1.background[i], g2.background[i]);
+        }
+        brightness = interpolate(t, g1.brightness, g2.brightness);
+        for (int i = 0; i < 2; ++i) {
+            center[i] = interpolate(t, g1.center[i], g2.center[i]);
+        }
+        gamma = interpolate(t, g1.gamma, g2.gamma);
+        rotate = interpolate(t, g1.rotate, g2.rotate);
+        vibrancy = interpolate(t, g1.vibrancy, g2.vibrancy);
+        highlightPower = interpolate(t, g1.highlightPower, g2.highlightPower);
+        zoom = interpolate(t, g1.zoom, g2.zoom);
+        contrast = interpolate(t, g1.contrast, g2.contrast);
+        gammaLinearThreshold = interpolate(t, g1.gammaLinearThreshold, g2.gammaLinearThreshold);
+        for (int i = 0; i < 256; ++i) {
+            double[] hsv1 = new double[3];
+            double[] hsv2 = new double[3];
+            double[] hsv = new double[3];
+            flam3.rgb2hsv(g1.colors[i], hsv1);
+            flam3.rgb2hsv(g2.colors[i], hsv2);
+
+            for (int j = 0; j < 3; ++j) {
+                hsv[j] = interpolate(t, hsv1[j], hsv2[j]);
+            }
+
+            colors[i] = new double[3];
+            flam3.hsv2rgb(hsv, colors[i]);
+        }
+
+        finalxform = new Xform(g1.finalxform, g2.finalxform, t);
+
+        for (int i = 0; i < Math.min(g1.xforms.size(), g2.xforms.size()); ++i) {
+            xforms.add(new Xform(g1.xforms.get(i), g2.xforms.get(i), t));
+        }
+        if (g1.xforms.size() > g2.xforms.size() && t > 0) {
+            for (int i = g2.xforms.size(); i < g1.xforms.size(); ++i) {
+                xforms.add(new Xform(g1.xforms.get(i), null, t));
+            }
+        } else if (t < 1.0) {
+            for (int i = g1.xforms.size(); i < g2.xforms.size(); ++i) {
+                xforms.add(new Xform(g2.xforms.get(i), null, 1 - t));
+            }
+        }
+    }
+
+    private static double interpolate(double t, double v1, double v2) {
+        return (1 - t) * v1 + t * v2;
+    }
+
 
     public static FlamGenome parse(String filename) throws IOException, SAXException {
         DOMParser parser = new DOMParser();
@@ -226,6 +277,13 @@ public class FlamGenome {
                 quality = parseDouble(node.getNodeValue());
             } else if (attrName.equals("rotate")) {
                 rotate = parseDouble(node.getNodeValue());
+
+                while (rotate > 360) {
+                    rotate -= 360;
+                }
+                while (rotate < -360) {
+                    rotate += 360;
+                }
             } else if (attrName.equals("scale")) {
                 scale = parseDouble(node.getNodeValue());
             } else if (attrName.equals("size")) {
@@ -324,19 +382,78 @@ public class FlamGenome {
         }
     }
 
-    static class Xform {
+    static class Xform implements Serializable {
         double[] coefs = new double[6];
         double[] variations = new double[variationNames.length];
+        int[] nonZeroVariations;
 
         double color;
         double weight;
         private double animate;
         double colorSpeed = 0.5;
-        private double opacity;
+        double opacity = 1.0;
         private double julian_dist;
         private double julian_power;
         private double perspective_angle;
         private double perspective_dist;
+
+        Xform() {
+        }
+
+        private void init() {
+            int variationCount = 0;
+            for (int j = 0; j < FlamGenome.variationNames.length; ++j) {
+                if (variations[j] != 0.0) {
+                    variationCount++;
+                }
+            }
+            nonZeroVariations = new int[variationCount];
+            variationCount = 0;
+            for (int j = 0; j < FlamGenome.variationNames.length; ++j) {
+                if (variations[j] != 0.0) {
+                    nonZeroVariations[variationCount] = j;
+                    variationCount++;
+                }
+            }
+        }
+        
+        public Xform(Xform f1, Xform f2, double t) {
+            if (f2 == null) {
+                t = 1 - t;
+                for (int i = 0; i < 6; ++i) {
+                    coefs[i] = f1.coefs[i];
+                }
+                for (int i = 0; i < variationNames.length; ++i) {
+                    variations[i] = f1.variations[i] * t;
+                }
+
+                color = f1.color;
+                weight = f1.weight * t;
+                opacity = f1.opacity * t;
+                colorSpeed = f1.colorSpeed;
+                julian_dist = f1.julian_dist;
+                julian_power = f1.julian_power;
+                perspective_angle = f1.perspective_angle;
+                perspective_dist = f1.perspective_dist;
+            } else {
+                for (int i = 0; i < 6; ++i) {
+                    coefs[i] = interpolate(t, f1.coefs[i], f2.coefs[i]);
+                }
+                for (int i = 0; i < variationNames.length; ++i) {
+                    variations[i] = interpolate(t, f1.variations[i], f2.variations[i]);
+                }
+                color = interpolate(t, f1.color, f2.color);
+                weight = interpolate(t, f1.weight, f2.weight);
+                colorSpeed = interpolate(t, f1.colorSpeed, f2.colorSpeed);
+                julian_dist = interpolate(t, f1.julian_dist, f2.julian_dist);
+                julian_power = interpolate(t, f1.julian_power, f2.julian_power);
+                perspective_angle = interpolate(t, f1.perspective_angle, f2.perspective_angle);
+                perspective_dist = interpolate(t, f1.perspective_dist, f2.perspective_dist);
+                opacity = interpolate(t, f1.opacity, f2.opacity);
+            }
+            
+            init();
+        }
 
         public void parse(Node xformNode) {
             if (!xformNode.getNodeName().equals("xform") && !xformNode.getNodeName().equals("finalxform")) {
@@ -386,8 +503,9 @@ public class FlamGenome {
                 }
             }
 
-
+            init();
         }
+
 
         public void applyTo(double[] in, double[] out) {
             double x = in[0];
@@ -416,13 +534,12 @@ public class FlamGenome {
                 double r2 = x * x + y * y;
                 double r = Math.sqrt(r2);
 
-                for (int j = 0; j < FlamGenome.variationNames.length; ++j) {
+                for (int j = 0; j < nonZeroVariations.length; ++j) {
                     double dx;
                     double dy;
 
-                    if (variations[j] == 0) continue;
-
-                    switch (j) {
+                    int var = nonZeroVariations[j];
+                    switch (var) {
                         default:
                             throw new IllegalArgumentException("Unimplemented variation: " + j + " : " + FlamGenome.variationNames[j]);
                         case 0: // linear
@@ -515,8 +632,8 @@ public class FlamGenome {
                         }
                     }
 
-                    x2 += variations[j] * dx;
-                    y2 += variations[j] * dy;
+                    x2 += variations[var] * dx;
+                    y2 += variations[var] * dy;
                 }
 
                 x = x2;
@@ -557,5 +674,14 @@ public class FlamGenome {
             return (-angle);     // negate if in quad III or IV
         else
             return (angle);
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

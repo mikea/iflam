@@ -16,18 +16,18 @@ public class FlamComponent extends JComponent {
     static final Random random = new Random();
 
     // state
-    private final FlamGenome genome;
+    private FlamGenome genome;
     private RenderState state;
+    private GenomeProvider provider;
 
-    public FlamComponent(FlamGenome flamGenome) {
-        genome = flamGenome;
+    public FlamComponent(final GenomeProvider provider) {
+        this.provider = provider;
         setFocusable(true);
 
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
-                resetState();
-                resetState();
+                provider.reset();
             }
 
             @Override
@@ -40,17 +40,19 @@ public class FlamComponent extends JComponent {
         });
     }
 
-    private void resetState() {
+    private void resetState(FlamGenome newGenome) {
+        genome = newGenome;
         state = new RenderState(genome, getWidth(), getHeight());
-
     }
 
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        if (state == null || state.width != getWidth() || state.height != getHeight()) {
-            resetState();
+        FlamGenome newGenome = provider.getGenome();
+        if (state == null || state.width != getWidth() || state.height != getHeight() || state.genome != newGenome) {
+            resetState(newGenome);
         }
+        
         int batchSize = 100000;
 
         long start = System.nanoTime();
@@ -66,9 +68,15 @@ public class FlamComponent extends JComponent {
         double[] xyc2 = new double[3];
 
         for (int i = 0; i < batchSize; ++i, ++state.samples) {
-            state.applyXform(pickRandomXform());
+            FlamGenome.Xform xform = pickRandomXform();
+            state.applyXform(xform);
 
             double[] xyc = state.xyc;
+            double opacity = xform.opacity;
+
+            if (opacity != 1.0) {
+                flam3.adjust_percentage(xform.opacity);
+            }
 
             if (genome.finalxform != null) {
                 genome.finalxform.applyTo(xyc, xyc2);
@@ -84,7 +92,7 @@ public class FlamComponent extends JComponent {
             }
 
             if (state.samples > 20) {
-                updateHistogram(xyc[0], xyc[1], xyc[2]);
+                updateHistogram(xyc[0], xyc[1], xyc[2], opacity);
             }
         }
         long batchFinish = System.nanoTime();
@@ -98,11 +106,16 @@ public class FlamComponent extends JComponent {
     }
 
     private FlamGenome.Xform pickRandomXform() {
-        int k = Math.abs(random.nextInt() % genome.xforms.size());
-        return genome.xforms.get(k);
+        while (true) {
+            int k = Math.abs(random.nextInt() % genome.xforms.size());
+            FlamGenome.Xform xform = genome.xforms.get(k);
+            if (xform.weight != 0.0) {
+                return xform;
+            }
+        }
     }
 
-    private static double crnd() {
+    static double crnd() {
         return random.nextDouble() * 2 - 1;
     }
 
@@ -110,7 +123,7 @@ public class FlamComponent extends JComponent {
         return random.nextDouble();
     }
 
-    private void updateHistogram(double x, double y, double cc) {
+    private void updateHistogram(double x, double y, double cc, double opacity) {
         int x1 = (int) ((x - state.viewLeft) * state.width / state.viewWidth + 0.5);
         int y1 = (int) ((y - state.viewBottom) * state.height / state.viewHeight + 0.5);
 
@@ -120,7 +133,7 @@ public class FlamComponent extends JComponent {
 
         int offset = x1 + state.width * y1;
 
-        ++state.freqHistogram[offset];
+        state.freqHistogram[offset] += opacity;
 
         double[] color = genome.colors[((int) Math.min(Math.max(cc * 255.0, 0), 255))];
         state.colorHistogram[offset * 3] += color[0];
@@ -139,7 +152,7 @@ public class FlamComponent extends JComponent {
         private final FlamGenome genome;
         private final int width;
         private final int height;
-        private final int[] freqHistogram;
+        private final double[] freqHistogram;
         private final double[] colorHistogram;
         private final BufferedImage image;
         private static final double PREFILTER_WHITE = 255;
@@ -162,7 +175,7 @@ public class FlamComponent extends JComponent {
             xyc[2] = rnd();
 
             image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
-            freqHistogram = new int[this.width * this.height];
+            freqHistogram = new double[this.width * this.height];
             colorHistogram = new double[this.width * this.height * 3];
 
             scale = Math.pow(2.0, genome.zoom);

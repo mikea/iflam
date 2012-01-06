@@ -8,7 +8,9 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException, SAXException {
-        FlamGenome flamGenome = FlamGenome.parse("flams/e_4.flam3");
+        final FlamGenome genome1 = FlamGenome.parse("flams/e_1.flam3");
+        FlamGenome genome2 = FlamGenome.parse("flams/e_3.flam3");
+        TransitionGenomeProvider provider = new TransitionGenomeProvider(genome2, genome1);
 
         JFrame frame = new JFrame();
 
@@ -16,7 +18,20 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(new FlamComponent(flamGenome), BorderLayout.CENTER);
+
+        final FlamGenome finalGenome = new FlamGenome(genome2, genome1, 1.0);
+
+        GenomeProvider staticProvider = new GenomeProvider() {
+            @Override
+            public FlamGenome getGenome() {
+                return genome1;
+            }
+
+            @Override
+            public void reset() {
+            }
+        };
+        frame.getContentPane().add(new FlamComponent(new AnimationProvider(genome1)), BorderLayout.CENTER);
         
         frame.pack();
         frame.setVisible(true);
