@@ -1,12 +1,20 @@
 package flam;
 
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
@@ -419,15 +427,15 @@ public class FlamGenome implements Serializable {
 
     public void createXformDistrib() {
         chaos = new double[xforms.size()][];
-        
+
         for (int i = 0; i < xforms.size(); ++i) {
             chaos[i] = new double[xforms.size()];
-            
+
             for (int j = 0; j < xforms.size(); ++j) {
                 chaos[i][j] = 1;
             }
         }
-        
+
         xformDistrib = new int[xforms.size()][];
         for (int i = 0; i < xformDistrib.length; ++i) {
             xformDistrib[i] = new int[CHOOSE_XFORM_GRAIN];
@@ -511,6 +519,9 @@ public class FlamGenome implements Serializable {
         private double perspective_dist;
         public static final Xform IDENTITY = new Xform();
         private double chaos = 1;
+        private double[] post;
+        private double radial_blur_angle;
+        private double rings2_val;
 
         static {
             IDENTITY.coefs[0] = 1;
@@ -565,38 +576,25 @@ public class FlamGenome implements Serializable {
         }
 
         public Xform(Xform f1, Xform f2, double t) {
-            if (f2 == null) {
-                t = 1 - t;
-                for (int i = 0; i < 6; ++i) {
-                    coefs[i] = f1.coefs[i];
-                }
-                for (int i = 0; i < variationNames.length; ++i) {
-                    variations[i] = f1.variations[i] * t;
-                }
+            for (int i = 0; i < 6; ++i) {
+                coefs[i] = interpolate(t, f1.coefs[i], f2.coefs[i]);
+            }
+            for (int i = 0; i < variationNames.length; ++i) {
+                variations[i] = interpolate(t, f1.variations[i], f2.variations[i]);
+            }
+            color = interpolate(t, f1.color, f2.color);
+            weight = interpolate(t, f1.weight, f2.weight);
+            colorSpeed = interpolate(t, f1.colorSpeed, f2.colorSpeed);
+            julian_dist = interpolate(t, f1.julian_dist, f2.julian_dist);
+            julian_power = interpolate(t, f1.julian_power, f2.julian_power);
+            perspective_angle = interpolate(t, f1.perspective_angle, f2.perspective_angle);
+            perspective_dist = interpolate(t, f1.perspective_dist, f2.perspective_dist);
+            opacity = interpolate(t, f1.opacity, f2.opacity);
+            radial_blur_angle = interpolate(t, f1.radial_blur_angle, f2.radial_blur_angle);
+            rings2_val = interpolate(t, f1.rings2_val, f2.rings2_val);
 
-                color = f1.color;
-                weight = f1.weight * t;
-                opacity = f1.opacity * t;
-                colorSpeed = f1.colorSpeed;
-                julian_dist = f1.julian_dist;
-                julian_power = f1.julian_power;
-                perspective_angle = f1.perspective_angle;
-                perspective_dist = f1.perspective_dist;
-            } else {
-                for (int i = 0; i < 6; ++i) {
-                    coefs[i] = interpolate(t, f1.coefs[i], f2.coefs[i]);
-                }
-                for (int i = 0; i < variationNames.length; ++i) {
-                    variations[i] = interpolate(t, f1.variations[i], f2.variations[i]);
-                }
-                color = interpolate(t, f1.color, f2.color);
-                weight = interpolate(t, f1.weight, f2.weight);
-                colorSpeed = interpolate(t, f1.colorSpeed, f2.colorSpeed);
-                julian_dist = interpolate(t, f1.julian_dist, f2.julian_dist);
-                julian_power = interpolate(t, f1.julian_power, f2.julian_power);
-                perspective_angle = interpolate(t, f1.perspective_angle, f2.perspective_angle);
-                perspective_dist = interpolate(t, f1.perspective_dist, f2.perspective_dist);
-                opacity = interpolate(t, f1.opacity, f2.opacity);
+            if (f1.post != null || f2.post != null) {
+                throw new UnsupportedOperationException();
             }
 
             init();
@@ -637,6 +635,13 @@ public class FlamGenome implements Serializable {
                     perspective_angle = parseDouble(node.getNodeValue());
                 } else if (attrName.equals("perspective_dist")) {
                     perspective_dist = parseDouble(node.getNodeValue());
+                } else if (attrName.equals("radial_blur_angle")) {
+                    radial_blur_angle = parseDouble(node.getNodeValue());
+                } else if (attrName.equals("rings2_val")) {
+                    rings2_val = parseDouble(node.getNodeValue());
+                } else if (attrName.equals("post")) {
+                    post = new double[6];
+                    parseIntoDoubleVector(node, post);
 //                } else if (attrName.equals("chaos")) {
 //                    chaos = parseDouble(node.getNodeValue());
                 } else if (variationNameSet.contains(attrName)) {
@@ -654,7 +659,6 @@ public class FlamGenome implements Serializable {
 
             init();
         }
-
 
         public boolean applyTo(double[] in, double[] out) {
             double x = in[0];
@@ -688,9 +692,10 @@ public class FlamGenome implements Serializable {
                     double dy;
 
                     int var = nonZeroVariations[j];
+                    final double w = variations[var];
                     switch (var) {
                         default:
-                            throw new IllegalArgumentException("Unimplemented variation: " + j + " : " + FlamGenome.variationNames[j]);
+                            throw new IllegalArgumentException("Unimplemented variation: " + var + " : " + FlamGenome.variationNames[var]);
                         case 0: // linear
                             dx = x;
                             dy = y;
@@ -721,6 +726,13 @@ public class FlamGenome implements Serializable {
                             dy = r * cos(theta - r);
                             break;
                         }
+                        case 7: // heart
+                        {
+                            double theta = atan2(x, y);
+                            dx = r * sin(theta * r);
+                            dy = - r * cos(theta * r);
+                            break;
+                        }
                         case 8: // disc
                         {
                             double theta = atan2(x, y);
@@ -747,6 +759,19 @@ public class FlamGenome implements Serializable {
                             dx = x + b * sin(y / (c * c + EPS));
                             dy = y + e * sin(x / (f * f + EPS));
                             break;
+                        case 16: // fisheye
+                            dx = y * 2 / (r + 1);
+                            dy = x * 2 / (r + 1);
+                            break;
+                        case 26: // rings2
+                        {
+                            double theta = atan2(x, y);
+                            double p = rings2_val* rings2_val;
+                            double t = r - 2*p*floor((r+p)/(2*p)) + r* (1-p);
+                            dx = t * sin(theta);
+                            dy = t * cos(theta);
+                            break;
+                        }
                         case 27: // eyefish
                             dx = 2 * x / (r + 1);
                             dy = 2 * y / (r + 1);
@@ -779,14 +804,35 @@ public class FlamGenome implements Serializable {
                             dy = z * sin(t);
                             break;
                         }
+                        case 36:  // radial_blor
+                        {
+                            double phi = atan2(y, x);
+                            double p1 = radial_blur_angle * PI / 2;
+                            double t1 = w * (FlamComponent.random.nextDouble() + FlamComponent.random.nextDouble() + FlamComponent.random.nextDouble() + FlamComponent.random.nextDouble() - 2);
+                            double t2 = phi + t1 * sin(p1);
+                            double t3 = t1 * cos(p1) - 1;
+                            dx = (r * cos(t2) + t3 * x) / w;
+                            dy = (r * sin(t2) + t3 * y) / w;
+                        }
                     }
 
-                    x2 += variations[var] * dx;
-                    y2 += variations[var] * dy;
+                    x2 += w * dx;
+                    y2 += w * dy;
                 }
 
                 x = x2;
                 y = y2;
+            }
+
+            {
+                if (post != null) {
+                    double x1, y1;
+                    x1 = x * post[0] + y * post[2] + post[4];
+                    y1 = x * post[1] + y * post[3] + post[5];
+
+                    x = x1;
+                    y = y1;
+                }
             }
 
             cc = cc * (1 - colorSpeed) + color * colorSpeed;

@@ -19,7 +19,7 @@ public class ViewMain {
     private static final JFrame frame = new JFrame();
 
     public static void main(String[] args) throws IOException, SAXException {
-        openGenome("flams/e_5_1.flam3");
+        openGenome("sheeps/1031.flam3");
 
         frame.setPreferredSize(new Dimension(500, 500));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,7 +36,7 @@ public class ViewMain {
             public void reset() {
             }
         });
-        flamComponent.setFps(1.0);
+        flamComponent.setFps(5);
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
         JMenuBar menuBar = new JMenuBar();
@@ -50,7 +50,7 @@ public class ViewMain {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File("flams"));
+                fileChooser.setCurrentDirectory(new File("sheeps"));
                 fileChooser.setFileFilter(new FileNameExtensionFilter("flam3", "flam3"));
                 int val = fileChooser.showOpenDialog(frame);
                 if (val == JFileChooser.APPROVE_OPTION) {
@@ -66,6 +66,7 @@ public class ViewMain {
 
     private static void openGenome(String path) {
         try {
+            System.out.println("***** Loading " + path);
             frame.setTitle(path);
             genome = FlamGenome.parse(path);
         } catch (IOException e) {
