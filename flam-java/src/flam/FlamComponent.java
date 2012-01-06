@@ -19,6 +19,7 @@ public class FlamComponent extends JComponent {
     private FlamGenome genome;
     private RenderState state;
     private GenomeProvider provider;
+    private int batchSize;
 
     public FlamComponent(final GenomeProvider provider) {
         this.provider = provider;
@@ -38,6 +39,7 @@ public class FlamComponent extends JComponent {
             public void keyReleased(KeyEvent keyEvent) {
             }
         });
+        batchSize = 100000;
     }
 
     private void resetState(FlamGenome newGenome) {
@@ -52,8 +54,6 @@ public class FlamComponent extends JComponent {
         if (state == null || state.width != getWidth() || state.height != getHeight() || state.genome != newGenome) {
             resetState(newGenome);
         }
-        
-        int batchSize = 100000;
 
         long start = System.nanoTime();
 
@@ -100,7 +100,7 @@ public class FlamComponent extends JComponent {
         blt(graphics);
 
         long bltFinish = System.nanoTime();
-        System.out.println((batchFinish - start) / 1e9 + " : " + (bltFinish - batchFinish) / 1e9);
+//        System.out.println((batchFinish - start) / 1e9 + " : " + (bltFinish - batchFinish) / 1e9);
 
         repaint();
     }
@@ -144,6 +144,10 @@ public class FlamComponent extends JComponent {
     private void blt(Graphics graphics) {
         state.renderHistogram();
         graphics.drawImage(state.image, 0, 0, null);
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
     }
 
 
@@ -202,10 +206,6 @@ public class FlamComponent extends JComponent {
             double linrange = genome.gammaLinearThreshold;
             double g = 1.0 / (genome.gamma / vib_gam_n);
             double highpow = genome.highlightPower;
-
-            int nchan = 3;
-            int transp = 0;
-
 
             int nbatches = genome.nbatches;
             double oversample = 1.0; // genome.oversample

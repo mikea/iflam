@@ -6,11 +6,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-public class Main {
+public class AnimationMain {
     public static void main(String[] args) throws IOException, SAXException {
-        final FlamGenome genome1 = FlamGenome.parse("flams/e_1.flam3");
-        FlamGenome genome2 = FlamGenome.parse("flams/e_3.flam3");
-        TransitionGenomeProvider provider = new TransitionGenomeProvider(genome2, genome1);
+        final FlamGenome genome1 = FlamGenome.parse("flams/e_2.flam3");
 
         JFrame frame = new JFrame();
 
@@ -18,8 +16,6 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         frame.getContentPane().setLayout(new BorderLayout());
-
-        final FlamGenome finalGenome = new FlamGenome(genome2, genome1, 1.0);
 
         GenomeProvider staticProvider = new GenomeProvider() {
             @Override

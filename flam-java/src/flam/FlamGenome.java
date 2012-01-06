@@ -199,20 +199,50 @@ public class FlamGenome implements Serializable {
             flam3.hsv2rgb(hsv, colors[i]);
         }
 
-        finalxform = new Xform(g1.finalxform, g2.finalxform, t);
+        finalxform = new Xform(g1.finalxform == null ? Xform.IDENTITY : g1.finalxform, g2.finalxform == null ? Xform.IDENTITY : g2.finalxform, t);
 
         for (int i = 0; i < Math.min(g1.xforms.size(), g2.xforms.size()); ++i) {
             xforms.add(new Xform(g1.xforms.get(i), g2.xforms.get(i), t));
         }
-        if (g1.xforms.size() > g2.xforms.size() && t > 0) {
+        if (g1.xforms.size() > g2.xforms.size()) {
             for (int i = g2.xforms.size(); i < g1.xforms.size(); ++i) {
-                xforms.add(new Xform(g1.xforms.get(i), null, t));
+                xforms.add(new Xform(g1.xforms.get(i), Xform.IDENTITY, t));
             }
-        } else if (t < 1.0) {
+        } else {
             for (int i = g1.xforms.size(); i < g2.xforms.size(); ++i) {
-                xforms.add(new Xform(g2.xforms.get(i), null, 1 - t));
+                xforms.add(new Xform(Xform.IDENTITY, g2.xforms.get(i), t));
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        
+        result.append("FlamGenome[\n");
+        result.append("  xforms=[\n");
+        for (Xform xform : xforms) {
+            result.append("     ");
+            result.append(xform);
+            result.append("\n");
+        }
+        result.append("  ],\n");
+        result.append("  finalxform = " + finalxform + "\n");
+        result.append("  brightness = " + brightness + "\n");
+        result.append("  gamma = " + gamma + "\n");
+        result.append("  rotate = " + rotate + "\n");
+        result.append("  vibrancy = " + vibrancy + "\n");
+        result.append("  highlightPower = " + highlightPower + "\n");
+        result.append("  zoom = " + zoom + "\n");
+        result.append("  contrast = " + contrast + "\n");
+        result.append("  gammaLinearThreshold = " + gammaLinearThreshold + "\n");
+
+        // center
+        // colors
+        // background
+        result.append("]\n");
+        
+        return result.toString();
     }
 
     private static double interpolate(double t, double v1, double v2) {
@@ -278,10 +308,10 @@ public class FlamGenome implements Serializable {
             } else if (attrName.equals("rotate")) {
                 rotate = parseDouble(node.getNodeValue());
 
-                while (rotate > 360) {
+                while (rotate > 180) {
                     rotate -= 360;
                 }
-                while (rotate < -360) {
+                while (rotate <= -180) {
                     rotate += 360;
                 }
             } else if (attrName.equals("scale")) {
@@ -396,7 +426,15 @@ public class FlamGenome implements Serializable {
         private double julian_power;
         private double perspective_angle;
         private double perspective_dist;
+        public static final Xform IDENTITY = new Xform();
 
+        static {
+            IDENTITY.coefs[0] = 1;
+            IDENTITY.coefs[3] = 1;
+            IDENTITY.variations[0] = 1;
+            IDENTITY.init();
+        }
+        
         Xform() {
         }
 
@@ -416,7 +454,32 @@ public class FlamGenome implements Serializable {
                 }
             }
         }
-        
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            
+            builder.append("Xform[");
+            builder.append("coefs=");
+            for (double coef : coefs) {
+                builder.append(coef);
+                builder.append(", ");
+            }
+            builder.append(", variations=");
+            for (double coef : variations) {
+                builder.append(coef);
+                builder.append(", ");
+            }
+            builder.append(", nonZeroVariations=");
+            for (int coef : nonZeroVariations) {
+                builder.append(coef);
+                builder.append(", ");
+            }
+            builder.append("]");
+            
+            return builder.toString();
+        }
+
         public Xform(Xform f1, Xform f2, double t) {
             if (f2 == null) {
                 t = 1 - t;
