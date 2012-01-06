@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Random;
 
 import static java.lang.Math.*;
@@ -16,25 +15,15 @@ import static java.lang.Math.*;
 public class FlamComponent extends JComponent {
     private static final Random random = new Random();
 
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 300;
     private static final double GAMMA = 1.5;
 
     // state
-    private int[] freqHistogram = new int[WIDTH * HEIGHT];
-    private double[] colorHistogram = new double[WIDTH * HEIGHT * 3];
-    private final BufferedImage buffer;
     private final FlamGenome genome;
-    private RenderState renderState = new RenderState();
+    private RenderState state;
 
     public FlamComponent(FlamGenome flamGenome) {
         genome = flamGenome;
         setFocusable(true);
-
-        buffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-
-        resetState();
-
 
         addKeyListener(new KeyListener() {
             @Override
@@ -53,42 +42,27 @@ public class FlamComponent extends JComponent {
         });
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(WIDTH, HEIGHT);
-    }
-
-    @Override
-    public Dimension getMinimumSize() {
-        return new Dimension(WIDTH, HEIGHT);
-    }
-
-    @Override
-    public Dimension getMaximumSize() {
-        return new Dimension(WIDTH, HEIGHT);
-    }
-
     private void resetState() {
-        Arrays.fill(colorHistogram, 0.0);
-        Arrays.fill(freqHistogram, 0);
+        state = new RenderState(getWidth(), getHeight());
 
-        renderState = new RenderState();
     }
 
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-
+        if (state == null || state.width !=  getWidth() || state.height != getHeight()) {
+            resetState();
+        }
+        
         for (int i = 0; i < 500000; ++i) {
-            renderState.applyXform(pickRandomXform());
-            
+            state.applyXform(pickRandomXform());
+
             if (genome.finalxform != null) {
-                renderState.applyXform(genome.finalxform);
+                state.applyXform(genome.finalxform);
             }
 
             if (i > 20) {
-                updateHistogram(renderState.x, renderState.y, renderState.cc);
+                updateHistogram(state.x, state.y, state.cc);
             }
         }
 
@@ -105,6 +79,10 @@ public class FlamComponent extends JComponent {
         return random.nextDouble() * 2 - 1;
     }
 
+    private static double rnd() {
+        return random.nextDouble();
+    }
+
     private void updateHistogram(double x, double y, double cc) {
         double top = 1, bottom = -1, left = -1, right = 1;
 
@@ -119,60 +97,26 @@ public class FlamComponent extends JComponent {
         double width = right - left;
 
 
-        double x1 = (x - left) * WIDTH / width;
-        double y1 = (y - bottom) * HEIGHT / height;
+        int x1 = (int) ((x - left) * state.width / width);
+        int y1 = (int) ((y - bottom) * state.height / height);
 
-        int offset = (int) x1 + HEIGHT * (int) y1;
-
-        if (offset >= freqHistogram.length) {
+        if (x1 < 0 || x1 >= state.width || y1 < 0 || y1 >= state.height) {
             return;
         }
-        ++freqHistogram[offset];
+        
+        int offset = x1 + state.width * y1;
+
+        ++state.freqHistogram[offset];
 
         double[] color = genome.colors[((int) Math.min(Math.max(cc * 255.0, 0), 255))];
-        colorHistogram[offset * 3] = (colorHistogram[(offset * 3)] + color[0]) / 2;
-        colorHistogram[offset * 3 + 1] = (colorHistogram[offset * 3 + 1] + color[1]) / 2;
-        colorHistogram[offset * 3 + 2] = (colorHistogram[offset * 3 + 2] + color[2]) / 2;
+        state.colorHistogram[offset * 3] = (state.colorHistogram[(offset * 3)] + color[0]) / 2;
+        state.colorHistogram[offset * 3 + 1] = (state.colorHistogram[offset * 3 + 1] + color[1]) / 2;
+        state.colorHistogram[offset * 3 + 2] = (state.colorHistogram[offset * 3 + 2] + color[2]) / 2;
     }
 
     private void blt(Graphics graphics) {
-        {
-            Graphics bg = buffer.getGraphics();
-            bg.setColor(Color.BLACK);
-            bg.fillRect(0, 0, getWidth(), getHeight());
-        }
-
-        int maxFreq = 0;
-        for (int aFreqHistogram : freqHistogram) {
-            if (maxFreq < aFreqHistogram) {
-                maxFreq = aFreqHistogram;
-            }
-        }
-
-        double maxFreqLog = Math.log(maxFreq);
-        for (int x = 0; x < WIDTH; ++x) {
-            for (int y = 0; y < HEIGHT; ++y) {
-                int offset = x + HEIGHT * y;
-                if (freqHistogram[offset] == 0) continue;
-                double alpha = Math.log(freqHistogram[offset]) / maxFreqLog;
-                if (alpha > 1) {
-                    System.out.println();
-                }
-                alpha = Math.pow(alpha, 1 / GAMMA);
-                double r = colorHistogram[offset * 3];
-                double g = colorHistogram[offset * 3 + 1];
-                double b = colorHistogram[offset * 3 + 2];
-
-                int rgb = ((int) (r * alpha * 255) << 16) |
-                        ((int) (g * alpha * 255) << 8) |
-                        (int) (b * alpha * 255);
-
-
-                buffer.setRGB(x, y, rgb);
-            }
-        }
-
-        graphics.drawImage(buffer, 0, 0, null);
+        state.renderHistogram();
+        graphics.drawImage(state.image, 0, 0, null);
     }
 
 
@@ -180,19 +124,67 @@ public class FlamComponent extends JComponent {
         private double x;
         private double y;
         private double cc;
+        private final int width;
+        private final int height;
+        private final int[] freqHistogram;
+        private final double[] colorHistogram;
+        private final BufferedImage image;
 
-        public RenderState() {
+        public RenderState(int width, int height) {
+            this.width = width;
+            this.height = height;
+
             this.x = crnd();
             this.y = crnd();
-            this.cc = 0;
+            this.cc = rnd();
+
+            image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
+            freqHistogram = new int[this.width * this.height];
+            colorHistogram = new double[this.width * this.height * 3];
+        }
+
+        private void renderHistogram() {
+            {
+                Graphics bg = image.getGraphics();
+                bg.setColor(Color.BLACK);
+                bg.fillRect(0, 0, image.getWidth(), image.getHeight());
+            }
+
+            int maxFreq = 0;
+            for (int aFreqHistogram : freqHistogram) {
+                if (maxFreq < aFreqHistogram) {
+                    maxFreq = aFreqHistogram;
+                }
+            }
+
+            double maxFreqLog = Math.log(maxFreq);
+            for (int x = 0; x < width; ++x) {
+                for (int y = 0; y < height; ++y) {
+                    int offset = x + width * y;
+                    if (freqHistogram[offset] == 0) continue;
+
+                    double alpha = Math.log(freqHistogram[offset]) / maxFreqLog;
+                    alpha = Math.pow(alpha, 1 / GAMMA);
+                    double r = colorHistogram[offset * 3];
+                    double g = colorHistogram[offset * 3 + 1];
+                    double b = colorHistogram[offset * 3 + 2];
+
+                    int rgb = ((int) (r * alpha * 255) << 16) |
+                            ((int) (g * alpha * 255) << 8) |
+                            (int) (b * alpha * 255);
+
+
+                    image.setRGB(x, y, rgb);
+                }
+            }
         }
 
         public void applyXform(FlamGenome.Xform xform) {
             final double a = xform.coefs[0];
-            final double b = xform.coefs[1];
-            final double c = xform.coefs[2];
-            final double d = xform.coefs[3];
-            final double e = xform.coefs[4];
+            final double b = xform.coefs[2];
+            final double c = xform.coefs[4];
+            final double d = xform.coefs[1];
+            final double e = xform.coefs[3];
             final double f = xform.coefs[5];
 
             {   // Affine transform
@@ -215,9 +207,7 @@ public class FlamComponent extends JComponent {
                     double dx;
                     double dy;
 
-                    if (xform.variations[j] == 0) {
-                        continue;
-                    }
+                    if (xform.variations[j] == 0) continue;
 
                     switch (j) {
                         default:
@@ -273,7 +263,8 @@ public class FlamComponent extends JComponent {
                 y = y2;
             }
 
-            cc = (cc + xform.color) / 2;
+            double colorSpeed = xform.colorSpeed;
+            cc = cc * (1-colorSpeed)  + xform.color * colorSpeed;
         }
     }
 

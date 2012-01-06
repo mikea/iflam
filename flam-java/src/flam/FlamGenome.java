@@ -161,6 +161,7 @@ public class FlamGenome {
     double[][] colors = new double[256][];
     private double pixelsPerUnit = 50;
     private String version;
+    private double highlightPower;
 
     public FlamGenome() {
         for (int i = 0; i < colors.length; i++) {
@@ -244,6 +245,8 @@ public class FlamGenome {
                 url = node.getNodeValue();
             } else if (attrName.equals("vibrancy")) {
                 vibrancy = parseDouble(node.getNodeValue());
+            } else if (attrName.equals("highlight_power")) {
+                highlightPower = parseDouble(node.getNodeValue());
             } else if (attrName.equals("version")) {
                 version = node.getNodeValue();
             } else {
@@ -326,7 +329,7 @@ public class FlamGenome {
         double symmetry;
         double weight;
         private double animate;
-        private double colorSpeed;
+        double colorSpeed = 0.5;
         private double opacity;
 
 
