@@ -147,7 +147,7 @@ public class FlamGenome {
     private String notes;
     private String paletteMode;
     int passes = 1;
-    double quality = 1;
+    double quality = 1;  // aka sample_density
     double rotate;
     private double scale;
     private int[] size = new int[]{1024, 1024};
@@ -167,6 +167,9 @@ public class FlamGenome {
     double zoom = 1.0;
     double contrast = 1.0;
     double gammaLinearThreshold = 0.01;
+    public int nbatches = 1;
+    private String brood;
+    private String genebank;
 
     public FlamGenome() {
         for (int i = 0; i < colors.length; i++) {
@@ -254,6 +257,10 @@ public class FlamGenome {
                 highlightPower = parseDouble(node.getNodeValue());
             } else if (attrName.equals("version")) {
                 version = node.getNodeValue();
+            } else if (attrName.equals("brood")) {
+                brood = node.getNodeValue();
+            } else if (attrName.equals("genebank")) {
+                genebank = node.getNodeValue();
             } else {
                 throw new IllegalArgumentException("Unsupported attribute: " + node);
             }
@@ -335,6 +342,10 @@ public class FlamGenome {
         private double animate;
         double colorSpeed = 0.5;
         private double opacity;
+        private double julian_dist;
+        private double julian_power;
+        private double perspective_angle;
+        private double perspective_dist;
 
 
         public void parse(Node xformNode) {
@@ -364,6 +375,14 @@ public class FlamGenome {
                     colorSpeed = parseDouble(node.getNodeValue());
                 } else if (attrName.equals("opacity")) {
                     opacity = parseDouble(node.getNodeValue());
+                } else if (attrName.equals("julian_dist")) {
+                    julian_dist = parseDouble(node.getNodeValue());
+                } else if (attrName.equals("julian_power")) {
+                    julian_power = parseDouble(node.getNodeValue());
+                } else if (attrName.equals("perspective_angle")) {
+                    perspective_angle = parseDouble(node.getNodeValue());
+                } else if (attrName.equals("perspective_dist")) {
+                    perspective_dist = parseDouble(node.getNodeValue());
                 } else if (variationNameSet.contains(attrName)) {
                     for (int j = 0; j < variationNames.length; j++) {
                         if (variationNames[j].equals(attrName)) {
@@ -405,6 +424,7 @@ public class FlamGenome {
                 double r2 = x * x + y * y;
                 double r = Math.sqrt(r2);
                 double theta = Math.atan2(x, y);
+                double phi = Math.atan2(y, x);
 
                 for (int j = 0; j < FlamGenome.variationNames.length; ++j) {
                     double dx;
@@ -431,9 +451,17 @@ public class FlamGenome {
                             dx = x * sin(r2) - y * cos(r2);
                             dy = x * cos(r2) + y * sin(r2);
                             break;
+                        case 5: // polar
+                            dx = theta / PI;
+                            dy = r - 1;
+                            break;
                         case 6: // handkerchief
                             dx = r * sin(theta + r);
                             dy = r * cos(theta - r);
+                            break;
+                        case 8: // disc
+                            dx = theta * sin(PI * r) / PI;
+                            dy = theta * cos(PI * r) / PI;
                             break;
                         case 11: // diamond
                             dx = sin(theta) * cos(r);
@@ -452,10 +480,33 @@ public class FlamGenome {
                             dx = 2 * x / (r + 1);
                             dy = 2 * y / (r + 1);
                             break;
+                        case 28: // bubble
+                            dx = 4 * x / (r2 + 4);
+                            dy = 4 * y / (r2 + 4);
+                            break;
                         case 29: // cylinder
                             dx = sin(x);
                             dy = y;
                             break;
+                        case 30: // perspective
+                        {
+                            double p1 = perspective_angle;
+                            double p2 = perspective_dist;
+                            dx = p2 * x / (p2 - y * sin(p1));
+                            dy = p2 * y * cos(p1) / (p2 - y * sin(p1));
+                            break;
+                        }
+                        case 32: // julian
+                        {
+                            double p1 = julian_power;
+                            double p2 = julian_dist;
+                            double p3 = floor(abs(p1) * FlamComponent.random.nextDouble());
+                            double t = (phi + 2 * PI * p3) / p1;
+                            double z = pow(r, p2/p1);
+                            dx = z * cos(t);
+                            dy = z * sin(t);
+                            break;
+                        }
                     }
 
                     x2 += variations[j] * dx;

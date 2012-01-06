@@ -13,6 +13,7 @@ import static java.lang.Math.*;
  * @author mike
  */
 public class FlamComponent extends JComponent {
+    public static final int WHITE_LEVEL = 255;
     static final Random random = new Random();
 
     private static final double GAMMA = 1.5;
@@ -204,14 +205,39 @@ public class FlamComponent extends JComponent {
             int nchan = 3;
             int transp = 0;
 
+
+            int nbatches = genome.nbatches;
+            double oversample = 1.0; // genome.oversample
+            // double sample_density = genome.quality * scale * scale;
+            // double nsamples = sample_density * width * height;
+            double sample_density = ((double) (samples)) / (width * height);
+            System.out.println("sample_density = " + sample_density);
+            double batch_filter = 1 / nbatches;
+
+            double k1 = (genome.contrast * genome.brightness * PREFILTER_WHITE * 268.0 * batch_filter) / 256;
+            double area = width * height / (ppux * ppuy);
+            double sumfilt = 1;
+            double k2 = (oversample * oversample * nbatches) /
+                    (genome.contrast * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
+
+            System.out.println("k1 = " + k1);
+            System.out.println("k2 = " + k2);
+
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     int offset = x + width * y;
-                    int freq = freqHistogram[offset];
+                    double freq = freqHistogram[offset];
                     double cr = colorHistogram[offset * 3];
                     double cg = colorHistogram[offset * 3 + 1];
                     double cb = colorHistogram[offset * 3 + 2];
 
+                    if (freq != 0) {
+                        double ls = (k1 * log(1.0 + freq * k2)) / freq;
+                        freq *= ls;
+                        cr *= ls;
+                        cg *= ls;
+                        cb *= ls;
+                    }
                     double tmp = freq / PREFILTER_WHITE;
                     double alpha, ls;
 
@@ -230,24 +256,24 @@ public class FlamComponent extends JComponent {
                     flam3.flam3_calc_newrgb(
                             t, ls, highpow, newrgb);
 
-                    for (int rgbi=0;rgbi<3;rgbi++) {
-                       double a = newrgb[rgbi];
-                       a += (1.0-vibrancy) * 256.0 * pow( t[rgbi] / PREFILTER_WHITE, g);
-                       if (nchan<=3 || transp==0)
-                          a += ((1.0 - alpha) * genome.background[rgbi]);
-                       else {
-                          if (alpha>0)
-                             a /= alpha;
-                          else
-                             a = 0;
-                       }
+                    for (int rgbi = 0; rgbi < 3; rgbi++) {
+                        double a = newrgb[rgbi];
+                        a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / PREFILTER_WHITE, g);
+                        if (nchan <= 3 || transp == 0)
+                            a += ((1.0 - alpha) * genome.background[rgbi]);
+                        else {
+                            if (alpha > 0)
+                                a /= alpha;
+                            else
+                                a = 0;
+                        }
 
-                       /* Clamp here to ensure proper filter functionality */
-                       if (a>255) a = 255;
-                       if (a<0) a = 0;
+                        /* Clamp here to ensure proper filter functionality */
+                        if (a > 255) a = 255;
+                        if (a < 0) a = 0;
 
-                       /* Replace values in accumulation buffer with these new ones */
-                       t[rgbi] = a;
+                        /* Replace values in accumulation buffer with these new ones */
+                        t[rgbi] = a;
                     }
                     t[3] = alpha;
 
