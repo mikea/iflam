@@ -32,7 +32,7 @@ public class AnimationMain {
         frame.getContentPane().setLayout(new BorderLayout());
 
         FlamComponent flamComponent = new FlamComponent(animationProvider);
-        flamComponent.setFps(24);
+        flamComponent.setFps(10);
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
 
