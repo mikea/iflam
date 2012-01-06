@@ -36,7 +36,7 @@ public class ViewMain {
             public void reset() {
             }
         });
-        flamComponent.setBatchSize(500000);
+        flamComponent.setFps(1.0);
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
         JMenuBar menuBar = new JMenuBar();

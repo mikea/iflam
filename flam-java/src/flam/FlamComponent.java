@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
@@ -19,7 +21,7 @@ public class FlamComponent extends JComponent {
     private FlamGenome genome;
     private RenderState state;
     private GenomeProvider provider;
-    private int batchSize;
+    private double fps = 10;
 
     public FlamComponent(final GenomeProvider provider) {
         this.provider = provider;
@@ -39,7 +41,32 @@ public class FlamComponent extends JComponent {
             public void keyReleased(KeyEvent keyEvent) {
             }
         });
-        batchSize = 100000;
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                provider.reset();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+    }
+
+    public void setFps(double fps) {
+        this.fps = fps;
     }
 
     private void resetState(FlamGenome newGenome) {
@@ -70,7 +97,8 @@ public class FlamComponent extends JComponent {
 
         genome.createXformDistrib();
 
-        for (int i = -4 * fuse; i < batchSize; ++i, ++state.samples) {
+        int i = -4 * fuse;
+        for (; ; ++i, ++state.samples) {
             FlamGenome.Xform xform = state.pickRandomXform();
             if (!state.applyXform(xform)) {
                 consequentErrors++;
@@ -112,13 +140,17 @@ public class FlamComponent extends JComponent {
             if (i > 20) {
                 updateHistogram(xyc[0], xyc[1], xyc[2], opacity);
             }
+            
+            if (i % 100000 == 0 && (System.nanoTime() - start) / 1e9 > 1.0/ fps) {
+                break;
+            }
         }
         long batchFinish = System.nanoTime();
 
         blt(graphics);
 
         long bltFinish = System.nanoTime();
-//        System.out.println((batchFinish - start) / 1e9 + " : " + (bltFinish - batchFinish) / 1e9);
+//        System.out.println(i + " : " + (batchFinish - start) / 1e9 + " : " + (bltFinish - batchFinish) / 1e9);
 
         repaint();
     }
@@ -162,11 +194,6 @@ public class FlamComponent extends JComponent {
         state.renderHistogram();
         graphics.drawImage(state.image, 0, 0, null);
     }
-
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
-    }
-
 
     private static class RenderState {
         private double[] xyc = new double[3];
