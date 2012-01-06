@@ -13,7 +13,7 @@ import static java.lang.Math.*;
  * @author mike
  */
 public class FlamComponent extends JComponent {
-    private static final Random random = new Random();
+    static final Random random = new Random();
 
     private static final double GAMMA = 1.5;
 
@@ -50,19 +50,34 @@ public class FlamComponent extends JComponent {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        if (state == null || state.width !=  getWidth() || state.height != getHeight()) {
+        if (state == null || state.width != getWidth() || state.height != getHeight()) {
             resetState();
         }
-        
+
         for (int i = 0; i < 500000; ++i) {
             state.applyXform(pickRandomXform());
 
+            double[] xyc = state.xyc;
+
             if (genome.finalxform != null) {
-                state.applyXform(genome.finalxform);
+                double[] xyc2 = new double[3];
+                genome.finalxform.applyTo(xyc, xyc2);
+                xyc = xyc2;
+            }
+            
+            if (genome.rotate != 0) {
+                //todo: optimize
+                double c = cos(genome.rotate * 2 * PI / 360.0);
+                double s = sin(genome.rotate * 2 * PI / 360.0);
+
+                double x = c * xyc[0] - s * xyc[1];
+                double y = s * xyc[0] + c * xyc[1];
+                xyc[0] = x;
+                xyc[1] = y;
             }
 
             if (i > 20) {
-                updateHistogram(state.x, state.y, state.cc);
+                updateHistogram(xyc[0], xyc[1], xyc[2]);
             }
         }
 
@@ -84,26 +99,25 @@ public class FlamComponent extends JComponent {
     }
 
     private void updateHistogram(double x, double y, double cc) {
-        double top = 1, bottom = -1, left = -1, right = 1;
+        double scale = Math.pow(2.0, genome.zoom);
+        double ppux = genome.pixelsPerUnit * scale;
+        double ppuy = genome.pixelsPerUnit * scale;
 
-        if (x < left || x > right || y < bottom || y > top) {
-            return;
-        }
+        double cornerX = genome.center[0] - state.width / ppux / 2.0;
+        double cornerY = genome.center[1] - state.height / ppuy / 2.0;
 
-        x -= genome.center[0];
-        y -= genome.center[0];
+        double top = cornerY + state.height / ppuy, bottom = cornerY, left = cornerX, right = cornerX + state.width / ppux;
 
         double height = top - bottom;
         double width = right - left;
 
-
-        int x1 = (int) ((x - left) * state.width / width);
-        int y1 = (int) ((y - bottom) * state.height / height);
+        int x1 = (int) ((x - left) * state.width / width + 0.5);
+        int y1 = (int) ((y - bottom) * state.height / height + 0.5);
 
         if (x1 < 0 || x1 >= state.width || y1 < 0 || y1 >= state.height) {
             return;
         }
-        
+
         int offset = x1 + state.width * y1;
 
         ++state.freqHistogram[offset];
@@ -121,9 +135,7 @@ public class FlamComponent extends JComponent {
 
 
     private static class RenderState {
-        private double x;
-        private double y;
-        private double cc;
+        private double[] xyc = new double[3];
         private final int width;
         private final int height;
         private final int[] freqHistogram;
@@ -134,9 +146,9 @@ public class FlamComponent extends JComponent {
             this.width = width;
             this.height = height;
 
-            this.x = crnd();
-            this.y = crnd();
-            this.cc = rnd();
+            xyc[0] = crnd();
+            xyc[1] = crnd();
+            xyc[2] = rnd();
 
             image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
             freqHistogram = new int[this.width * this.height];
@@ -180,91 +192,7 @@ public class FlamComponent extends JComponent {
         }
 
         public void applyXform(FlamGenome.Xform xform) {
-            final double a = xform.coefs[0];
-            final double b = xform.coefs[2];
-            final double c = xform.coefs[4];
-            final double d = xform.coefs[1];
-            final double e = xform.coefs[3];
-            final double f = xform.coefs[5];
-
-            {   // Affine transform
-                double x1, y1;
-                x1 = x * a + y * b + c;
-                y1 = x * d + y * e + f;
-
-                x = x1;
-                y = y1;
-            }
-
-            {   // Nonlinear transform
-                double x2 = 0, y2 = 0;
-
-                double r2 = x * x + y * y;
-                double r = Math.sqrt(r2);
-                double theta = Math.atan(x / y);
-
-                for (int j = 0; j < FlamGenome.variationNames.length; ++j) {
-                    double dx;
-                    double dy;
-
-                    if (xform.variations[j] == 0) continue;
-
-                    switch (j) {
-                        default:
-                            throw new IllegalArgumentException("Unimplemented variation: " + j + " : " + FlamGenome.variationNames[j]);
-                        case 0: // linear
-                            dx = x;
-                            dy = y;
-                            break;
-                        case 1: // sinusoidal
-                            dx = sin(x);
-                            dy = sin(y);
-                            break;
-                        case 2: // spherical
-                            dx = x / r2;
-                            dy = y / r2;
-                            break;
-                        case 3: // swirl
-                            dx = x * sin(r2) - y * cos(r2);
-                            dy = x * cos(r2) + y * sin(r2);
-                            break;
-                        case 6: // handkerchief
-                            dx = r * sin(theta + r);
-                            dy = r * cos(theta - r);
-                            break;
-                        case 11: // diamond
-                            dx = sin(theta) * cos(r);
-                            dy = cos(theta) * sin(r);
-                            break;
-                        case 13: // julia
-                            double omega = random.nextBoolean() ? 0 : PI;
-                            dx = sqrt(r) * cos(theta / 2 + omega);
-                            dy = sqrt(r) * sin(theta / 2 + omega);
-                            break;
-                        case 15: // waves
-                            dx = x + b * sin(y / (c * c));
-                            dy = y + e * sin(x / (f * f));
-                            break;
-                        case 27: // eyefish
-                            dx = 2 * x / (r + 1);
-                            dy = 2 * y / (r + 1);
-                            break;
-                        case 29: // cylinder
-                            dx = sin(x);
-                            dy = y;
-                            break;
-                    }
-
-                    x2 += xform.variations[j] * dx;
-                    y2 += xform.variations[j] * dy;
-                }
-
-                x = x2;
-                y = y2;
-            }
-
-            double colorSpeed = xform.colorSpeed;
-            cc = cc * (1-colorSpeed)  + xform.color * colorSpeed;
+            xform.applyTo(xyc, xyc);
         }
     }
 

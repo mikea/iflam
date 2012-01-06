@@ -17,6 +17,8 @@ import java.util.Set;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
+import static java.lang.Math.*;
+import static java.lang.Math.sin;
 
 /**
  */
@@ -146,7 +148,7 @@ public class FlamGenome {
     private String paletteMode;
     private int passes = 1;
     private double quality;
-    private double rotate;
+    double rotate;
     private double scale;
     private int[] size = new int[]{1024, 1024};
     private int supersample;
@@ -159,9 +161,10 @@ public class FlamGenome {
     List<Xform> xforms = new ArrayList<Xform>();
     Xform finalxform;
     double[][] colors = new double[256][];
-    private double pixelsPerUnit = 50;
+    double pixelsPerUnit = 50;
     private String version;
     private double highlightPower;
+    double zoom = 1.0;
 
     public FlamGenome() {
         for (int i = 0; i < colors.length; i++) {
@@ -326,7 +329,6 @@ public class FlamGenome {
         double[] variations = new double[variationNames.length];
 
         double color;
-        double symmetry;
         double weight;
         private double animate;
         double colorSpeed = 0.5;
@@ -350,7 +352,8 @@ public class FlamGenome {
                 } else if (attrName.equals("color")) {
                     color = parseDouble(node.getNodeValue());
                 } else if (attrName.equals("symmetry")) {
-                    symmetry = parseDouble(node.getNodeValue());
+                    colorSpeed = (1 - parseDouble(node.getNodeValue())) / 2;
+                    animate = parseDouble(node.getNodeValue()) > 0 ? 0 : 1;
                 } else if (attrName.equals("weight")) {
                     weight = parseDouble(node.getNodeValue());
                 } else if (attrName.equals("animate")) {
@@ -371,6 +374,101 @@ public class FlamGenome {
                     throw new IllegalArgumentException("Unsupported attribute: " + node);
                 }
             }
+        }
+        
+        public void applyTo(double[] in, double[] out) {
+            double x = in[0];
+            double y = in[1];
+            double cc = in[2];
+            
+            final double a = coefs[0];
+            final double b = coefs[2];
+            final double c = coefs[4];
+            final double d = coefs[1];
+            final double e = coefs[3];
+            final double f = coefs[5];
+
+            {   // Affine transform
+                double x1, y1;
+                x1 = x * a + y * b + c;
+                y1 = x * d + y * e + f;
+
+                x = x1;
+                y = y1;
+            }
+
+            {   // Nonlinear transform
+                double x2 = 0, y2 = 0;
+
+                double r2 = x * x + y * y;
+                double r = Math.sqrt(r2);
+                double theta = Math.atan2(x, y);
+
+                for (int j = 0; j < FlamGenome.variationNames.length; ++j) {
+                    double dx;
+                    double dy;
+
+                    if (variations[j] == 0) continue;
+
+                    switch (j) {
+                        default:
+                            throw new IllegalArgumentException("Unimplemented variation: " + j + " : " + FlamGenome.variationNames[j]);
+                        case 0: // linear
+                            dx = x;
+                            dy = y;
+                            break;
+                        case 1: // sinusoidal
+                            dx = sin(x);
+                            dy = sin(y);
+                            break;
+                        case 2: // spherical
+                            dx = x / r2;
+                            dy = y / r2;
+                            break;
+                        case 3: // swirl
+                            dx = x * sin(r2) - y * cos(r2);
+                            dy = x * cos(r2) + y * sin(r2);
+                            break;
+                        case 6: // handkerchief
+                            dx = r * sin(theta + r);
+                            dy = r * cos(theta - r);
+                            break;
+                        case 11: // diamond
+                            dx = sin(theta) * cos(r);
+                            dy = cos(theta) * sin(r);
+                            break;
+                        case 13: // julia
+                            double omega = FlamComponent.random.nextBoolean() ? 0 : PI;
+                            dx = sqrt(r) * cos(theta / 2 + omega);
+                            dy = sqrt(r) * sin(theta / 2 + omega);
+                            break;
+                        case 15: // waves
+                            dx = x + b * sin(y / (c * c));
+                            dy = y + e * sin(x / (f * f));
+                            break;
+                        case 27: // eyefish
+                            dx = 2 * x / (r + 1);
+                            dy = 2 * y / (r + 1);
+                            break;
+                        case 29: // cylinder
+                            dx = sin(x);
+                            dy = y;
+                            break;
+                    }
+
+                    x2 += variations[j] * dx;
+                    y2 += variations[j] * dy;
+                }
+
+                x = x2;
+                y = y2;
+            }
+
+            cc = cc * (1 - colorSpeed) + color * colorSpeed;
+
+            out[0] = x;
+            out[1] = y;
+            out[2] = cc;
         }
     }
 }
