@@ -23,7 +23,7 @@ public class AnimationMain {
         frame = new JFrame();
 
         animationProvider = new AnimationProvider();
-        openGenome("sheeps/1006.flam3");
+        openGenome("flams/e_2.flam3");
 
 
         frame.setPreferredSize(new Dimension(500, 500));
@@ -33,6 +33,7 @@ public class AnimationMain {
 
         FlamComponent flamComponent = new FlamComponent(animationProvider);
         flamComponent.setFps(10);
+
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
 

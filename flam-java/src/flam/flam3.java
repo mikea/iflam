@@ -1,87 +1,13 @@
 package flam;
 
 
-import static flam.MyMath.floor;
-import static flam.MyMath.log;
-import static flam.MyMath.pow;
+import static flam.MyMath.*;
 
 /**
  * @author mike
  */
 public class flam3 {
     public static final int PREFILTER_WHITE = 255;
-
-    static double flam3_calc_alpha(double density, double gamma, double linrange) {
-        double dnorm = density;
-        double funcval = pow(linrange, gamma);
-        double frac, alpha;
-
-        if (dnorm > 0) {
-            if (dnorm < linrange) {
-                frac = dnorm / linrange;
-                alpha = (1.0 - frac) * dnorm * (funcval / linrange) + frac * pow(dnorm, gamma);
-            } else
-                alpha = pow(dnorm, gamma);
-        } else
-            alpha = 0;
-
-        return (alpha);
-    }
-
-    static void flam3_calc_newrgb(double[] cbuf, double ls, double highpow, double[] newrgb) {
-        int rgbi;
-        double newls, lsratio;
-        double newhsv[] = new double[3];
-        double a, maxa = -1.0, maxc = 0;
-        double adjhlp;
-
-        if (ls == 0.0 || (cbuf[0] == 0.0 && cbuf[1] == 0.0 && cbuf[2] == 0.0)) {
-            newrgb[0] = 0.0;
-            newrgb[1] = 0.0;
-            newrgb[2] = 0.0;
-            return;
-        }
-
-        /* Identify the most saturated channel */
-        for (rgbi = 0; rgbi < 3; rgbi++) {
-            a = ls * (cbuf[rgbi] / PREFILTER_WHITE);
-            if (a > maxa) {
-                maxa = a;
-                maxc = cbuf[rgbi] / PREFILTER_WHITE;
-            }
-        }
-
-        /* If a channel is saturated and we have a non-negative highlight power */
-        /* modify the color to prevent hue shift                                */
-        if (maxa > 255 && highpow >= 0.0) {
-            newls = 255.0 / maxc;
-            lsratio = pow(newls / ls, highpow);
-
-            /* Calculate the max-value color (ranged 0 - 1) */
-            for (rgbi = 0; rgbi < 3; rgbi++)
-                newrgb[rgbi] = newls * (cbuf[rgbi] / PREFILTER_WHITE) / 255.0;
-
-            /* Reduce saturation by the lsratio */
-            rgb2hsv(newrgb, newhsv);
-            newhsv[1] *= lsratio;
-            hsv2rgb(newhsv, newrgb);
-
-            for (rgbi = 0; rgbi < 3; rgbi++)
-                newrgb[rgbi] *= 255.0;
-
-        } else {
-            newls = 255.0 / maxc;
-            adjhlp = -highpow;
-            if (adjhlp > 1)
-                adjhlp = 1;
-            if (maxa <= 255)
-                adjhlp = 1.0;
-
-            /* Calculate the max-value color (ranged 0 - 1) interpolated with the old behaviour */
-            for (rgbi = 0; rgbi < 3; rgbi++)
-                newrgb[rgbi] = ((1.0 - adjhlp) * newls + adjhlp * ls) * (cbuf[rgbi] / PREFILTER_WHITE);
-        }
-    }
 
 
     /* rgb 0 - 1,
@@ -197,10 +123,10 @@ public class flam3 {
 
     static double adjust_percentage(double in) {
 
-       if (in==0.0)
-          return(0.0);
-       else
-          return(pow(10.0, -log(1.0 / in) / log(2)));
+        if (in == 0.0)
+            return (0.0);
+        else
+            return (pow(10.0, -log(1.0 / in) / log(2)));
 
     }
 
