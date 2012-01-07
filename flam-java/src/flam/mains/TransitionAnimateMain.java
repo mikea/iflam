@@ -3,13 +3,14 @@ package flam.mains;
 import flam.FlamComponent;
 import flam.FlamGenome;
 import flam.GenomeProvider;
+import flam.MyMath;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-public class TransitionMain {
+public class TransitionAnimateMain {
     public static void main(String[] args) throws IOException, SAXException {
         final FlamGenome genome1 = FlamGenome.parse("flams/e_4.flam3");
         final FlamGenome genome2 = FlamGenome.parse("sheeps/1006.flam3");
@@ -22,32 +23,19 @@ public class TransitionMain {
         frame.getContentPane().setLayout(new BorderLayout());
 
 
-        final JSlider slider = new JSlider(0, 1024, 0);
-        frame.getContentPane().add(slider, BorderLayout.NORTH);
-
         final GenomeProvider provider = new GenomeProvider() {
-            public int oldValue = slider.getValue();
-            public FlamGenome genome = genome1;
-
             @Override
             public FlamGenome getGenome() {
-                if (slider.getValue() != oldValue) {
-//                    System.out.println("slider.getValue() = " + slider.getValue());
-                    genome = new FlamGenome(genome1, genome2, slider.getValue() / 1024.0);
-
-//                    System.out.println(genome.toString());
-
-                    oldValue = slider.getValue();
-                }
-                return genome;
+                double t = MyMath.sin(System.currentTimeMillis() / 10000.0);
+                t *= t;
+                return new FlamGenome(genome1, genome2, t);
             }
 
             @Override
             public void reset() {
             }
         };
-        System.out.println(genome1.toString());
-        System.out.println(genome2.toString());
+
         frame.getContentPane().add(new FlamComponent(provider), BorderLayout.CENTER);
 
         frame.pack();

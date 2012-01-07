@@ -96,8 +96,25 @@ public class FlamComponent extends JComponent {
     protected void paintComponent(Graphics graphics) {
         updateGenome();
 
-        state.reseed();
+        long start = System.currentTimeMillis();
+        int i = iterateBatch(start);
+        long batchFinish = System.currentTimeMillis();
+        iterTime += (batchFinish - start);
 
+        state.renderHistogram();
+
+        long bltFinish = System.currentTimeMillis();
+
+        renderTime += (bltFinish - batchFinish);
+        batches++;
+
+        System.out.println(i + " : " + (batchFinish - start) + " : " + (bltFinish - batchFinish));
+
+        graphics.drawImage(buffer.image, 0, 0, null);
+        repaint();
+    }
+
+    private int iterateBatch(long start) {
         double rotate1 = 0;
         double rotate2 = 0;
 
@@ -117,7 +134,6 @@ public class FlamComponent extends JComponent {
         double allotedTimeMs = 1000.0 / fps;
         double avgRenderTime = batches == 0 ? 0 : renderTime / batches;
 
-        long start = System.currentTimeMillis();
         for (; ; ++i, ++state.samples) {
             FlamGenome.Xform xform = state.pickRandomXform();
             if (!state.applyXform(xform)) {
@@ -163,24 +179,10 @@ public class FlamComponent extends JComponent {
 
             if (i % 1000 == 0 && i > 25000) {
                 if ((System.currentTimeMillis() - start + avgRenderTime) > allotedTimeMs) {
-                    break;
+                    return i;
                 }
             }
         }
-        long batchFinish = System.currentTimeMillis();
-        iterTime += (batchFinish - start);
-
-        state.renderHistogram();
-
-        long bltFinish = System.currentTimeMillis();
-
-        renderTime += (bltFinish - batchFinish);
-        batches++;
-
-        System.out.println(i + " : " + (batchFinish - start) + " : " + (bltFinish - batchFinish));
-
-        graphics.drawImage(buffer.image, 0, 0, null);
-        repaint();
     }
 
     private void updateGenome() {
@@ -372,8 +374,12 @@ public class FlamComponent extends JComponent {
                     line[x] = ((int) (t[0]) << 16) | ((int) (t[1]) << 8) | (int) (t[2]);
                 }
 
-                image.setRGB(0, y, width, 1, line, 0, 1);
+                setLine(image, width, line, y);
             }
+        }
+
+        private void setLine(BufferedImage image, int width, int[] line, int y) {
+            image.setRGB(0, y, width, 1, line, 0, 1);
         }
 
         public boolean applyXform(FlamGenome.Xform xform) {

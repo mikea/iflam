@@ -32,7 +32,7 @@ public class MyMath {
     }
 
     public static double pow(double x, double y) {
-        return FastMath.pow(x, y);
+        return Math.pow(x, y);
     }
 
     public static double sqrt(double x) {

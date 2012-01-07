@@ -597,7 +597,26 @@ public class FlamGenome implements Serializable {
             rings2_val = interpolate(t, f1.rings2_val, f2.rings2_val);
 
             if (f1.post != null || f2.post != null) {
-                throw new UnsupportedOperationException();
+                post = new double[6];
+            }
+            if (f1.post != null && f2.post != null) {
+                for (int i = 0; i < 6; ++i) {
+                    post[i] = interpolate(t, f1.post[i], f2.post[i]);
+                }
+            } if (f1.post != null) {
+                post[0] = interpolate(t, f1.post[0], 1);
+                post[1] = interpolate(t, f1.post[1], 0);
+                post[2] = interpolate(t, f1.post[2], 0);
+                post[3] = interpolate(t, f1.post[3], 1);
+                post[4] = interpolate(t, f1.post[4], 0);
+                post[5] = interpolate(t, f1.post[5], 0);
+            } else if (f2.post != null) {
+                post[0] = interpolate(t, 1, f2.post[0]);
+                post[1] = interpolate(t, 0, f2.post[1]);
+                post[2] = interpolate(t, 0, f2.post[2]);
+                post[3] = interpolate(t, 1, f2.post[3]);
+                post[4] = interpolate(t, 0, f2.post[4]);
+                post[5] = interpolate(t, 0, f2.post[5]);
             }
 
             init();
