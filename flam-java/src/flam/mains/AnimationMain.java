@@ -61,6 +61,7 @@ public class AnimationMain {
     }
 
     private static void openGenome(String path) {
+        System.out.println("*** Opening " + path);
         try {
             frame.setTitle(path);
             animationProvider.setGenome(FlamGenome.parse(path));

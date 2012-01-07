@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Random;
 
-import static java.lang.Math.*;
+import static flam.MyMath.*;
 
 /**
  * @author mike
@@ -24,7 +24,9 @@ public class FlamComponent extends JComponent {
     private RenderBuffer buffer;
     private GenomeProvider provider;
     private double fps = 10;
-    private long lastBltTimeMillis = 0;
+    public long iterTime = 0;
+    public long renderTime = 0;
+    public int batches = 0;
 
     public FlamComponent(final GenomeProvider provider) {
         this.provider = provider;
@@ -33,7 +35,7 @@ public class FlamComponent extends JComponent {
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
-                provider.reset();
+                reset();
             }
 
             @Override
@@ -47,7 +49,7 @@ public class FlamComponent extends JComponent {
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                provider.reset();
+                reset();
             }
 
             @Override
@@ -66,6 +68,13 @@ public class FlamComponent extends JComponent {
             public void mouseExited(MouseEvent e) {
             }
         });
+    }
+
+    private void reset() {
+        this.provider.reset();
+        batches = 0;
+        renderTime = 0;
+        iterTime = 0;
     }
 
     public void setFps(double fps) {
@@ -106,6 +115,7 @@ public class FlamComponent extends JComponent {
 
         int i = -4 * fuse;
         double allotedTimeMs = 1000.0 / fps;
+        double avgRenderTime = batches == 0 ? 0 : renderTime / batches;
 
         long start = System.currentTimeMillis();
         for (; ; ++i, ++state.samples) {
@@ -151,19 +161,21 @@ public class FlamComponent extends JComponent {
                 updateHistogram(xyc[0], xyc[1], xyc[2], opacity);
             }
 
-            if (i % 1000 == 0) {
-                if ((System.currentTimeMillis() - start + lastBltTimeMillis) > allotedTimeMs) {
+            if (i % 1000 == 0 && i > 25000) {
+                if ((System.currentTimeMillis() - start + avgRenderTime) > allotedTimeMs) {
                     break;
                 }
             }
         }
         long batchFinish = System.currentTimeMillis();
+        iterTime += (batchFinish - start);
 
         state.renderHistogram();
 
         long bltFinish = System.currentTimeMillis();
 
-        lastBltTimeMillis = (bltFinish - batchFinish);
+        renderTime += (bltFinish - batchFinish);
+        batches++;
 
         System.out.println(i + " : " + (batchFinish - start) + " : " + (bltFinish - batchFinish));
 
@@ -199,7 +211,7 @@ public class FlamComponent extends JComponent {
         int offset = (x1 + buffer.width * y1) * 4;
 
 
-        double[] color = genome.colors[((int) Math.min(Math.max(cc * 255.0, 0), 255))];
+        double[] color = genome.colors[((int) min(max(cc * 255.0, 0), 255))];
         buffer.accum[offset] += color[0];
         buffer.accum[offset + 1] += color[1];
         buffer.accum[offset + 2] += color[2];
@@ -244,7 +256,7 @@ public class FlamComponent extends JComponent {
             this.genome = genome;
             this.buffer = buffer;
 
-            scale = Math.pow(2.0, genome.zoom);
+            scale = pow(2.0, genome.zoom);
             ppux = genome.pixelsPerUnit * scale;
             ppuy = genome.pixelsPerUnit * scale;
 

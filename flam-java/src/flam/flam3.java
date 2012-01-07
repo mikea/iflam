@@ -1,8 +1,9 @@
 package flam;
 
-import static java.lang.Math.floor;
-import static java.lang.Math.pow;
-import static java.lang.StrictMath.log;
+
+import static flam.MyMath.floor;
+import static flam.MyMath.log;
+import static flam.MyMath.pow;
 
 /**
  * @author mike
@@ -199,7 +200,7 @@ public class flam3 {
        if (in==0.0)
           return(0.0);
        else
-          return(pow(10.0, -log(1.0/in)/log(2)));
+          return(pow(10.0, -log(1.0 / in) / log(2)));
 
     }
 

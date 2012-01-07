@@ -16,9 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static flam.MyMath.*;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
-import static java.lang.Math.*;
 
 /**
  */
@@ -175,6 +175,7 @@ public class FlamGenome implements Serializable {
     private double[][] chaos;
     boolean chaosEnabled;
     int[][] xformDistrib;
+    private String parents;
 
     public FlamGenome() {
         for (int i = 0; i < colors.length; i++) {
@@ -214,7 +215,7 @@ public class FlamGenome implements Serializable {
 
         finalxform = new Xform(g1.finalxform == null ? Xform.IDENTITY : g1.finalxform, g2.finalxform == null ? Xform.IDENTITY : g2.finalxform, t);
 
-        for (int i = 0; i < Math.min(g1.xforms.size(), g2.xforms.size()); ++i) {
+        for (int i = 0; i < min(g1.xforms.size(), g2.xforms.size()); ++i) {
             xforms.add(new Xform(g1.xforms.get(i), g2.xforms.get(i), t));
         }
         if (g1.xforms.size() > g2.xforms.size()) {
@@ -353,6 +354,8 @@ public class FlamGenome implements Serializable {
                 brood = node.getNodeValue();
             } else if (attrName.equals("genebank")) {
                 genebank = node.getNodeValue();
+            } else if (attrName.equals("parents")) {
+                parents = node.getNodeValue();
             } else {
                 throw new IllegalArgumentException("Unsupported attribute: " + node);
             }
@@ -685,7 +688,7 @@ public class FlamGenome implements Serializable {
                 double x2 = 0, y2 = 0;
 
                 double r2 = x * x + y * y;
-                double r = Math.sqrt(r2);
+                double r = sqrt(r2);
 
                 for (int j = 0; j < nonZeroVariations.length; ++j) {
                     double dx;
@@ -711,6 +714,10 @@ public class FlamGenome implements Serializable {
                         case 3: // swirl
                             dx = x * sin(r2) - y * cos(r2);
                             dy = x * cos(r2) + y * sin(r2);
+                            break;
+                        case 4: // horseshoe
+                            dx = (x - y) * (x + y) / r;
+                            dy = 2 * x * y / r;
                             break;
                         case 5: // polar
                         {
@@ -767,7 +774,7 @@ public class FlamGenome implements Serializable {
                         {
                             double theta = atan2(x, y);
                             double p = rings2_val* rings2_val;
-                            double t = r - 2*p*floor((r+p)/(2*p)) + r* (1-p);
+                            double t = r - 2*p*floor((r + p) / (2 * p)) + r* (1-p);
                             dx = t * sin(theta);
                             dy = t * cos(theta);
                             break;
@@ -804,7 +811,7 @@ public class FlamGenome implements Serializable {
                             dy = z * sin(t);
                             break;
                         }
-                        case 36:  // radial_blor
+                        case 36:  // radial_blur
                         {
                             double phi = atan2(y, x);
                             double p1 = radial_blur_angle * PI / 2;
@@ -813,6 +820,12 @@ public class FlamGenome implements Serializable {
                             double t3 = t1 * cos(p1) - 1;
                             dx = (r * cos(t2) + t3 * x) / w;
                             dy = (r * sin(t2) + t3 * y) / w;
+                        }
+                        case 45:  // blade
+                        {
+                            double xi = FlamComponent.random.nextDouble();
+                            dx = x * (cos(xi * r * w) + sin(xi * r * w));
+                            dy = x * (cos(xi * r * w) - sin(xi * r * w));
                         }
                     }
 
@@ -856,33 +869,7 @@ public class FlamGenome implements Serializable {
         }
     }
 
-    private static double atan2(double x, double y) {
-//        return Math.atan2(x, y);
-        return fastAtan2(x, y);
-    }
 
-
-    //http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization
-    static double fastAtan2(double x, double y) {
-        double coeff_1 = PI / 4;
-        double coeff_2 = 3 * coeff_1;
-        double abs_y = abs(x) + 1e-10;      // kludge to prevent 0/0 condition
-
-        double r;
-        double angle;
-
-        if (y >= 0) {
-            r = (y - abs_y) / (y + abs_y);
-            angle = coeff_1 - coeff_1 * r;
-        } else {
-            r = (y + abs_y) / (abs_y - y);
-            angle = coeff_2 - coeff_1 * r;
-        }
-        if (x < 0)
-            return (-angle);     // negate if in quad III or IV
-        else
-            return (angle);
-    }
 
     @Override
     public Object clone() {

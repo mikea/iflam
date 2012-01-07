@@ -1,7 +1,7 @@
 package flam;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+import static flam.MyMath.cos;
+import static flam.MyMath.sin;
 
 /**
  * @author mike
@@ -78,7 +78,7 @@ public class AnimationProvider implements GenomeProvider {
 
         @Override
         public void animate(double[] coefs, double time) {
-            coefs[coef] += Math.sin(time) * coefs[coef] / 2;
+            coefs[coef] += sin(time) * coefs[coef] / 2;
         }
     }
 
@@ -113,8 +113,8 @@ public class AnimationProvider implements GenomeProvider {
                     x = c; y = f; break;
             }
 
-            x += Math.sin(time);
-            y += Math.cos(time);
+            x += sin(time);
+            y += cos(time);
 
             switch (idx) {
                 default:
