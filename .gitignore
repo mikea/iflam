@@ -1,0 +1,7 @@
+/build
+workspace.xml
+.DS_Store
+.*.swp
+project.xcworkspace
+out/
+xcuserdata
