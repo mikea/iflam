@@ -14,7 +14,7 @@ import static flam.MyMath.*;
  * @author mike
  */
 public class FlamComponent extends JComponent {
-    static final Random random = new Random();
+    public static final Random random = new Random();
 
     // state
     private FlamGenome genome;
@@ -111,7 +111,7 @@ public class FlamComponent extends JComponent {
         renderTime += (bltFinish - batchFinish);
         batches++;
 
-        System.out.println(i + " : " + (batchFinish - start) + " : " + (bltFinish - batchFinish));
+//        System.out.println(i + " : " + (batchFinish - start) + " : " + (bltFinish - batchFinish));
 
         graphics.drawImage(buffer.image, 0, 0, null);
         repaint();
@@ -195,7 +195,7 @@ public class FlamComponent extends JComponent {
         }
     }
 
-    static double crnd() {
+    public static double crnd() {
         return random.nextDouble() * 2 - 1;
     }
 

@@ -159,13 +159,13 @@ public class FlamGenome implements Serializable {
     private double time;
     private String url;
     double vibrancy = 1.0;
-    List<Xform> xforms = new ArrayList<Xform>();
-    Xform finalxform;
+    public List<Xform> xforms = new ArrayList<Xform>();
+    public Xform finalxform;
     double[][] colors = new double[256][];
     double pixelsPerUnit = 50;
     private String version;
     double highlightPower = 1;
-    double zoom = 1.0;
+    public double zoom = 1.0;
     double contrast = 1.0;
     double gammaLinearThreshold = 0.01;
     public int nbatches = 1;
@@ -506,7 +506,7 @@ public class FlamGenome implements Serializable {
         }
     }
 
-    static class Xform implements Serializable {
+    public static class Xform implements Serializable {
         double[] coefs = new double[6];
         double[] variations = new double[variationNames.length];
         int[] nonZeroVariations;
@@ -766,11 +766,27 @@ public class FlamGenome implements Serializable {
                             dy = theta * cos(PI * r) / PI;
                             break;
                         }
+                        case 10: // hyperbolic
+                        {
+                            double theta = atan2(x, y);
+                            dx = sin(theta)/ r;
+                            dy = r * cos(theta);
+                            break;
+                        }
                         case 11: // diamond
                         {
                             double theta = atan2(x, y);
                             dx = sin(theta) * cos(r);
                             dy = cos(theta) * sin(r);
+                            break;
+                        }
+                        case 12: // ex
+                        {
+                            double theta = atan2(x, y);
+                            double p0 = sin(theta + r);
+                            double p1 = cos(theta - r);
+                            dx = r * (p0*p0*p0 + p1 * p1 * p1);
+                            dy = r * (p0*p0*p0 - p1 * p1 * p1);
                             break;
                         }
                         case 13: // julia
@@ -781,6 +797,19 @@ public class FlamGenome implements Serializable {
                             dy = sqrt(r) * sin(theta / 2 + omega);
                             break;
                         }
+                        case 14: // bent
+                        {
+                            if (x >= 0 && y >= 0) {
+                                dx = x; dy = y;
+                            } else if (x < 0 && y >= 0) {
+                                dx = 2 * x; dy = y;
+                            } else if (x >= 0 && y < 0) {
+                                dx = x; dy = y / 2;
+                            } else /* if (x < 0 && y < 0) */ {
+                                dx = 2 * x; dy = y / 2;
+                            }
+                            break;
+                        }
                         case 15: // waves
                             dx = x + b * sin(y / (c * c + EPS));
                             dy = y + e * sin(x / (f * f + EPS));
@@ -789,6 +818,28 @@ public class FlamGenome implements Serializable {
                             dx = y * 2 / (r + 1);
                             dy = x * 2 / (r + 1);
                             break;
+                        case 21: // rings
+                        {
+                            double theta = atan2(x, y);
+                            double c2 = c * c;
+                            double k = fmod(r + c2, 2 * c2) - c2 + r * (1 - c2);
+                            dx = k * cos(theta);
+                            dy = k * sin(theta);
+                            break;
+                        }
+                        case 22: // fan
+                        {
+                            double theta = atan2(x, y);
+                            double t = PI * c * c;
+                            if (fmod(theta + f, t) > t / 2) {
+                                dx = r * cos (theta - t/2);
+                                dy = r * sin (theta - t/2);
+                            } else {
+                                dx = r * cos (theta + t/2);
+                                dy = r * sin (theta + t/2);
+                            }
+                            break;
+                        }
                         case 26: // rings2
                         {
                             double theta = atan2(x, y);
@@ -830,6 +881,14 @@ public class FlamGenome implements Serializable {
                             dy = z * sin(t);
                             break;
                         }
+                        case 34: // blur
+                        {
+                            double xi1 = FlamComponent.random.nextDouble();
+                            double xi2 = FlamComponent.random.nextDouble();
+                            dx = xi1 * cos(2 * PI * xi2);
+                            dy = xi1 * sin(2 * PI * xi2);
+                            break;
+                        }
                         case 36:  // radial_blur
                         {
                             double phi = atan2(y, x);
@@ -845,6 +904,11 @@ public class FlamGenome implements Serializable {
                             double xi = FlamComponent.random.nextDouble();
                             dx = x * (cos(xi * r * w) + sin(xi * r * w));
                             dy = x * (cos(xi * r * w) - sin(xi * r * w));
+                        }
+                        case 46:  // secant2
+                        {
+                            dx = x;
+                            dy = 1 / (w * cos(w * r));
                         }
                     }
 
