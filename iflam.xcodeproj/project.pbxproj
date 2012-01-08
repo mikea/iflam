@@ -20,6 +20,11 @@
 		322FDCEE14B3F37F003DB166 /* iflamTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCED14B3F37F003DB166 /* iflamTests.h */; };
 		322FDCF014B3F37F003DB166 /* iflamTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCEF14B3F37F003DB166 /* iflamTests.m */; };
 		322FDCFB14B3F5A4003DB166 /* FlamView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFA14B3F5A4003DB166 /* FlamView.mm */; };
+		322FDCFB14B3F5A4003DB169 /* genome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB168 /* genome.cpp */; };
+		322FDCFB14B3F5A4003DB16C /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB16B /* tinystr.cpp */; };
+		322FDCFB14B3F5A4003DB16F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB16E /* tinyxml.cpp */; };
+		322FDCFB14B3F5A4003DB172 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB171 /* tinyxmlerror.cpp */; };
+		322FDCFB14B3F5A4003DB174 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB173 /* tinyxmlparser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +62,14 @@
 		322FDCEF14B3F37F003DB166 /* iflamTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iflamTests.m; sourceTree = "<group>"; };
 		322FDCF914B3F5A4003DB166 /* FlamView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlamView.h; sourceTree = "<group>"; };
 		322FDCFA14B3F5A4003DB166 /* FlamView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamView.mm; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB167 /* genome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = genome.h; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB168 /* genome.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = genome.cpp; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB16B /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinystr.cpp; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB16D /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinystr.h; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB16E /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB170 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB171 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
+		322FDCFB14B3F5A4003DB173 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +133,8 @@
 		322FDCC814B3F37D003DB166 /* iflam */ = {
 			isa = PBXGroup;
 			children = (
+				322FDCFB14B3F5A4003DB168 /* genome.cpp */,
+				322FDCFB14B3F5A4003DB167 /* genome.h */,
 				322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */,
 				322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */,
 				322FDCF914B3F5A4003DB166 /* FlamView.h */,
@@ -129,6 +144,7 @@
 				322FDCD714B3F37E003DB166 /* MainMenu.xib */,
 				322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */,
 				322FDCC914B3F37D003DB166 /* Supporting Files */,
+				322FDCFB14B3F5A4003DB16A /* tinyxml */,
 			);
 			path = iflam;
 			sourceTree = "<group>";
@@ -163,6 +179,19 @@
 				322FDCEC14B3F37F003DB166 /* iflamTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		322FDCFB14B3F5A4003DB16A /* tinyxml */ = {
+			isa = PBXGroup;
+			children = (
+				322FDCFB14B3F5A4003DB173 /* tinyxmlparser.cpp */,
+				322FDCFB14B3F5A4003DB171 /* tinyxmlerror.cpp */,
+				322FDCFB14B3F5A4003DB170 /* tinyxml.h */,
+				322FDCFB14B3F5A4003DB16E /* tinyxml.cpp */,
+				322FDCFB14B3F5A4003DB16D /* tinystr.h */,
+				322FDCFB14B3F5A4003DB16B /* tinystr.cpp */,
+			);
+			path = tinyxml;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,6 +304,11 @@
 				322FDCDC14B3F37E003DB166 /* iflam.xcdatamodeld in Sources */,
 				322FDCFB14B3F5A4003DB166 /* FlamView.mm in Sources */,
 				32160C1B14B3FCA000E2408D /* renderer.cpp in Sources */,
+				322FDCFB14B3F5A4003DB169 /* genome.cpp in Sources */,
+				322FDCFB14B3F5A4003DB16C /* tinystr.cpp in Sources */,
+				322FDCFB14B3F5A4003DB16F /* tinyxml.cpp in Sources */,
+				322FDCFB14B3F5A4003DB172 /* tinyxmlerror.cpp in Sources */,
+				322FDCFB14B3F5A4003DB174 /* tinyxmlparser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

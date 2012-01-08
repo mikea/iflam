@@ -21,36 +21,11 @@ void assertSane(double dx) {
     assert(dx < 1e20 && dx > -1e20);
     assert(dx > 1e-20 || dx < -1e-20);
 }
-}
 
-FlamDefinition::FlamDefinition() {
-}
-
-FlamDefinition::~FlamDefinition() {
-}
-
-void FlamDefinition::Randomize() {
-    boost::random::uniform_int_distribution<> dist(1, 10);
-
-    number_of_functions_ = dist(rng);
-    coeffs_.resize(kFLen * number_of_functions_);
-    for (int i = 0; i < kFLen * number_of_functions_; ++i) {
-        double d = crndDist(rng);
-        assertSane(d);
-        coeffs_[i] = d;
-    }
-
-    colors_.resize(kFLen * number_of_functions_ * 3);
-    for (int i = 0; i < kFLen * number_of_functions_ * 3; ++i) {
-        double d = rndDist(rng);
-        colors_[i] = d;
-    }
-
-    assert(coeffs_.size() == kFLen * number_of_functions_);
 }
 
 void FlamRender::UpdateHistogram(const RenderState& s) {
-    if (s.x < 0 || s.x > 1 || s.y < 0 || s.y > 1) {
+/*    if (s.x < 0 || s.x > 1 || s.y < 0 || s.y > 1) {
         return;
     }
     double x1 = s.x * width_;
@@ -65,11 +40,11 @@ void FlamRender::UpdateHistogram(const RenderState& s) {
     ++histogram_[offset];
     color_histogram_[offset * 3] = (color_histogram_[offset * 3] + s.r) / 2;
     color_histogram_[offset * 3 + 1] = (color_histogram_[offset * 3 + 1] + s.g) / 2;
-    color_histogram_[offset * 3 + 2] = (color_histogram_[offset * 3 + 2] + s.b) / 2;
+    color_histogram_[offset * 3 + 2] = (color_histogram_[offset * 3 + 2] + s.b) / 2;*/
 }
 
-void FlamRender::Render(const FlamDefinition& definition) {
-    Lock();
+void FlamRender::Render(const Genome& definition) {
+ /*   Lock();
     assert(definition.number_of_functions_ * kFLen == definition.coeffs_.size());
     boost::random::uniform_int_distribution<> fnDist(0, definition.number_of_functions_ - 1);
     Unlock();
@@ -176,11 +151,11 @@ void FlamRender::Render(const FlamDefinition& definition) {
         if (i > 20) {
             UpdateHistogram(s);
         }
-    }
+    }*/
 }
 
 void FlamRender::Visualize(PixelInterface *pixelInterface) {
-    int maxFreq = 0;
+ /*   int maxFreq = 0;
     for (int i = 0; i < width_ * height_; ++i) {
         if (maxFreq < histogram_[i]) {
             maxFreq = histogram_[i];
@@ -199,5 +174,5 @@ void FlamRender::Visualize(PixelInterface *pixelInterface) {
 
             pixelInterface->SetPixel(x, y, r * alpha, g * alpha, b * alpha);
         }
-    }
+    }*/
 }

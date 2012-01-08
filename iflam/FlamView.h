@@ -8,12 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 #import "renderer.h"
+#import "genome.h"
 
 
 @interface FlamView : NSView {
 @private
     CGContextRef bitmapContext;
-    FlamDefinition* def;
+    Genome * def;
 }
 
 @end
