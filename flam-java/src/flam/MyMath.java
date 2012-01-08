@@ -46,6 +46,9 @@ public class MyMath {
     public static double abs(double x) {
         return FastMath.abs(x);
     }
+    public static double fmod(double x, double y) {
+        return FastMath.IEEEremainder(x, y);
+    }
 
     //http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization
     static double fastAtan2(double x, double y) {
