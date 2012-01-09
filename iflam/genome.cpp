@@ -16,41 +16,29 @@ Genome::~Genome() {
 }
 
 namespace {
-  template<typename ArrayType, int size>
-  bool ParseArray(const string& str,
-      boost::array<ArrayType, size>* array,
-      string* error) {
+  template<typename ArrayType, size_t size>
+  void ParseArray(const string& str, boost::array<ArrayType, size>* array) {
     vector<string> strs;
     boost::split(strs, str, boost::is_space());
-
     if (strs.size() != size) {
-      *error = "Wrong vector length in " + str;
-      return false;
+      throw ReadError("Wrong vector length in " + str);
     }
-    for (int i = 0; i < strs.size(); ++i) {
+    for (size_t i = 0; i < strs.size(); ++i) {
       (*array)[i] = boost::lexical_cast<ArrayType>(strs[i]);
     }
-
-    return true;
   }
 
   template<typename T>
-  bool ParseScalar(
-      const string& str,
-      T* d,
-      string* error) {
+  void ParseScalar(const string& str, T* d) {
     // TODO: error checks
     *d = boost::lexical_cast<T>(str);
-    return true;
   }
 }
 
-bool Genome::Read(string file_name, string* error) {
-  error->clear();
-
+void Genome::Read(string file_name) {
   TiXmlDocument doc(file_name.c_str());
   if (!doc.LoadFile()) {
-    return false;
+    throw ReadError("Can't load file: " + file_name);
   }
 
   const TiXmlElement* root = doc.RootElement();
@@ -63,85 +51,47 @@ bool Genome::Read(string file_name, string* error) {
     if (attr_name == "name") {
       name_ = attr->Value();
     } else if (attr_name == "time") {
-      if (!ParseScalar(attr->ValueStr(), &time_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &time_);
     } else if (attr_name == "size") {
-      if (!ParseArray<int, 2>(attr->ValueStr(), &size_, error)) {
-        return false;
-      }
+      ParseArray<int, 2>(attr->ValueStr(), &size_);
     } else if (attr_name == "center") {
-      if (!ParseArray<double, 2>(attr->ValueStr(), &center_, error)) {
-        return false;
-      }
+      ParseArray<double, 2>(attr->ValueStr(), &center_);
     } else if (attr_name == "scale") {
-      if (!ParseScalar(attr->ValueStr(), &scale_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &scale_);
     } else if (attr_name == "rotate") {
-      if (!ParseScalar(attr->ValueStr(), &rotate_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &rotate_);
     } else if (attr_name == "supersample") {
-      if (!ParseScalar(attr->ValueStr(), &supersample_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &supersample_);
     } else if (attr_name == "filter") {
-      if (!ParseScalar(attr->ValueStr(), &filter_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &filter_);
     } else if (attr_name == "filter_shape") {
       filter_shape_ = attr->ValueStr();
     } else if (attr_name == "temporal_filter_type") {
       temporal_filter_type_ = attr->ValueStr();
     } else if (attr_name == "temporal_filter_width") {
-      if (!ParseScalar(attr->ValueStr(), &temporal_filter_width_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &temporal_filter_width_);
     } else if (attr_name == "quality") {
-      if (!ParseScalar(attr->ValueStr(), &quality_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &quality_);
     } else if (attr_name == "passes") {
-      if (!ParseScalar(attr->ValueStr(), &passes_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &passes_);
     } else if (attr_name == "temporal_samples") {
-      if (!ParseScalar(attr->ValueStr(), &temporal_samples_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &temporal_samples_);
     } else if (attr_name == "background") {
-      if (!ParseArray<double, 3>(attr->ValueStr(), &background_, error)) {
-        return false;
-      }
+      ParseArray<double, 3>(attr->ValueStr(), &background_);
     } else if (attr_name == "brightness") {
-      if (!ParseScalar(attr->ValueStr(), &brightness_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &brightness_);
     } else if (attr_name == "gamma") {
-      if (!ParseScalar(attr->ValueStr(), &gamma_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &gamma_);
     } else if (attr_name == "vibrancy") {
-      if (!ParseScalar(attr->ValueStr(), &vibrancy_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &vibrancy_);
     } else if (attr_name == "estimator_radius") {
-      if (!ParseScalar(attr->ValueStr(), &estimator_radius_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &estimator_radius_);
     } else if (attr_name == "estimator_minimum") {
-      if (!ParseScalar(attr->ValueStr(), &estimator_minimum_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &estimator_minimum_);
     } else if (attr_name == "estimator_curve") {
-      if (!ParseScalar(attr->ValueStr(), &estimator_curve_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &estimator_curve_);
     } else if (attr_name == "gamma_threshold") {
-      if (!ParseScalar(attr->ValueStr(), &gamma_threshold_, error)) {
-        return false;
-      }
+      ParseScalar(attr->ValueStr(), &gamma_threshold_);
     } else if (attr_name == "palette_mode") {
       palette_mode_ = attr->ValueStr();
     } else if (attr_name == "interpolation_type") {
@@ -153,11 +103,10 @@ bool Genome::Read(string file_name, string* error) {
     } else if (attr_name == "notes") {
       notes_ = attr->ValueStr();
     } else {
-      *error = "Unsupported attribute: " + attr_name + "=\"" +
-        attr->Value() + "\"";
-      return false;
+      throw ReadError("Unsupported attribute: " + attr_name + "=\"" +
+        attr->Value() + "\"");
     }
   }
 
-  return true;
+  throw ReadError("Element parsing not yet implemented.");
 }

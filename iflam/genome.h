@@ -7,6 +7,11 @@
 #include <boost/utility.hpp>
 #include <boost/array.hpp>
 
+class ReadError : public std::runtime_error {
+  public:
+    ReadError(const std::string& message) : std::runtime_error(message) { }
+};
+
 class Genome : boost::noncopyable {
 public:
     Genome();
@@ -14,7 +19,8 @@ public:
 
     void Randomize();
 
-    bool Read(std::string file_name, std::string* error_message);
+    // Throws ReadError.
+    void Read(std::string file_name);
 private:
 
     std::string name_;

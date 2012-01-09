@@ -1,16 +1,33 @@
 #include <assert.h>
+#include <boost/program_options.hpp>
 #include "genome.h"
 
+namespace po = boost::program_options;
+using std::string;
+
 int main(int argc, char *argv[]) {
-  Genome genome;
-  std::string error;
-  bool result = genome.Read(
-      "/Users/aizatsky/Projects/iflam/flam-java/flams/e_1.flam3",
-      &error);
-  if (!result) {
-    std::cerr << "Parsing error: " << error << "\n";
-    abort();
+  po::options_description desc("Allowed options");
+  desc.add_options()
+    ("help", "produce help message")
+    ("file", po::value<string>(), "flam3 file")
+    ;
+
+  po::variables_map vm;
+  po::store(po::parse_command_line(argc, argv, desc), vm);
+  po::notify(vm);
+
+  if (vm.count("help")) {
+    std::cout << desc << "\n";
+    return 1;
   }
+
+  if (!vm.count("file")) {
+    std::cout << "-file was not set.\n";
+    return 1;
+  }
+
+  Genome genome;
+  genome.Read(vm["file"].as<string>());
 
   return 0;
 }
