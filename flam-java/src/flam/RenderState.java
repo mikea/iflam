@@ -7,7 +7,7 @@ import static flam.MyMath.log;
 import static flam.MyMath.pow;
 
 /**
-*/
+ */
 class RenderState {
     double[] xyc = new double[3];
     final FlamGenome genome;
@@ -138,26 +138,26 @@ class RenderState {
         int vib_gam_n = 1;
         double vibrancy = genome.vibrancy;
         vibrancy /= vib_gam_n;
-            double linrange = genome.gammaLinearThreshold;
-            double gamma = 1.0 / (genome.gamma / vib_gam_n);
-            double highpow = genome.highlightPower;
+        double linrange = genome.gammaLinearThreshold;
+        double gamma = 1.0 / (genome.gamma / vib_gam_n);
+        double highpow = genome.highlightPower;
 
-            int nbatches = genome.nbatches;
-            double oversample = 1.0; // genome.oversample
-            // double sample_density = genome.quality * scale * scale;
-            // double nsamples = sample_density * width * height;
+        int nbatches = genome.nbatches;
+        double oversample = 1.0; // genome.oversample
+        // double sample_density = genome.quality * scale * scale;
+        // double nsamples = sample_density * width * height;
 
-            double sample_density = ((double) (samples)) / (width * height);
-            double batch_filter = 1 / nbatches;
+        double sample_density = ((double) (samples)) / (width * height);
+        double batch_filter = 1 / nbatches;
 
-            double k1 = (genome.contrast * genome.brightness * PREFILTER_WHITE * 268.0 * batch_filter) / 256;
-            double area = width * height / (ppux * ppuy);
-            double sumfilt = 1;
-            double k2 = (oversample * oversample * nbatches) /
-                    (genome.contrast * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
-            double linRangePowGamma = pow(linrange, gamma) / linrange;
+        double k1 = (genome.contrast * genome.brightness * PREFILTER_WHITE * 268.0 * batch_filter) / 256;
+        double area = width * height / (ppux * ppuy);
+        double sumfilt = 1;
+        double k2 = (oversample * oversample * nbatches) /
+                (genome.contrast * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
+        double linRangePowGamma = pow(linrange, gamma) / linrange;
 
-            int[] line = new int[width];
+        int[] line = new int[width];
         double[] newrgb = new double[4];
 
         for (int y = 0; y < height; ++y) {
