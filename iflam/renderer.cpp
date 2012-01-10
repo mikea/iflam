@@ -310,10 +310,16 @@ RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
     scale_(pow(2, genome_.zoom())),
     ppux_(genome_.pixels_per_unit() * scale_),
     ppuy_(genome_.pixels_per_unit() * scale_),
-    view_left_(genome_.center()[0] - buffer->width() / ppux_ / 2.0),
-    view_bottom_(genome_.center()[1] - buffer->height() / ppuy_ / 2.0),
-    view_height_(buffer->height() / ppuy_),
-    view_width_(buffer->width() / ppux_),
+
+    // genome_height_(buffer->height())
+    // genome_width_(buffer->width_())
+    genome_height_(genome.size()[1]),
+    genome_width_(genome_height_ * (buffer->width() * 1.0 / buffer->height())),
+
+    view_left_(genome_.center()[0] - genome_width_ / ppux_ / 2.0),
+    view_bottom_(genome_.center()[1] - genome_height_ / ppuy_ / 2.0),
+    view_height_(genome_height_ / ppuy_),
+    view_width_(genome_width_ / ppux_),
     xform_distrib_(new int[genome_.xforms().size() * kChooseXformGrain]),
     last_xform_(0) {
   size_t xforms_size = genome_.xforms().size();
@@ -390,7 +396,7 @@ void RenderState::Iterate() {
   int consequent_errors_ = 0;
   array<double, 3> xyc2;
 
-  for (int i = -20; i < 1000000 * 10; ++i) {
+  for (int i = -20; i < 1000000; ++i) {
     const Xform& xform = PickRandomXform();
     if (!xform.Apply(xyc_.c_array(), xyc_.c_array())) {
       std::cout << "Apply resulted in error\n";

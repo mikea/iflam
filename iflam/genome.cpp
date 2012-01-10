@@ -154,7 +154,8 @@ bool Xform::Apply(double* in, double* out) const {
     const double r2 = x * x + y * y;
     const double r = sqrt(r2);
 
-    for (size_t var = 0; var < variations_.size(); ++var) {
+    for (size_t i = 0; i < non_zero_variations_.size(); ++i) {
+      size_t var = non_zero_variations_[i];
       const double w = variations_[var];
 
       if (w == 0) {
@@ -251,7 +252,7 @@ Genome::Genome()
    pixels_per_unit_(50),
    quality_(1),
    vibrancy_(1),
-   zoom_(2) {
+   zoom_(0) {
 }
 
 Genome::~Genome() {
@@ -318,7 +319,7 @@ void Genome::Read(string file_name) {
     } else if (attr_name == "center") {
       ParseArray<double, 2>(attr->ValueStr(), &center_);
     } else if (attr_name == "scale") {
-      ParseScalar(attr->ValueStr(), &scale_);
+      ParseScalar(attr->ValueStr(), &pixels_per_unit_);
     } else if (attr_name == "rotate") {
       ParseScalar(attr->ValueStr(), &rotate_);
     } else if (attr_name == "supersample") {
@@ -476,5 +477,13 @@ void Xform::Parse(const TiXmlElement* element) {
               attr->Value() + "\""));
       }
     }
+  }
+
+  Init();
+}
+
+void Xform::Init() {
+  for (size_t i = 0; i < variations_.size(); ++i) {
+    if (variations_[i] != 0) non_zero_variations_.push_back(i);
   }
 }

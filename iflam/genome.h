@@ -27,9 +27,11 @@ class Xform : boost::noncopyable {
 
     bool Apply(double* in, double* out) const;
   private:
+    void Init();
 
     array<double, 6> coefs_;
     array<double, kVariationsCount> variations_;
+    std::vector<int> non_zero_variations_;
     double color_;
     double color_speed_;
     double opacity_;
@@ -54,7 +56,7 @@ public:
     // Throws error.
     void Read(std::string file_name);
 
-    const array<double, 2> center() const { return center_; }
+    const array<double, 2>& center() const { return center_; }
     double pixels_per_unit() const { return pixels_per_unit_; }
     double zoom() const { return zoom_; }
     const boost::ptr_vector<Xform>& xforms() const { return xforms_; }
@@ -69,6 +71,7 @@ public:
     double contrast() const { return contrast_; }
     double brightness() const { return brightness_; }
     const Color& background() const { return background_; }
+    const array<int, 2>& size() const { return size_; }
 
 private:
     double brightness_;
@@ -88,7 +91,6 @@ private:
     array<double, 2> center_;
     Color background_;
     array<Color, 256> colors_;
-    double scale_;
     double rotate_;
     int supersample_;
     int filter_;

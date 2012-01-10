@@ -53,6 +53,8 @@ class RenderState {
     const double scale_;
     const double ppux_;
     const double ppuy_;
+    const double genome_height_;
+    const double genome_width_;
     const double view_left_;
     const double view_bottom_;
     const double view_height_;

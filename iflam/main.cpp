@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
   Genome genome;
   genome.Read(vm["file"].as<string>());
 
-  int width = 800 * 4;
-  int height = 592 * 4;
+  int width = 1024;
+  int height = 768;
 
   RenderBuffer buffer(genome, width, height);
   RenderState state(genome, &buffer);
