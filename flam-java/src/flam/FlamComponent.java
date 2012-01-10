@@ -155,7 +155,7 @@ public class FlamComponent extends JComponent {
                 double opacity = xform.opacity;
 
                 if (opacity != 1.0) {
-                    flam3.adjust_percentage(xform.opacity);
+                    opacity = flam3.adjust_percentage(xform.opacity);
                 }
 
                 if (genome.finalxform != null) {
