@@ -134,7 +134,7 @@ public class FlamGenome implements Serializable {
 
     double[] background = new double[3];
     double brightness = 1.0;
-    double[] center = new double[2];
+    public double[] center = new double[2];
     private double estimatorCurve = 0;
     private double estimatorMinimum = 0;
     private double estimatorRadius = 0;
@@ -506,7 +506,7 @@ public class FlamGenome implements Serializable {
     }
 
     public static class Xform implements Serializable {
-        double[] coefs = new double[6];
+        public double[] coefs = new double[6];
         double[] variations = new double[variationNames.length];
         int[] nonZeroVariations;
 

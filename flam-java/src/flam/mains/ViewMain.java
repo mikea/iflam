@@ -1,5 +1,6 @@
 package flam.mains;
 
+import flam.DeepCopy;
 import flam.FlamComponent;
 import flam.FlamGenome;
 import flam.GenomeProvider;
@@ -59,6 +60,47 @@ public class ViewMain {
             }
         });
 
+        JToolBar toolBar = new JToolBar();
+        toolBar.add(new AbstractAction("+") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                newGenome.zoom += .1;
+                genome = newGenome;
+            }
+        });
+        toolBar.add(new AbstractAction("-") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                newGenome.zoom -= .1;
+                genome = newGenome;
+            }
+        });
+        toolBar.addSeparator();
+        toolBar.add(new AbstractAction("<-") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                newGenome.center[0] += .1;
+                genome = newGenome;
+            }
+        });
+        toolBar.add(new AbstractAction("->") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                newGenome.center[0] -= .1;
+                genome = newGenome;
+            }
+        });
+
+        frame.getContentPane().add(toolBar, BorderLayout.NORTH);
+        
+        
 
         frame.pack();
         frame.setVisible(true);
