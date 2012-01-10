@@ -4,6 +4,7 @@
 namespace {
 boost::random::uniform_real_distribution<> rndDist(0, 1);
 boost::random::uniform_real_distribution<> crndDist(-1, 1);
+boost::random::uniform_int_distribution<> brndDist(0, 1);
 }
 
 boost::random::mt19937 Random::rng_(std::time(0));
@@ -16,3 +17,6 @@ double Random::crnd() {
   return crndDist(rng_);
 }
 
+bool Random::brnd() {
+  return brndDist(rng_) == 1;
+}

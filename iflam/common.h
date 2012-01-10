@@ -22,11 +22,13 @@ struct error : virtual boost::exception, virtual std::exception { };
 typedef boost::error_info<struct tag_error_message, std::string> error_message;
 
 const double kPI = boost::math::constants::pi<double>();
+const double kEpsilon = 1e-10;
 
 class Random {
   public:
     static double rnd();
     static double crnd();
+    static bool brnd();
 
     static boost::random::mt19937 rng_;
 };

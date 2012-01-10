@@ -177,6 +177,51 @@ bool Xform::Apply(double* in, double* out) const {
           dy = y;
           break;
         }
+        case 1: // sinusoidal
+        {
+          dx = sin(x);
+          dy = sin(y);
+          break;
+        }
+        case 2: // spherical
+        {
+          dx = x / r2;
+          dy = y / r2;
+          break;
+        }
+        case 3: // swirl
+        {
+          dx = x * sin(r2) - y * cos(r2);
+          dy = x * cos(r2) + y * sin(r2);
+          break;
+        }
+        case 4: // horseshoe
+        {
+          dx = (x - y) * (x + y) / r;
+          dy = 2 * x * y / r;
+          break;
+        }
+        case 5: // polar
+        {
+          double theta = atan2(x, y);
+          dx = theta / kPI;
+          dy = r - 1;
+          break;
+        }
+        case 6: // handkerchief
+        {
+          double theta = atan2(x, y);
+          dx = r * sin(theta + r);
+          dy = r * cos(theta - r);
+          break;
+        }
+        case 7: // heart
+        {
+          double theta = atan2(x, y);
+          dx = r * sin(theta * r);
+          dy = - r * cos(theta * r);
+          break;
+        }
         case 8: // disc
         {
           double theta = atan2(x, y);
@@ -184,12 +229,101 @@ bool Xform::Apply(double* in, double* out) const {
           dy = theta * cos(kPI * r) / kPI;
           break;
         }
-        case 28: // bubble
+        case 10: // hyperbolic
         {
-          dx = 4 * x / (r2 + 4);
-          dy = 4 * y / (r2 + 4);
+          double theta = atan2(x, y);
+          dx = sin(theta)/ r;
+          dy = r * cos(theta);
           break;
         }
+        case 11: // diamond
+        {
+          double theta = atan2(x, y);
+          dx = sin(theta) * cos(r);
+          dy = cos(theta) * sin(r);
+          break;
+        }
+        case 12: // ex
+        {
+          double theta = atan2(x, y);
+          double p0 = sin(theta + r);
+          double p1 = cos(theta - r);
+          dx = r * (p0*p0*p0 + p1 * p1 * p1);
+          dy = r * (p0*p0*p0 - p1 * p1 * p1);
+          break;
+        }
+        case 13: // julia
+        {
+          double theta = atan2(x, y);
+          double omega = Random::brnd() ? 0 : kPI;
+          dx = sqrt(r) * cos(theta / 2 + omega);
+          dy = sqrt(r) * sin(theta / 2 + omega);
+          break;
+        }
+        case 14: // bent
+        {
+          if (x >= 0 && y >= 0) {
+            dx = x; dy = y;
+          } else if (x < 0 && y >= 0) {
+            dx = 2 * x; dy = y;
+          } else if (x >= 0 && y < 0) {
+            dx = x; dy = y / 2;
+          } else /* if (x < 0 && y < 0) */ {
+            dx = 2 * x; dy = y / 2;
+          }
+          break;
+        }
+        case 15: // waves
+        dx = x + b * sin(y / (c * c + kEpsilon));
+        dy = y + e * sin(x / (f * f + kEpsilon));
+        break;
+        case 16: // fisheye
+        dx = y * 2 / (r + 1);
+        dy = x * 2 / (r + 1);
+        break;
+        case 21: // rings
+        {
+          double theta = atan2(x, y);
+          double c2 = c * c;
+          double k = fmod(r + c2, 2 * c2) - c2 + r * (1 - c2);
+          dx = k * cos(theta);
+          dy = k * sin(theta);
+          break;
+        }
+        case 22: // fan
+        {
+          double theta = atan2(x, y);
+          double t = kPI * c * c;
+          if (fmod(theta + f, t) > t / 2) {
+            dx = r * cos (theta - t/2);
+            dy = r * sin (theta - t/2);
+          } else {
+            dx = r * cos (theta + t/2);
+            dy = r * sin (theta + t/2);
+          }
+          break;
+        }
+        case 26: // rings2
+        {
+          double theta = atan2(x, y);
+          double p = rings2_val_ * rings2_val_;
+          double t = r - 2*p*floor((r + p) / (2 * p)) + r* (1-p);
+          dx = t * sin(theta);
+          dy = t * cos(theta);
+          break;
+        }
+        case 27: // eyefish
+        dx = 2 * x / (r + 1);
+        dy = 2 * y / (r + 1);
+        break;
+        case 28: // bubble
+        dx = 4 * x / (r2 + 4);
+        dy = 4 * y / (r2 + 4);
+        break;
+        case 29: // cylinder
+        dx = sin(x);
+        dy = y;
+        break;
         case 30: // perspective
         {
           double p1 = perspective_angle_;
@@ -209,6 +343,35 @@ bool Xform::Apply(double* in, double* out) const {
           dx = z * cos(t);
           dy = z * sin(t);
           break;
+        }
+        case 34: // blur
+        {
+          double xi1 = Random::rnd();
+          double xi2 = Random::rnd();
+          dx = xi1 * cos(2 * kPI * xi2);
+          dy = xi1 * sin(2 * kPI * xi2);
+          break;
+        }
+        case 36:  // radial_blur
+        {
+          double phi = atan2(y, x);
+          double p1 = radial_blur_angle_ * kPI / 2;
+          double t1 = w * (Random::rnd() + Random::rnd() + Random::rnd() + Random::rnd() - 2);
+          double t2 = phi + t1 * sin(p1);
+          double t3 = t1 * cos(p1) - 1;
+          dx = (r * cos(t2) + t3 * x) / w;
+          dy = (r * sin(t2) + t3 * y) / w;
+        }
+        case 45:  // blade
+        {
+          double xi = Random::rnd();
+          dx = x * (cos(xi * r * w) + sin(xi * r * w));
+          dy = x * (cos(xi * r * w) - sin(xi * r * w));
+        }
+        case 46:  // secant2
+        {
+          dx = x;
+          dy = 1 / (w * cos(w * r));
         }
       }
 
@@ -364,6 +527,8 @@ void Genome::Read(string file_name) {
       nick_ = attr->ValueStr();
     } else if (attr_name == "notes") {
       notes_ = attr->ValueStr();
+    } else if (attr_name == "genebank" || attr_name == "brood") {
+      // ignore
     } else {
       BOOST_THROW_EXCEPTION(unsupported_attribute_error()
           << error_message("Unsupported attribute: " + attr_name + "=\"" +
