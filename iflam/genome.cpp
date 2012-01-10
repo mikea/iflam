@@ -16,15 +16,16 @@ Genome::~Genome() {
 }
 
 namespace {
-  template<typename ArrayType, size_t size>
-  void ParseArray(const string& str, boost::array<ArrayType, size>* array) {
+  template<typename T, size_t size>
+  void ParseArray(const string& str,
+      boost::array<T, size>* array) {
     vector<string> strs;
     boost::split(strs, str, boost::is_space());
     if (strs.size() != size) {
       throw ReadError("Wrong vector length in " + str);
     }
     for (size_t i = 0; i < strs.size(); ++i) {
-      (*array)[i] = boost::lexical_cast<ArrayType>(strs[i]);
+      (*array)[i] = boost::lexical_cast<T>(strs[i]);
     }
   }
 
