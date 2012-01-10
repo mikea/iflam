@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 #set(CMAKE_CXX_COMPILER clang++)
 #set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_FLAGS "-g -Wall -O0")
+set(CMAKE_CXX_FLAGS "-g -Wall -O3")
 add_definitions(-DTIXML_USE_STL)
 
 project(iflam)
