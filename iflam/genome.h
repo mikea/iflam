@@ -72,6 +72,7 @@ public:
     double brightness() const { return brightness_; }
     const Color& background() const { return background_; }
     const array<int, 2>& size() const { return size_; }
+    double rotate() const {return rotate_; }
 
 private:
     double brightness_;

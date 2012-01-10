@@ -313,7 +313,7 @@ RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
 
     // genome_height_(buffer->height())
     // genome_width_(buffer->width_())
-    genome_height_(genome.size()[1]),
+    genome_height_(genome_.size()[1]),
     genome_width_(genome_height_ * (buffer->width() * 1.0 / buffer->height())),
 
     view_left_(genome_.center()[0] - genome_width_ / ppux_ / 2.0),
@@ -396,6 +396,14 @@ void RenderState::Iterate(int iterations) {
   int consequent_errors_ = 0;
   array<double, 3> xyc2;
 
+  double rotate1 = 0;
+  double rotate2 = 0;
+
+  if (genome_.rotate() != 0) {
+    rotate1 = cos(genome_.rotate() * 2 * kPI / 360.0);
+    rotate2 = sin(genome_.rotate() * 2 * kPI / 360.0);
+  }
+
   for (int i = -20; i < iterations; ++i) {
     const Xform& xform = PickRandomXform();
     if (!xform.Apply(xyc_.c_array(), xyc_.c_array())) {
@@ -427,7 +435,15 @@ void RenderState::Iterate(int iterations) {
       xyc2[2] = xyc_[2];
     }
 
-    //TODO: rotate
+    if (genome_.rotate() != 0) {
+      //todo: optimize
+      double x1 = xyc2[0] - genome_.center()[0];
+      double y1 = xyc2[1] - genome_.center()[1];
+      double x = rotate1 * x1 - rotate2 * y1 + genome_.center()[0];
+      double y = rotate2 * x1 + rotate1 * y1 + genome_.center()[1];
+      xyc2[0] = x;
+      xyc2[1] = y;
+    }
     {
       // todo: use round
       int x1 = (int) ((xyc2[0] - view_left_) *
