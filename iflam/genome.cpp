@@ -14,138 +14,6 @@ namespace {
   bool BadValue(double x) {
     return (x != x) || (x > 1e10) || (x < -1e10);;
   }
-}
-
-struct apply_error : virtual error { };
-
-Xform::Xform()
- : color_speed_(0.5),
-   opacity_(1.0),
-   weight_(1.0) { }
-
-Xform::~Xform() { }
-
-bool Xform::Apply(double* in, double* out) const {
-  double x = in[0];
-  double y = in[1];
-  double cc = in[2];
-
-  const double a = coefs_[0];
-  const double b = coefs_[2];
-  const double c = coefs_[4];
-  const double d = coefs_[1];
-  const double e = coefs_[3];
-  const double f = coefs_[5];
-
-  { // Affine transform.
-    double x1, y1;
-    x1 = x * a + y * b + c;
-    y1 = x * d + y * e + f;
-    x = x1;
-    y = y1;
-  }
-
-  {  // Nonlinear transform
-    double x1 = 0;
-    double y1 = 0;
-    const double r2 = x * x + y * y;
-    const double r = sqrt(r2);
-
-    for (size_t var; var < variations_.size(); ++var) {
-      const double w = variations_[var];
-
-      if (w == 0) {
-        continue;
-      }
-
-      double dx;
-      double dy;
-
-      switch (var) {
-        default:
-          BOOST_THROW_EXCEPTION(apply_error());
-          break;
-      }
-
-      x1 += w * dx;
-      y1 += w * dy;
-    }
-
-    x = x1;
-    y = y1;
-  }
-
-  if (post_.get() != NULL) {
-    double x1, y1;
-    const boost::array<double, 6>& post = *post_;
-    x1 = x * post[0] + y * post[2] + post[4];
-    y1 = x * post[1] + y * post[3] + post[5];
-    x = x1;
-    y = y1;
-  }
-
-  cc = cc * (1 - color_speed_) + color_ * color_speed_;
-
-  bool good = true;
-  if (BadValue(x) || BadValue(y)) {
-    abort();
-  }
-
-  out[0] = x;
-  out[1] = y;
-  out[2] = cc;
-  return good;
-}
-
-Genome::Genome()
- : brightness_(1),
-   contrast_(1),
-   gamma_ (4),
-   gamma_threshold_(0.01),
-   passes_ (1),
-   pixels_per_unit_(50),
-   quality_(1),
-   vibrancy_(1),
-   zoom_(1) {
-}
-
-Genome::~Genome() {
-}
-
-// ----------------------------------------------------------------------------
-// - Parsing
-// ----------------------------------------------------------------------------
-
-typedef boost::error_info<struct tag_error_message, std::string> error_message;
-
-struct parse_error : virtual error { };
-struct vector_parse_error : virtual parse_error { };
-struct xml_parse_error : virtual parse_error { };
-struct unsupported_attribute_error : virtual parse_error { };
-struct unsupported_element_error : virtual parse_error { };
-
-namespace {
-  template<typename T, size_t size>
-  void ParseArray(const string& str,
-      boost::array<T, size>* array) {
-    vector<string> strs;
-    boost::split(strs, str, boost::is_space());
-    if (strs.size() != size) {
-      BOOST_THROW_EXCEPTION(vector_parse_error()
-          << error_message("Wrong vector length in '" + str + "'. Is " +
-            boost::lexical_cast<string>(strs.size()) + " but should be " +
-            boost::lexical_cast<string>(size)));
-    }
-    for (size_t i = 0; i < strs.size(); ++i) {
-      (*array)[i] = boost::lexical_cast<T>(strs[i]);
-    }
-  }
-
-  template<typename T>
-  void ParseScalar(const string& str, T* d) {
-    // TODO: error checks
-    *d = boost::lexical_cast<T>(str);
-  }
 
   const char * const kVariationNames[Xform::kVariationsCount] = {
     "linear",
@@ -251,6 +119,179 @@ namespace {
 
 }
 
+struct apply_error : virtual error { };
+
+Xform::Xform()
+ : color_speed_(0.5),
+   opacity_(1.0),
+   weight_(1.0) { }
+
+Xform::~Xform() { }
+
+bool Xform::Apply(double* in, double* out) const {
+  double x = in[0];
+  double y = in[1];
+  double cc = in[2];
+
+  const double a = coefs_[0];
+  const double b = coefs_[2];
+  const double c = coefs_[4];
+  const double d = coefs_[1];
+  const double e = coefs_[3];
+  const double f = coefs_[5];
+
+  { // Affine transform.
+    double x1, y1;
+    x1 = x * a + y * b + c;
+    y1 = x * d + y * e + f;
+    x = x1;
+    y = y1;
+  }
+
+  {  // Nonlinear transform
+    double x1 = 0;
+    double y1 = 0;
+    const double r2 = x * x + y * y;
+    const double r = sqrt(r2);
+
+    for (size_t var = 0; var < variations_.size(); ++var) {
+      const double w = variations_[var];
+
+      if (w == 0) {
+        continue;
+      }
+
+      double dx;
+      double dy;
+
+      switch (var) {
+        default:
+          BOOST_THROW_EXCEPTION(apply_error()
+              << error_message("Variation " + boost::lexical_cast<string>(var)
+                + " (" + kVariationNames[var] + ") not implemented"));
+          break;
+        case 0: // linear
+        {
+          dx = x;
+          dy = y;
+          break;
+        }
+        case 8: // disc
+        {
+          double theta = atan2(x, y);
+          dx = theta * sin(kPI * r) / kPI;
+          dy = theta * cos(kPI * r) / kPI;
+          break;
+        }
+        case 28: // bubble
+        {
+          dx = 4 * x / (r2 + 4);
+          dy = 4 * y / (r2 + 4);
+          break;
+        }
+        case 30: // perspective
+        {
+          double p1 = perspective_angle_;
+          double p2 = perspective_dist_;
+          dx = p2 * x / (p2 - y * sin(p1));
+          dy = p2 * y * cos(p1) / (p2 - y * sin(p1));
+          break;
+        }
+        case 32: // julian
+        {
+          double phi = atan2(y, x);
+          double p1 = julian_power_;
+          double p2 = julian_dist_;
+          double p3 = floor(abs(p1) * Random::rnd());
+          double t = (phi + 2 * kPI * p3) / p1;
+          double z = pow(r, p2 / p1);
+          dx = z * cos(t);
+          dy = z * sin(t);
+          break;
+        }
+      }
+
+      x1 += w * dx;
+      y1 += w * dy;
+    }
+
+    x = x1;
+    y = y1;
+  }
+
+  if (post_.get() != NULL) {
+    double x1, y1;
+    const array<double, 6>& post = *post_;
+    x1 = x * post[0] + y * post[2] + post[4];
+    y1 = x * post[1] + y * post[3] + post[5];
+    x = x1;
+    y = y1;
+  }
+
+  cc = cc * (1 - color_speed_) + color_ * color_speed_;
+
+  bool good = true;
+  if (BadValue(x) || BadValue(y)) {
+    abort();
+  }
+
+  out[0] = x;
+  out[1] = y;
+  out[2] = cc;
+  return good;
+}
+
+Genome::Genome()
+ : brightness_(1),
+   contrast_(1),
+   gamma_ (4),
+   gamma_threshold_(0.01),
+   highlight_power_(1),
+   passes_ (1),
+   pixels_per_unit_(50),
+   quality_(1),
+   vibrancy_(1),
+   zoom_(1) {
+}
+
+Genome::~Genome() {
+}
+
+// ----------------------------------------------------------------------------
+// - Parsing
+// ----------------------------------------------------------------------------
+
+
+struct parse_error : virtual error { };
+struct vector_parse_error : virtual parse_error { };
+struct xml_parse_error : virtual parse_error { };
+struct unsupported_attribute_error : virtual parse_error { };
+struct unsupported_element_error : virtual parse_error { };
+
+namespace {
+  template<typename T, size_t size>
+  void ParseArray(const string& str, array<T, size>* array) {
+    vector<string> strs;
+    boost::split(strs, str, boost::is_space());
+    if (strs.size() != size) {
+      BOOST_THROW_EXCEPTION(vector_parse_error()
+          << error_message("Wrong vector length in '" + str + "'. Is " +
+            boost::lexical_cast<string>(strs.size()) + " but should be " +
+            boost::lexical_cast<string>(size)));
+    }
+    for (size_t i = 0; i < strs.size(); ++i) {
+      (*array)[i] = boost::lexical_cast<T>(strs[i]);
+    }
+  }
+
+  template<typename T>
+  void ParseScalar(const string& str, T* d) {
+    // TODO: error checks
+    *d = boost::lexical_cast<T>(str);
+  }
+
+}
+
 void Genome::Read(string file_name) {
   TiXmlDocument doc(file_name.c_str());
   if (!doc.LoadFile()) {
@@ -347,7 +388,7 @@ void Genome::Read(string file_name) {
       swap(xform, final_xform_);
     } else if (element_name == "color") {
       size_t index = 0;
-      boost::array<double, 3> color;
+      array<double, 3> color;
 
       for (const TiXmlAttribute* attr = e->FirstAttribute();
           attr != NULL;
@@ -414,7 +455,7 @@ void Xform::Parse(const TiXmlElement* element) {
     } else if (attr_name == "rings2_val") {
       ParseScalar(attr->ValueStr(), &rings2_val_);
     } else if (attr_name == "post") {
-      post_.reset(new boost::array<double, 6>);
+      post_.reset(new array<double, 6>);
       ParseArray<double, 6>(attr->ValueStr(), post_.get());
     } else {
       bool found = false;

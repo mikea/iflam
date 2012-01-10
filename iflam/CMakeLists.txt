@@ -7,6 +7,7 @@ add_definitions(-DTIXML_USE_STL)
 
 project(iflam)
 add_executable(iflam
+  common.cpp
   genome.cpp
   renderer.cpp
   main.cpp

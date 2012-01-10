@@ -5,15 +5,14 @@
 #include <vector>
 #include <boost/scoped_ptr.hpp>
 #include <boost/utility.hpp>
-#include <boost/array.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/exception/all.hpp>
+
+#include "common.h"
 
 class TiXmlElement;
 
-struct error : virtual boost::exception, virtual std::exception { };
 
-typedef boost::array<double, 3> Color;
+typedef array<double, 3> Color;
 
 class Xform : boost::noncopyable {
   public:
@@ -29,8 +28,8 @@ class Xform : boost::noncopyable {
     bool Apply(double* in, double* out) const;
   private:
 
-    boost::array<double, 6> coefs_;
-    boost::array<double, kVariationsCount> variations_;
+    array<double, 6> coefs_;
+    array<double, kVariationsCount> variations_;
     double color_;
     double color_speed_;
     double opacity_;
@@ -42,7 +41,7 @@ class Xform : boost::noncopyable {
     double perspective_dist_;
     double radial_blur_angle_;
     double rings2_val_;
-    boost::scoped_ptr<boost::array<double, 6> > post_;
+    boost::scoped_ptr<array<double, 6> > post_;
 };
 
 class Genome : boost::noncopyable {
@@ -55,20 +54,28 @@ public:
     // Throws error.
     void Read(std::string file_name);
 
-    const boost::array<double, 2> center() const { return center_; }
+    const array<double, 2> center() const { return center_; }
     double pixels_per_unit() const { return pixels_per_unit_; }
     double zoom() const { return zoom_; }
     const boost::ptr_vector<Xform>& xforms() const { return xforms_; }
-    bool is_chaos_enabled() const { return true; }  // todo: chaos
+    bool is_chaos_enabled() const { return false; }  // todo: chaos
     bool has_final_xform() const { return final_xform_.get() != NULL; }
     const Xform& final_xform() const { return *final_xform_; }
     const Color& color(size_t c) const { return colors_[c]; }
+    double vibrancy() const { return vibrancy_; }
+    double gamma_threshold() const { return gamma_threshold_; }
+    double gamma() const { return gamma_; }
+    double highlight_power() const { return highlight_power_; }
+    double contrast() const { return contrast_; }
+    double brightness() const { return brightness_; }
+    const Color& background() const { return background_; }
 
 private:
     double brightness_;
     double contrast_;
     double gamma_;
     double gamma_threshold_;
+    double highlight_power_;
     int passes_;
     double pixels_per_unit_;
     int quality_;
@@ -77,10 +84,10 @@ private:
 
     std::string name_;
     double time_;
-    boost::array<int, 2> size_;
-    boost::array<double, 2> center_;
-    boost::array<double, 3> background_;
-    boost::array<Color, 256> colors_;
+    array<int, 2> size_;
+    array<double, 2> center_;
+    Color background_;
+    array<Color, 256> colors_;
     double scale_;
     double rotate_;
     int supersample_;

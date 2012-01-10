@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   Genome genome;
   genome.Read(vm["file"].as<string>());
 
-  RenderBuffer buffer(1024, 768);
+  RenderBuffer buffer(genome, 1024, 768);
   RenderState state(genome, &buffer);
   state.Iterate();
 
