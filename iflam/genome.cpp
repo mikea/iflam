@@ -251,7 +251,7 @@ Genome::Genome()
    pixels_per_unit_(50),
    quality_(1),
    vibrancy_(1),
-   zoom_(1) {
+   zoom_(2) {
 }
 
 Genome::~Genome() {
@@ -411,6 +411,9 @@ void Genome::Read(string file_name) {
             << error_message("Color index too big: " +
               boost::lexical_cast<string>(index)));
       }
+      color[0] /= 255.0;
+      color[1] /= 255.0;
+      color[2] /= 255.0;
       colors_[index] = color;
     } else {
       BOOST_THROW_EXCEPTION(unsupported_element_error()

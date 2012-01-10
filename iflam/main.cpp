@@ -40,11 +40,14 @@ int main(int argc, char *argv[]) {
   Genome genome;
   genome.Read(vm["file"].as<string>());
 
-  RenderBuffer buffer(genome, 1024, 768);
+  int width = 800 * 4;
+  int height = 592 * 4;
+
+  RenderBuffer buffer(genome, width, height);
   RenderState state(genome, &buffer);
   state.Iterate();
 
-  boost::gil::rgb8_image_t img(1024, 768);
+  boost::gil::rgb8_image_t img(width, height);
   boost::gil::rgb8_view_t v(view(img));
   buffer.Render(&v);
   boost::gil::png_write_view("render.png", v);
