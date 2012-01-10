@@ -722,21 +722,29 @@ public class FlamGenome implements Serializable {
                             dy = y;
                             break;
                         case 1: // sinusoidal
+                        {
                             dx = sin(x);
                             dy = sin(y);
                             break;
+                        }
                         case 2: // spherical
+                        {
                             dx = x / r2;
                             dy = y / r2;
                             break;
+                        }
                         case 3: // swirl
+                        {
                             dx = x * sin(r2) - y * cos(r2);
                             dy = x * cos(r2) + y * sin(r2);
                             break;
+                        }
                         case 4: // horseshoe
+                        {
                             dx = (x - y) * (x + y) / r;
                             dy = 2 * x * y / r;
                             break;
+                        }
                         case 5: // polar
                         {
                             double theta = atan2(x, y);
