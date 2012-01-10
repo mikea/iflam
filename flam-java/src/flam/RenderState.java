@@ -31,11 +31,14 @@ class RenderState {
         ppux = genome.pixelsPerUnit * scale;
         ppuy = genome.pixelsPerUnit * scale;
 
-        viewLeft = genome.center[0] - buffer.width / ppux / 2.0;
-        viewBottom = genome.center[1] - buffer.height / ppuy / 2.0;
+        int genomeWidth = genome.size[0];
+        int genomeHeight = genome.size[1];
 
-        viewHeight = buffer.height / ppuy;
-        viewWidth = buffer.width / ppux;
+        viewLeft = genome.center[0] - genomeWidth / ppux / 2.0;
+        viewBottom = genome.center[1] - genomeHeight / ppuy / 2.0;
+
+        viewHeight = genomeHeight / ppuy;
+        viewWidth = genomeWidth / ppux;
 
         reseed();
     }

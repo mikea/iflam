@@ -204,8 +204,11 @@ public class FlamComponent extends JComponent {
     }
 
     private void updateHistogram(double x, double y, double cc, double opacity) {
-        int x1 = (int) ((x - state.viewLeft) * buffer.width / state.viewWidth + 0.5);
-        int y1 = (int) ((y - state.viewBottom) * buffer.height / state.viewHeight + 0.5);
+        double ws = buffer.width / state.viewWidth;
+        double hs = buffer.height / state.viewHeight;
+
+        int x1 = (int) ((x - state.viewLeft) * ws + 0.5);
+        int y1 = (int) ((y - state.viewBottom) * hs + 0.5);
 
 //        System.out.println("(" + x1 + "," + y1 + ")");
 

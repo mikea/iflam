@@ -151,7 +151,7 @@ public class FlamGenome implements Serializable {
     double quality = 1;  // aka sample_density
     double rotate;
     private double scale;
-    private int[] size = new int[]{1024, 1024};
+    int[] size = new int[]{1024, 1024};
     int oversample = 1;
     private String temporalFilterType;
     private double temporalFilterWidth;
@@ -165,7 +165,7 @@ public class FlamGenome implements Serializable {
     double pixelsPerUnit = 50;
     private String version;
     double highlightPower = 1;
-    public double zoom = 1.0;
+    public double zoom = 2.0;
     double contrast = 1.0;
     double gammaLinearThreshold = 0.01;
     public int nbatches = 1;
