@@ -17,10 +17,17 @@ void UnhandledExceptionHandler()
 int main(int argc, char *argv[]) {
   std::set_terminate(UnhandledExceptionHandler);
 
+  int iterations;
+  int width;
+  int height;
+
   po::options_description desc("Allowed options");
   desc.add_options()
     ("help", "produce help message")
     ("file", po::value<string>(), "flam3 file")
+    ("iterations", po::value<int>(&iterations)->default_value(1000000), "number of iterations")
+    ("width", po::value<int>(&width)->default_value(1024), "render width")
+    ("height", po::value<int>(&height)->default_value(768), "render height")
     ;
 
   po::variables_map vm;
@@ -40,12 +47,9 @@ int main(int argc, char *argv[]) {
   Genome genome;
   genome.Read(vm["file"].as<string>());
 
-  int width = 1024;
-  int height = 768;
-
   RenderBuffer buffer(genome, width, height);
   RenderState state(genome, &buffer);
-  state.Iterate();
+  state.Iterate(iterations);
 
   boost::gil::rgb8_image_t img(width, height);
   boost::gil::rgb8_view_t v(view(img));

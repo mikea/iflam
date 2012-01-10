@@ -392,16 +392,17 @@ void RenderState::Reseed() {
   xyc_[2] = Random::crnd();
 }
 
-void RenderState::Iterate() {
+void RenderState::Iterate(int iterations) {
   int consequent_errors_ = 0;
   array<double, 3> xyc2;
 
-  for (int i = -20; i < 1000000; ++i) {
+  for (int i = -20; i < iterations; ++i) {
     const Xform& xform = PickRandomXform();
     if (!xform.Apply(xyc_.c_array(), xyc_.c_array())) {
       std::cout << "Apply resulted in error\n";
       ++consequent_errors_;
       if (consequent_errors_ < 5) {
+        i -= 4;
         continue;
       }
     }

@@ -38,7 +38,7 @@ class RenderState {
     RenderState(const Genome& genome, RenderBuffer* buffer);
     ~RenderState();
 
-    void Iterate();
+    void Iterate(int iterations);
   private:
     void Reseed();
 
