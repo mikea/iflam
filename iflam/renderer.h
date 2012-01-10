@@ -5,6 +5,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/utility.hpp>
+#include <boost/gil/gil_all.hpp>
 
 class Genome;
 
@@ -17,6 +18,8 @@ class RenderBuffer {
     size_t width() const { return width_; }
 
     void Update(int x, int y, const Color& c, double opacity);
+
+    void Render(boost::gil::rgb8_view_t* image);
   private:
     const size_t width_;
     const size_t height_;

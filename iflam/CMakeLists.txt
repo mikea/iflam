@@ -31,3 +31,12 @@ if (Boost_FOUND)
   target_link_libraries(iflam ${Boost_LIBRARIES})
 endif()
 
+find_package(PNG REQUIRED)
+
+set(PNG_INCLUDE_DIR "/usr/X11/include/")
+if (PNG_FOUND)
+  message(STATUS "PNG include dir: ${PNG_INCLUDE_DIR}")
+
+  include_directories(${PNG_INCLUDE_DIR})
+  target_link_libraries(iflam ${PNG_LIBRARIES})
+endif()

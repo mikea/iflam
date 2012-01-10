@@ -54,6 +54,14 @@ void RenderBuffer::Update(int x, int y,
   accum_[offset + 3] += opacity;
 }
 
+void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
+  if (image->width() != width_ || image->height() != height_) {
+    BOOST_THROW_EXCEPTION(error());
+  }
+
+  BOOST_THROW_EXCEPTION(error());
+}
+
 
 RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
   : genome_(genome),

@@ -2,6 +2,8 @@
 #include <boost/program_options.hpp>
 #include "genome.h"
 #include "renderer.h"
+#include <boost/gil/gil_all.hpp>
+#include <boost/gil/extension/io/png_io.hpp>
 
 namespace po = boost::program_options;
 using std::string;
@@ -41,6 +43,11 @@ int main(int argc, char *argv[]) {
   RenderBuffer buffer(1024, 768);
   RenderState state(genome, &buffer);
   state.Iterate();
+
+  boost::gil::rgb8_image_t img(1024, 768);
+  boost::gil::rgb8_view_t v(view(img));
+  buffer.Render(&v);
+  boost::gil::png_write_view("render.png", v);
 
   return 0;
 }
