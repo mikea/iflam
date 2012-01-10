@@ -5,7 +5,15 @@
 namespace po = boost::program_options;
 using std::string;
 
+void UnhandledExceptionHandler()
+{
+   std::cerr << "Unhandled exception:\n";
+   std::cerr << boost::diagnostic_information(boost::current_exception());
+}
+
 int main(int argc, char *argv[]) {
+  std::set_terminate(UnhandledExceptionHandler);
+
   po::options_description desc("Allowed options");
   desc.add_options()
     ("help", "produce help message")
