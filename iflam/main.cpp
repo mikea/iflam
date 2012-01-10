@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <boost/program_options.hpp>
 #include "genome.h"
+#include "renderer.h"
 
 namespace po = boost::program_options;
 using std::string;
@@ -36,6 +37,10 @@ int main(int argc, char *argv[]) {
 
   Genome genome;
   genome.Read(vm["file"].as<string>());
+
+  RenderBuffer buffer(1024, 768);
+  RenderState state(genome, &buffer);
+  state.Iterate();
 
   return 0;
 }

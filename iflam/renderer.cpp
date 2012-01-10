@@ -1,10 +1,10 @@
+#include "genome.h"
 #include "renderer.h"
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/math/constants/constants.hpp>
-
 
 namespace {
 boost::random::mt19937 rng(std::time(0));
@@ -13,6 +13,7 @@ boost::random::uniform_real_distribution<> crndDist(-1, 1);
 
 const size_t kVLen = 6;
 const size_t kFLen = 6 + kVLen;
+const size_t kChooseXformGrain = 16384;
 const double kPI = boost::math::constants::pi<double>();
 const double kGamma = 2.5;
 
@@ -22,6 +23,185 @@ void assertSane(double dx) {
     assert(dx > 1e-20 || dx < -1e-20);
 }
 
+double AdjustPercentage(double p) {
+  if (p == 0) {
+    return p;
+  } else {
+    return pow(10, -log(1.0/p)) / log(2);
+  }
+}
+
+}
+
+RenderBuffer::RenderBuffer(size_t width, size_t height)
+  : width_(width),
+    height_(height),
+    accum_(new double[width * height * 4]) { }
+
+RenderBuffer::~RenderBuffer() { }
+
+
+void RenderBuffer::Update(int x, int y,
+    const Color& color, double opacity) {
+  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
+    return;
+  }
+
+  int offset = (x + width_ * y) * 4;
+  accum_[offset] += color[0];
+  accum_[offset + 1] += color[1];
+  accum_[offset + 2] += color[2];
+  accum_[offset + 3] += opacity;
+}
+
+
+RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
+  : genome_(genome),
+    buffer_(buffer),
+    xyc_(new double[3]),
+    scale_(pow(2, genome_.zoom())),
+    ppux_(genome_.pixels_per_unit() * scale_),
+    ppuy_(genome_.pixels_per_unit() * scale_),
+    view_left_(genome_.center()[0] - buffer->width() / ppux_ / 2.0),
+    view_bottom_(genome_.center()[1] - buffer->height() / ppuy_ / 2.0),
+    view_height_(buffer->height() / ppuy_),
+    view_width_(buffer->width() / ppux_),
+    xform_distrib_(new int[genome_.xforms().size() * kChooseXformGrain]),
+    last_xform_(0) {
+  size_t xforms_size = genome_.xforms().size();
+  // setup xform_distrib_
+  for (size_t i = 0; i < xforms_size * kChooseXformGrain; ++i) {
+    xform_distrib_[i] = 1;
+  }
+
+  CreateXformDist(-1, 0);
+  chaos_enabled_ = genome_.is_chaos_enabled();
+  if (chaos_enabled_) {
+    chaos_enabled_ = true;
+    for (size_t i = 0; i < xforms_size; ++i) {
+      CreateXformDist(i, i);
+    }
+  }
+}
+
+void RenderState::CreateXformDist(int xi, int k) {
+  size_t xforms_size = genome_.xforms().size();
+
+  double weight_sum = 0;
+  for (size_t i = 0; i < xforms_size; ++i) {
+    double d =  genome_.xforms()[i].weight();
+    if (xi > 0) {
+      // d *= genome_.chaos(xi, i);
+    }
+    if (d < 0) {
+      BOOST_THROW_EXCEPTION(error());
+    }
+    weight_sum += d;
+  }
+
+  if (weight_sum == 0) {
+    BOOST_THROW_EXCEPTION(error());
+  }
+
+  double step = weight_sum / kChooseXformGrain;
+  double t = genome_.xforms()[0].weight();
+  if (xi > 0) {
+    // d *= genome_.chaos(xi, 0);
+  }
+
+  double r = 0;
+  size_t j = 0;
+  for (size_t i = 0; i < kChooseXformGrain; ++i) {
+    while (r >= t) {
+      j++;
+
+      if (xi >= 0) {
+        t += genome_.xforms()[j].weight() /* * genome_.chaos(xi, j) */;
+      } else {
+        t += genome_.xforms()[j].weight();
+      }
+
+      xform_distrib_[k * kChooseXformGrain + i] = j;
+      r += step;
+    }
+  }
+
+}
+
+RenderState::~RenderState() { }
+
+void RenderState::Reseed() {
+  xyc_[0] = crndDist(rng);
+  xyc_[1] = crndDist(rng);
+  xyc_[2] = crndDist(rng);
+}
+
+void RenderState::Iterate() {
+  int consequent_errors_ = 0;
+  boost::scoped_array<double> xyc2(new double[3]);
+
+  for (int i = -20; i < 1000000; ++i) {
+    const Xform& xform = PickRandomXform();
+    if (!xform.Apply(xyc_.get(), xyc_.get())) {
+      ++consequent_errors_;
+    }
+
+    if (consequent_errors_ < 5) {
+      continue;
+    }
+
+    consequent_errors_ = 0;
+
+    if (i <= 0) {
+      continue;
+    }
+
+    double opacity = xform.opacity();
+
+    if (opacity != 1.0) {
+      opacity = AdjustPercentage(opacity);
+    }
+
+    if (genome_.has_final_xform()) {
+      genome_.final_xform().Apply(xyc_.get(), xyc2.get());
+    } else {
+      xyc2[0] = xyc_[0];
+      xyc2[1] = xyc_[1];
+      xyc2[2] = xyc_[2];
+    }
+
+    //TODO: rotate
+    {
+      // todo: use round
+      int x1 = (int) ((xyc2[0] - view_left_) *
+          buffer_->width() / view_width_ + 0.5);
+      int y1 = (int) ((xyc2[1] - view_bottom_) *
+          buffer_->height() / view_height_ + 0.5);
+
+      buffer_->Update(
+          x1,
+          y1,
+          genome_.color((int) std::min(std::max(xyc2[2] * 255.0, 0.0), 255.0)),
+          opacity);
+    }
+  }
+}
+
+const Xform& RenderState::PickRandomXform() {
+  size_t k;
+
+  boost::random::uniform_int_distribution<> randomGrain(
+      0, kChooseXformGrain - 1);
+
+  if (chaos_enabled_) {
+    k = xform_distrib_[last_xform_ * kChooseXformGrain +
+      randomGrain(rng)];
+    last_xform_ = k + 1;
+  } else {
+    k = xform_distrib_[randomGrain(rng)];
+  }
+
+  return genome_.xforms()[k];
 }
 
 void FlamRender::UpdateHistogram(const RenderState& s) {
@@ -49,7 +229,7 @@ void FlamRender::Render(const Genome& definition) {
     boost::random::uniform_int_distribution<> fnDist(0, definition.number_of_functions_ - 1);
     Unlock();
 
-    RenderState s;    
+    RenderState s;
     s.x = crndDist(rng);
     s.y = crndDist(rng);
     s.r = 0;

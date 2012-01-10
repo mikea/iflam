@@ -6,7 +6,11 @@ set(CMAKE_CXX_FLAGS "-g -Wall -O0")
 add_definitions(-DTIXML_USE_STL)
 
 project(iflam)
-add_executable(iflam genome.cpp main.cpp
+add_executable(iflam
+  genome.cpp
+  renderer.cpp
+  main.cpp
+  #########################
   tinyxml/tinyxml.cpp
   tinyxml/tinystr.cpp
   tinyxml/tinyxmlerror.cpp

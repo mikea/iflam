@@ -11,7 +11,9 @@
 
 class TiXmlElement;
 
-struct parse_error : virtual boost::exception, virtual std::exception { };
+struct error : virtual boost::exception, virtual std::exception { };
+
+typedef boost::array<double, 3> Color;
 
 class Xform : boost::noncopyable {
   public:
@@ -21,15 +23,19 @@ class Xform : boost::noncopyable {
 
     void Parse(const TiXmlElement* element);
 
+    double weight() const { return weight_; }
+    double opacity() const { return opacity_; }
+
+    bool Apply(double* in, double* out) const;
   private:
 
     boost::array<double, 6> coefs_;
     boost::array<double, kVariationsCount> variations_;
     double color_;
     double color_speed_;
-    double animate_;  // is it bool?
-    double weight_;
     double opacity_;
+    double weight_;
+    double animate_;  // is it bool?
     double julian_dist_;
     double julian_power_;
     double perspective_angle_;
@@ -46,10 +52,28 @@ public:
 
     void Randomize();
 
-    // Throws ReadError.
+    // Throws error.
     void Read(std::string file_name);
+
+    const boost::array<double, 2> center() const { return center_; }
+    double pixels_per_unit() const { return pixels_per_unit_; }
+    double zoom() const { return zoom_; }
+    const boost::ptr_vector<Xform>& xforms() const { return xforms_; }
+    bool is_chaos_enabled() const { return true; }  // todo: chaos
+    bool has_final_xform() const { return final_xform_.get() != NULL; }
+    const Xform& final_xform() const { return *final_xform_; }
+    const Color& color(size_t c) const { return colors_[c]; }
+
 private:
-    typedef boost::array<double, 3> Color;
+    double brightness_;
+    double contrast_;
+    double gamma_;
+    double gamma_threshold_;
+    int passes_;
+    double pixels_per_unit_;
+    int quality_;
+    double vibrancy_;
+    double zoom_;
 
     std::string name_;
     double time_;
@@ -64,16 +88,10 @@ private:
     std::string filter_shape_;
     std::string temporal_filter_type_;
     int temporal_filter_width_;
-    int quality_;
-    int passes_;
     int temporal_samples_;
-    double brightness_;
-    double gamma_;
-    double vibrancy_;
     double estimator_radius_;
     double estimator_minimum_;
     double estimator_curve_;
-    double gamma_threshold_;
     std::string palette_mode_;
     std::string interpolation_type_;
     std::string url_;

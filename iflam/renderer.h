@@ -3,9 +3,55 @@
 
 #include <vector>
 #include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/utility.hpp>
 
 class Genome;
+
+class RenderBuffer {
+  public:
+    RenderBuffer(size_t width, size_t height);
+    ~RenderBuffer();
+
+    size_t height() const { return height_; }
+    size_t width() const { return width_; }
+
+    void Update(int x, int y, const Color& c, double opacity);
+  private:
+    const size_t width_;
+    const size_t height_;
+    boost::scoped_array<double> accum_;
+};
+
+class RenderState {
+  public:
+    RenderState(const Genome& genome, RenderBuffer* buffer);
+    ~RenderState();
+
+    void Iterate();
+  private:
+    void Reseed();
+
+    void CreateXformDist(int xi, int xf);
+    const Xform& PickRandomXform();
+
+    const Genome& genome_;
+    RenderBuffer* buffer_;
+
+    boost::scoped_array<double> xyc_;
+
+    const double scale_;
+    const double ppux_;
+    const double ppuy_;
+    const double view_left_;
+    const double view_bottom_;
+    const double view_height_;
+    const double view_width_;
+
+    boost::scoped_array<int> xform_distrib_;  // xforms.size() * kChooseXformGrain
+    bool chaos_enabled_;
+    size_t last_xform_;
+};
 
 class PixelInterface {
 public:

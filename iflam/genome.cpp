@@ -10,12 +10,103 @@ using std::string;
 using std::vector;
 using boost::scoped_ptr;
 
+namespace {
+  bool BadValue(double x) {
+    return (x != x) || (x > 1e10) || (x < -1e10);;
+  }
+}
 
-Xform::Xform() { }
+struct apply_error : virtual error { };
+
+Xform::Xform()
+ : color_speed_(0.5),
+   opacity_(1.0),
+   weight_(1.0) { }
 
 Xform::~Xform() { }
 
-Genome::Genome() {
+bool Xform::Apply(double* in, double* out) const {
+  double x = in[0];
+  double y = in[1];
+  double cc = in[2];
+
+  const double a = coefs_[0];
+  const double b = coefs_[2];
+  const double c = coefs_[4];
+  const double d = coefs_[1];
+  const double e = coefs_[3];
+  const double f = coefs_[5];
+
+  { // Affine transform.
+    double x1, y1;
+    x1 = x * a + y * b + c;
+    y1 = x * d + y * e + f;
+    x = x1;
+    y = y1;
+  }
+
+  {  // Nonlinear transform
+    double x1 = 0;
+    double y1 = 0;
+    const double r2 = x * x + y * y;
+    const double r = sqrt(r2);
+
+    for (size_t var; var < variations_.size(); ++var) {
+      const double w = variations_[var];
+
+      if (w == 0) {
+        continue;
+      }
+
+      double dx;
+      double dy;
+
+      switch (var) {
+        default:
+          BOOST_THROW_EXCEPTION(apply_error());
+          break;
+      }
+
+      x1 += w * dx;
+      y1 += w * dy;
+    }
+
+    x = x1;
+    y = y1;
+  }
+
+  if (post_.get() != NULL) {
+    double x1, y1;
+    const boost::array<double, 6>& post = *post_;
+    x1 = x * post[0] + y * post[2] + post[4];
+    y1 = x * post[1] + y * post[3] + post[5];
+    x = x1;
+    y = y1;
+  }
+
+  cc = cc * (1 - color_speed_) + color_ * color_speed_;
+
+  bool good = true;
+  if (BadValue(x) || BadValue(y)) {
+    abort();
+  }
+
+  out[0] = x;
+  out[1] = y;
+  out[2] = cc;
+  return good;
+}
+
+Genome::Genome()
+ : brightness_(1),
+   contrast_(1),
+   gamma_ (4),
+   gamma_threshold_(0.01),
+   passes_ (1),
+   pixels_per_unit_(50),
+   quality_(1),
+   vibrancy_(1),
+   zoom_(1) {
 }
 
 Genome::~Genome() {
@@ -27,6 +118,7 @@ Genome::~Genome() {
 
 typedef boost::error_info<struct tag_error_message, std::string> error_message;
 
+struct parse_error : virtual error { };
 struct vector_parse_error : virtual parse_error { };
 struct xml_parse_error : virtual parse_error { };
 struct unsupported_attribute_error : virtual parse_error { };
@@ -280,7 +372,7 @@ void Genome::Read(string file_name) {
       }
       colors_[index] = color;
     } else {
-      BOOST_THROW_EXCEPTION(unsupported_element_error() 
+      BOOST_THROW_EXCEPTION(unsupported_element_error()
           << error_message("Unsupported element: " + element_name));
     }
   }
