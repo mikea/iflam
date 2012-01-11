@@ -1,5 +1,6 @@
 #include "common.h"
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <sys/time.h>
 
 namespace {
 boost::random::uniform_real_distribution<> rndDist(0, 1);
@@ -19,4 +20,31 @@ Float Random::crnd() {
 
 bool Random::brnd() {
   return brndDist(rng_) == 1;
+}
+
+
+Stopwatch::Stopwatch(const std::string& message, long count)
+  : message_(message),
+    count_(count),
+    start_time_(Stopwatch::WallTime()) {
+}
+
+Stopwatch::~Stopwatch() {
+  double total_time = WallTime() - start_time_;
+
+  std::cout << message_ << " " << total_time << " sec";
+  if (count_ > 0) {
+    std::cout << " (" << (count_ / total_time) << "/sec)";
+  }
+  std::cout << "\n";
+}
+
+double Stopwatch::WallTime() {
+  timeval tv;
+
+  if (gettimeofday(&tv, NULL)) {
+    BOOST_THROW_EXCEPTION(error());
+  }
+
+  return double(tv.tv_sec) + tv.tv_usec / 1e6;
 }

@@ -39,5 +39,18 @@ class Random {
     static boost::random::mt19937 rng_;
 };
 
+
+class Stopwatch {
+  public:
+    Stopwatch(const std::string& name, long count = -1);
+    ~Stopwatch();
+
+    static double WallTime();
+  private:
+    std::string message_;
+    long count_;
+    double start_time_;
+};
+
 #endif
 

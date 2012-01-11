@@ -49,11 +49,18 @@ int main(int argc, char *argv[]) {
 
   RenderBuffer buffer(genome, width, height);
   RenderState state(genome, &buffer);
-  state.Iterate(iterations);
+  {
+    Stopwatch sw("Iterations took:", iterations);
+    state.Iterate(iterations);
+  }
+
 
   boost::gil::rgb8_image_t img(width, height);
   boost::gil::rgb8_view_t v(view(img));
-  buffer.Render(&v);
+  {
+    Stopwatch sw("Rendering took:");
+    buffer.Render(&v);
+  }
   boost::gil::png_write_view("render.png", v);
 
   return 0;
