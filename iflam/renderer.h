@@ -17,7 +17,7 @@ class RenderBuffer {
     size_t height() const { return height_; }
     size_t width() const { return width_; }
 
-    void Update(int x, int y, const Color& c, double opacity);
+    void Update(int x, int y, const Color& c, Float opacity);
 
     void Render(boost::gil::rgb8_view_t* image);
   private:
@@ -25,12 +25,12 @@ class RenderBuffer {
     const size_t width_;
     const size_t height_;
 
-    const double scale_;  // duplicated with render state
-    const double ppux_;  // duplicated with render state
-    const double ppuy_;  // duplicated with render state
+    const Float scale_;  // duplicated with render state
+    const Float ppux_;  // duplicated with render state
+    const Float ppuy_;  // duplicated with render state
 
     size_t samples_;
-    boost::scoped_array<double> accum_;
+    boost::scoped_array<Float> accum_;
 };
 
 class RenderState {
@@ -48,17 +48,17 @@ class RenderState {
     const Genome& genome_;
     RenderBuffer* buffer_;
 
-    array<double, 3> xyc_;
+    array<Float, 3> xyc_;
 
-    const double scale_;
-    const double ppux_;
-    const double ppuy_;
-    const double genome_height_;
-    const double genome_width_;
-    const double view_left_;
-    const double view_bottom_;
-    const double view_height_;
-    const double view_width_;
+    const Float scale_;
+    const Float ppux_;
+    const Float ppuy_;
+    const Float genome_height_;
+    const Float genome_width_;
+    const Float view_left_;
+    const Float view_bottom_;
+    const Float view_height_;
+    const Float view_width_;
 
     boost::scoped_array<int> xform_distrib_;  // xforms.size() * kChooseXformGrain
     bool chaos_enabled_;

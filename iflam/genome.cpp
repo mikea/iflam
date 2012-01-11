@@ -11,7 +11,7 @@ using std::vector;
 using boost::scoped_ptr;
 
 namespace {
-  bool BadValue(double x) {
+  bool BadValue(Float x) {
     return (x != x) || (x > 1e10) || (x < -1e10);;
   }
 
@@ -128,20 +128,20 @@ Xform::Xform()
 
 Xform::~Xform() { }
 
-bool Xform::Apply(double* in, double* out) const {
-  double x = in[0];
-  double y = in[1];
-  double cc = in[2];
+bool Xform::Apply(Float* in, Float* out) const {
+  Float x = in[0];
+  Float y = in[1];
+  Float cc = in[2];
 
-  const double a = coefs_[0];
-  const double b = coefs_[2];
-  const double c = coefs_[4];
-  const double d = coefs_[1];
-  const double e = coefs_[3];
-  const double f = coefs_[5];
+  const Float a = coefs_[0];
+  const Float b = coefs_[2];
+  const Float c = coefs_[4];
+  const Float d = coefs_[1];
+  const Float e = coefs_[3];
+  const Float f = coefs_[5];
 
   { // Affine transform.
-    double x1, y1;
+    Float x1, y1;
     x1 = x * a + y * b + c;
     y1 = x * d + y * e + f;
     x = x1;
@@ -149,21 +149,21 @@ bool Xform::Apply(double* in, double* out) const {
   }
 
   {  // Nonlinear transform
-    double x1 = 0;
-    double y1 = 0;
-    const double r2 = x * x + y * y;
-    const double r = sqrt(r2);
+    Float x1 = 0;
+    Float y1 = 0;
+    const Float r2 = x * x + y * y;
+    const Float r = sqrt(r2);
 
     for (size_t i = 0; i < non_zero_variations_.size(); ++i) {
       size_t var = non_zero_variations_[i];
-      const double w = variations_[var];
+      const Float w = variations_[var];
 
       if (w == 0) {
         continue;
       }
 
-      double dx;
-      double dy;
+      Float dx;
+      Float dy;
 
       switch (var) {
         default:
@@ -203,59 +203,59 @@ bool Xform::Apply(double* in, double* out) const {
         }
         case 5: // polar
         {
-          double theta = atan2(x, y);
+          Float theta = atan2(x, y);
           dx = theta / kPI;
           dy = r - 1;
           break;
         }
         case 6: // handkerchief
         {
-          double theta = atan2(x, y);
+          Float theta = atan2(x, y);
           dx = r * sin(theta + r);
           dy = r * cos(theta - r);
           break;
         }
         case 7: // heart
         {
-          double theta = atan2(x, y);
+          Float theta = atan2(x, y);
           dx = r * sin(theta * r);
           dy = - r * cos(theta * r);
           break;
         }
         case 8: // disc
         {
-          double theta = atan2(x, y);
+          Float theta = atan2(x, y);
           dx = theta * sin(kPI * r) / kPI;
           dy = theta * cos(kPI * r) / kPI;
           break;
         }
         case 10: // hyperbolic
         {
-          double theta = atan2(x, y);
+          Float theta = atan2(x, y);
           dx = sin(theta)/ r;
           dy = r * cos(theta);
           break;
         }
         case 11: // diamond
         {
-          double theta = atan2(x, y);
+          Float theta = atan2(x, y);
           dx = sin(theta) * cos(r);
           dy = cos(theta) * sin(r);
           break;
         }
         case 12: // ex
         {
-          double theta = atan2(x, y);
-          double p0 = sin(theta + r);
-          double p1 = cos(theta - r);
+          Float theta = atan2(x, y);
+          Float p0 = sin(theta + r);
+          Float p1 = cos(theta - r);
           dx = r * (p0*p0*p0 + p1 * p1 * p1);
           dy = r * (p0*p0*p0 - p1 * p1 * p1);
           break;
         }
         case 13: // julia
         {
-          double theta = atan2(x, y);
-          double omega = Random::brnd() ? 0 : kPI;
+          Float theta = atan2(x, y);
+          Float omega = Random::brnd() ? 0 : kPI;
           dx = sqrt(r) * cos(theta / 2 + omega);
           dy = sqrt(r) * sin(theta / 2 + omega);
           break;
@@ -283,17 +283,17 @@ bool Xform::Apply(double* in, double* out) const {
         break;
         case 21: // rings
         {
-          double theta = atan2(x, y);
-          double c2 = c * c;
-          double k = fmod(r + c2, 2 * c2) - c2 + r * (1 - c2);
+          Float theta = atan2(x, y);
+          Float c2 = c * c;
+          Float k = fmod(r + c2, 2 * c2) - c2 + r * (1 - c2);
           dx = k * cos(theta);
           dy = k * sin(theta);
           break;
         }
         case 22: // fan
         {
-          double theta = atan2(x, y);
-          double t = kPI * c * c;
+          Float theta = atan2(x, y);
+          Float t = kPI * c * c;
           if (fmod(theta + f, t) > t / 2) {
             dx = r * cos (theta - t/2);
             dy = r * sin (theta - t/2);
@@ -305,9 +305,9 @@ bool Xform::Apply(double* in, double* out) const {
         }
         case 26: // rings2
         {
-          double theta = atan2(x, y);
-          double p = rings2_val_ * rings2_val_;
-          double t = r - 2*p*floor((r + p) / (2 * p)) + r* (1-p);
+          Float theta = atan2(x, y);
+          Float p = rings2_val_ * rings2_val_;
+          Float t = r - 2*p*floor((r + p) / (2 * p)) + r* (1-p);
           dx = t * sin(theta);
           dy = t * cos(theta);
           break;
@@ -326,45 +326,45 @@ bool Xform::Apply(double* in, double* out) const {
         break;
         case 30: // perspective
         {
-          double p1 = perspective_angle_;
-          double p2 = perspective_dist_;
+          Float p1 = perspective_angle_;
+          Float p2 = perspective_dist_;
           dx = p2 * x / (p2 - y * sin(p1));
           dy = p2 * y * cos(p1) / (p2 - y * sin(p1));
           break;
         }
         case 32: // julian
         {
-          double phi = atan2(y, x);
-          double p1 = julian_power_;
-          double p2 = julian_dist_;
-          double p3 = floor(abs(p1) * Random::rnd());
-          double t = (phi + 2 * kPI * p3) / p1;
-          double z = pow(r, p2 / p1);
+          Float phi = atan2(y, x);
+          Float p1 = julian_power_;
+          Float p2 = julian_dist_;
+          Float p3 = floor(abs(p1) * Random::rnd());
+          Float t = (phi + 2 * kPI * p3) / p1;
+          Float z = pow(r, p2 / p1);
           dx = z * cos(t);
           dy = z * sin(t);
           break;
         }
         case 34: // blur
         {
-          double xi1 = Random::rnd();
-          double xi2 = Random::rnd();
+          Float xi1 = Random::rnd();
+          Float xi2 = Random::rnd();
           dx = xi1 * cos(2 * kPI * xi2);
           dy = xi1 * sin(2 * kPI * xi2);
           break;
         }
         case 36:  // radial_blur
         {
-          double phi = atan2(y, x);
-          double p1 = radial_blur_angle_ * kPI / 2;
-          double t1 = w * (Random::rnd() + Random::rnd() + Random::rnd() + Random::rnd() - 2);
-          double t2 = phi + t1 * sin(p1);
-          double t3 = t1 * cos(p1) - 1;
+          Float phi = atan2(y, x);
+          Float p1 = radial_blur_angle_ * kPI / 2;
+          Float t1 = w * (Random::rnd() + Random::rnd() + Random::rnd() + Random::rnd() - 2);
+          Float t2 = phi + t1 * sin(p1);
+          Float t3 = t1 * cos(p1) - 1;
           dx = (r * cos(t2) + t3 * x) / w;
           dy = (r * sin(t2) + t3 * y) / w;
         }
         case 45:  // blade
         {
-          double xi = Random::rnd();
+          Float xi = Random::rnd();
           dx = x * (cos(xi * r * w) + sin(xi * r * w));
           dy = x * (cos(xi * r * w) - sin(xi * r * w));
         }
@@ -384,8 +384,8 @@ bool Xform::Apply(double* in, double* out) const {
   }
 
   if (post_.get() != NULL) {
-    double x1, y1;
-    const array<double, 6>& post = *post_;
+    Float x1, y1;
+    const array<Float, 6>& post = *post_;
     x1 = x * post[0] + y * post[2] + post[4];
     y1 = x * post[1] + y * post[3] + post[5];
     x = x1;
@@ -480,7 +480,7 @@ void Genome::Read(string file_name) {
     } else if (attr_name == "size") {
       ParseArray<int, 2>(attr->ValueStr(), &size_);
     } else if (attr_name == "center") {
-      ParseArray<double, 2>(attr->ValueStr(), &center_);
+      ParseArray<Float, 2>(attr->ValueStr(), &center_);
     } else if (attr_name == "scale") {
       ParseScalar(attr->ValueStr(), &pixels_per_unit_);
     } else if (attr_name == "rotate") {
@@ -502,7 +502,7 @@ void Genome::Read(string file_name) {
     } else if (attr_name == "temporal_samples") {
       ParseScalar(attr->ValueStr(), &temporal_samples_);
     } else if (attr_name == "background") {
-      ParseArray<double, 3>(attr->ValueStr(), &background_);
+      ParseArray<Float, 3>(attr->ValueStr(), &background_);
     } else if (attr_name == "brightness") {
       ParseScalar(attr->ValueStr(), &brightness_);
     } else if (attr_name == "gamma") {
@@ -554,7 +554,7 @@ void Genome::Read(string file_name) {
       swap(xform, final_xform_);
     } else if (element_name == "color") {
       size_t index = 0;
-      array<double, 3> color;
+      array<Float, 3> color;
 
       for (const TiXmlAttribute* attr = e->FirstAttribute();
           attr != NULL;
@@ -564,7 +564,7 @@ void Genome::Read(string file_name) {
         if (attr_name == "index") {
           ParseScalar(attr->ValueStr(), &index);
         } else if (attr_name == "rgb") {
-          ParseArray<double, 3>(attr->ValueStr(), &color);
+          ParseArray<Float, 3>(attr->ValueStr(), &color);
         } else {
           BOOST_THROW_EXCEPTION(unsupported_attribute_error()
               << error_message("Unsupported attribute: " + attr_name + "=\"" +
@@ -595,11 +595,11 @@ void Xform::Parse(const TiXmlElement* element) {
     const string attr_name(attr->Name());
 
     if (attr_name == "coefs") {
-      ParseArray<double, 6>(attr->ValueStr(), &coefs_);
+      ParseArray<Float, 6>(attr->ValueStr(), &coefs_);
     } else if (attr_name == "color") {
       ParseScalar(attr->ValueStr(), &color_);
     } else if (attr_name == "symmetry") {
-      double symmetry;
+      Float symmetry;
       ParseScalar(attr->ValueStr(), &symmetry);
       color_speed_ = (1 - symmetry) / 2;
       animate_ = symmetry > 0 ? 0 : 1;
@@ -624,8 +624,8 @@ void Xform::Parse(const TiXmlElement* element) {
     } else if (attr_name == "rings2_val") {
       ParseScalar(attr->ValueStr(), &rings2_val_);
     } else if (attr_name == "post") {
-      post_.reset(new array<double, 6>);
-      ParseArray<double, 6>(attr->ValueStr(), post_.get());
+      post_.reset(new array<Float, 6>);
+      ParseArray<Float, 6>(attr->ValueStr(), post_.get());
     } else {
       bool found = false;
       for (size_t i = 0; i < variations_.size(); ++i) {

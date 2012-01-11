@@ -8,8 +8,10 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
+// type definition
+typedef double Float;
 
-// Initializing array
+// Initialized array
 template<typename T, std::size_t N>
 class array : public boost::array<T, N> {
   public:
@@ -18,16 +20,20 @@ class array : public boost::array<T, N> {
     }
 };
 
+typedef array<Float, 3> Color;
+
+// exceptions
 struct error : virtual boost::exception, virtual std::exception { };
 typedef boost::error_info<struct tag_error_message, std::string> error_message;
 
-const double kPI = boost::math::constants::pi<double>();
-const double kEpsilon = 1e-10;
+// constants
+const Float kPI = boost::math::constants::pi<Float>();
+const Float kEpsilon = 1e-10;
 
 class Random {
   public:
-    static double rnd();
-    static double crnd();
+    static Float rnd();
+    static Float crnd();
     static bool brnd();
 
     static boost::random::mt19937 rng_;

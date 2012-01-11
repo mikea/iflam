@@ -9,11 +9,11 @@ boost::random::uniform_int_distribution<> brndDist(0, 1);
 
 boost::random::mt19937 Random::rng_(std::time(0));
 
-double Random::rnd() {
+Float Random::rnd() {
   return rndDist(rng_);
 }
 
-double Random::crnd() {
+Float Random::crnd() {
   return crndDist(rng_);
 }
 

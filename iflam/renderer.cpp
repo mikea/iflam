@@ -6,16 +6,16 @@ namespace {
 const size_t kVLen = 6;
 const size_t kFLen = 6 + kVLen;
 const size_t kChooseXformGrain = 16384;
-const double kGamma = 2.5;
-const double kPrefilterWhite = 255;
+const Float kGamma = 2.5;
+const Float kPrefilterWhite = 255;
 
-void assertSane(double dx) {
+void assertSane(Float dx) {
     assert(!boost::math::isnan(dx));
     assert(dx < 1e20 && dx > -1e20);
     assert(dx > 1e-20 || dx < -1e-20);
 }
 
-double AdjustPercentage(double p) {
+Float AdjustPercentage(Float p) {
   if (p == 0) {
     return p;
   } else {
@@ -23,8 +23,8 @@ double AdjustPercentage(double p) {
   }
 }
 
-void rgb2hsv(double* rgb, double* hsv) {
-  double rd, gd, bd, h, s, v, max, min, del, rc, gc, bc;
+void rgb2hsv(Float* rgb, Float* hsv) {
+  Float rd, gd, bd, h, s, v, max, min, del, rc, gc, bc;
 
   rd = rgb[0];
   gd = rgb[1];
@@ -70,11 +70,11 @@ void rgb2hsv(double* rgb, double* hsv) {
   hsv[1] = s;
   hsv[2] = v;
 }
-void hsv2rgb(double* hsv, double* rgb) {
-  double h = hsv[0], s = hsv[1], v = hsv[2];
+void hsv2rgb(Float* hsv, Float* rgb) {
+  Float h = hsv[0], s = hsv[1], v = hsv[2];
   int j;
-  double rd, gd, bd;
-  double f, p, q, t;
+  Float rd, gd, bd;
+  Float f, p, q, t;
 
   while (h >= 6.0) h = h - 6.0;
   while (h < 0.0) h = h + 6.0;
@@ -127,10 +127,10 @@ void hsv2rgb(double* hsv, double* rgb) {
   rgb[2] = bd;
 }
 
-double CalcAlpha(double density, double gamma, double linearRange, double linRangePowGamma) {
+Float CalcAlpha(Float density, Float gamma, Float linearRange, Float linRangePowGamma) {
   if (density > 0) {
     if (density < linearRange) {
-      double frac = density / linearRange;
+      Float frac = density / linearRange;
       return (1.0 - frac) * density * linRangePowGamma + frac * pow(density, gamma);
     } else {
       return pow(density, gamma);
@@ -140,7 +140,7 @@ double CalcAlpha(double density, double gamma, double linearRange, double linRan
   }
 }
 
-void CalcNewRgb(double* rgb, double* newRgb, double ls, double highpow) {
+void CalcNewRgb(Float* rgb, Float* newRgb, Float ls, Float highpow) {
   if (ls == 0.0 || (rgb[0] == 0.0 && rgb[1] == 0.0 && rgb[2] == 0.0)) {
     newRgb[0] = 0.0;
     newRgb[1] = 0.0;
@@ -149,10 +149,10 @@ void CalcNewRgb(double* rgb, double* newRgb, double ls, double highpow) {
   }
 
   /* Identify the most saturated channel */
-  double maxA = -1.0;
-  double maxC = 0;
+  Float maxA = -1.0;
+  Float maxC = 0;
   for (int i = 0; i < 3; i++) {
-    double a = ls * (rgb[i] / kPrefilterWhite);
+    Float a = ls * (rgb[i] / kPrefilterWhite);
     if (a > maxA) {
       maxA = a;
       maxC = rgb[i] / kPrefilterWhite;
@@ -162,13 +162,13 @@ void CalcNewRgb(double* rgb, double* newRgb, double ls, double highpow) {
   /* If a channel is saturated and we have a non-negative highlight power */
   /* modify the color to prevent hue shift                                */
   if (maxA > 255 && highpow >= 0.0) {
-    double newls = 255.0 / maxC;
+    Float newls = 255.0 / maxC;
     /* Calculate the max-value color (ranged 0 - 1) */
     for (int i = 0; i < 3; i++)
       newRgb[i] = newls * (rgb[i] / kPrefilterWhite) / 255.0;
 
     /* Reduce saturation by the lsratio */
-    boost::scoped_array<double> newHsv(new double[3]);
+    boost::scoped_array<Float> newHsv(new Float[3]);
     rgb2hsv(newRgb, newHsv.get());
     newHsv[1] *= pow(newls / ls, highpow);
     hsv2rgb(newHsv.get(), newRgb);
@@ -177,8 +177,8 @@ void CalcNewRgb(double* rgb, double* newRgb, double ls, double highpow) {
       newRgb[i] *= 255.0;
     }
   } else {
-    double newLs = 255.0 / maxC;
-    double adjHlp = -highpow;
+    Float newLs = 255.0 / maxC;
+    Float adjHlp = -highpow;
     if (adjHlp > 1)
       adjHlp = 1;
     if (maxA <= 255)
@@ -201,13 +201,13 @@ RenderBuffer::RenderBuffer(const Genome& genome, size_t width, size_t height)
     ppux_(genome_.pixels_per_unit() * scale_),
     ppuy_(genome_.pixels_per_unit() * scale_),
     samples_(0),
-    accum_(new double[width * height * 4]) { }
+    accum_(new Float[width * height * 4]) { }
 
 RenderBuffer::~RenderBuffer() { }
 
 
 void RenderBuffer::Update(int x, int y,
-    const Color& color, double opacity) {
+    const Color& color, Float opacity) {
   if (x < 0 || x >= width_ || y < 0 || y >= height_) {
     return;
   }
@@ -229,64 +229,64 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
   }
 
   int vib_gam_n = 1;
-  double vibrancy = genome_.vibrancy();
+  Float vibrancy = genome_.vibrancy();
   vibrancy /= vib_gam_n;
-  double linrange = genome_.gamma_threshold();
-  double gamma = 1.0 / (genome_.gamma() / vib_gam_n);
-  double highpow = genome_.highlight_power();
+  Float linrange = genome_.gamma_threshold();
+  Float gamma = 1.0 / (genome_.gamma() / vib_gam_n);
+  Float highpow = genome_.highlight_power();
 
   int nbatches = 1; // genome_.nbatches();
-  double oversample = 1.0; // genome.oversample
-  // double sample_density = genome.quality * scale * scale;
-  // double nsamples = sample_density * width * height;
+  Float oversample = 1.0; // genome.oversample
+  // Float sample_density = genome.quality * scale * scale;
+  // Float nsamples = sample_density * width * height;
 
-  double sample_density = ((double) (samples_)) / (width_ * height_);
-  double batch_filter = 1 / nbatches;
+  Float sample_density = ((Float) (samples_)) / (width_ * height_);
+  Float batch_filter = 1 / nbatches;
 
-  double k1 = (genome_.contrast() * genome_.brightness() * kPrefilterWhite *
+  Float k1 = (genome_.contrast() * genome_.brightness() * kPrefilterWhite *
       268.0 * batch_filter) / 256;
-  double area = width_ * height_ / (ppux_ * ppuy_);
-  double sumfilt = 1;
-  double k2 = (oversample * oversample * nbatches) /
+  Float area = width_ * height_ / (ppux_ * ppuy_);
+  Float sumfilt = 1;
+  Float k2 = (oversample * oversample * nbatches) /
     (genome_.contrast() * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
-  double linRangePowGamma = pow(linrange, gamma) / linrange;
+  Float linRangePowGamma = pow(linrange, gamma) / linrange;
 
-  double newrgb[4] = {0, 0, 0, 0};
+  Float newrgb[4] = {0, 0, 0, 0};
 
   for (int y = 0; y < height_; ++y) {
     for (int x = 0; x < width_; ++x) {
       int offset = (x + width_ * y) * 4;
-      double cr = accum_[offset];
-      double cg = accum_[offset + 1];
-      double cb = accum_[offset + 2];
-      double freq = accum_[offset + 3];
+      Float cr = accum_[offset];
+      Float cg = accum_[offset + 1];
+      Float cb = accum_[offset + 2];
+      Float freq = accum_[offset + 3];
 
       if (freq != 0) {
-        double ls = (k1 * log(1.0 + freq * k2)) / freq;
+        Float ls = (k1 * log(1.0 + freq * k2)) / freq;
         freq *= ls;
         cr *= ls;
         cg *= ls;
         cb *= ls;
       }
 
-      double alpha, ls;
+      Float alpha, ls;
 
       if (freq <= 0) {
         alpha = 0.0;
         ls = 0.0;
       } else {
-        double tmp = freq / kPrefilterWhite;
+        Float tmp = freq / kPrefilterWhite;
         alpha = CalcAlpha(tmp, gamma, linrange, linRangePowGamma);
         ls = vibrancy * 256.0 * alpha / tmp;
         if (alpha < 0.0) alpha = 0.0;
         if (alpha > 1.0) alpha = 1.0;
       }
 
-      double t[4] = {cr, cg, cb, freq};
+      Float t[4] = {cr, cg, cb, freq};
       CalcNewRgb(t, newrgb, ls, highpow);
 
       for (int rgbi = 0; rgbi < 3; rgbi++) {
-        double a = newrgb[rgbi];
+        Float a = newrgb[rgbi];
         a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / kPrefilterWhite, gamma);
         a += ((1.0 - alpha) * genome_.background()[rgbi]);
         if (a > 255) a = 255;
@@ -343,9 +343,9 @@ RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
 void RenderState::CreateXformDist(int xi, int k) {
   size_t xforms_size = genome_.xforms().size();
 
-  double weight_sum = 0;
+  Float weight_sum = 0;
   for (size_t i = 0; i < xforms_size; ++i) {
-    double d =  genome_.xforms()[i].weight();
+    Float d =  genome_.xforms()[i].weight();
     if (xi > 0) {
       // d *= genome_.chaos(xi, i);
     }
@@ -359,13 +359,13 @@ void RenderState::CreateXformDist(int xi, int k) {
     BOOST_THROW_EXCEPTION(error());
   }
 
-  double step = weight_sum / kChooseXformGrain;
-  double t = genome_.xforms()[0].weight();
+  Float step = weight_sum / kChooseXformGrain;
+  Float t = genome_.xforms()[0].weight();
   if (xi > 0) {
     // d *= genome_.chaos(xi, 0);
   }
 
-  double r = 0;
+  Float r = 0;
   size_t j = 0;
   for (size_t i = 0; i < kChooseXformGrain; ++i) {
     while (r >= t) {
@@ -394,10 +394,10 @@ void RenderState::Reseed() {
 
 void RenderState::Iterate(int iterations) {
   int consequent_errors_ = 0;
-  array<double, 3> xyc2;
+  array<Float, 3> xyc2;
 
-  double rotate1 = 0;
-  double rotate2 = 0;
+  Float rotate1 = 0;
+  Float rotate2 = 0;
 
   if (genome_.rotate() != 0) {
     rotate1 = cos(genome_.rotate() * 2 * kPI / 360.0);
@@ -421,7 +421,7 @@ void RenderState::Iterate(int iterations) {
       continue;
     }
 
-    double opacity = xform.opacity();
+    Float opacity = xform.opacity();
 
     if (opacity != 1.0) {
       opacity = AdjustPercentage(opacity);
@@ -437,10 +437,10 @@ void RenderState::Iterate(int iterations) {
 
     if (genome_.rotate() != 0) {
       //todo: optimize
-      double x1 = xyc2[0] - genome_.center()[0];
-      double y1 = xyc2[1] - genome_.center()[1];
-      double x = rotate1 * x1 - rotate2 * y1 + genome_.center()[0];
-      double y = rotate2 * x1 + rotate1 * y1 + genome_.center()[1];
+      Float x1 = xyc2[0] - genome_.center()[0];
+      Float y1 = xyc2[1] - genome_.center()[1];
+      Float x = rotate1 * x1 - rotate2 * y1 + genome_.center()[0];
+      Float y = rotate2 * x1 + rotate1 * y1 + genome_.center()[1];
       xyc2[0] = x;
       xyc2[1] = y;
     }
@@ -454,7 +454,8 @@ void RenderState::Iterate(int iterations) {
       buffer_->Update(
           x1,
           y1,
-          genome_.color((int) std::min(std::max(xyc2[2] * 255.0, 0.0), 255.0)),
+          genome_.color((int) std::min(std::max(xyc2[2] * Float(255.0), 
+                Float(0.0)), Float(255.0))),
           opacity);
     }
   }
