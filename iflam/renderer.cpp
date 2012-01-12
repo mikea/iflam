@@ -146,7 +146,7 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
       Float freq = accum_[offset + 3];
 
       if (freq != 0) {
-        Float ls = (k1 * log(0.1 + freq * k2)) / freq;
+        Float ls = (k1 * log(1.0 + freq * k2)) / freq;
         freq *= ls;
         cr *= ls;
         cg *= ls;
