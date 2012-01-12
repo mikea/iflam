@@ -42,13 +42,14 @@ class Random {
 
 class Stopwatch {
   public:
-    Stopwatch(const std::string& name, long count = -1);
+    Stopwatch(const std::string& name, long count = -1, std::string unit = "");
     ~Stopwatch();
 
     static double WallTime();
   private:
     std::string message_;
     long count_;
+    std::string unit_;
     double start_time_;
 };
 

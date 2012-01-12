@@ -23,9 +23,10 @@ bool Random::brnd() {
 }
 
 
-Stopwatch::Stopwatch(const std::string& message, long count)
+Stopwatch::Stopwatch(const std::string& message, long count, std::string unit)
   : message_(message),
     count_(count),
+    unit_(unit == "" ? "it" : unit),
     start_time_(Stopwatch::WallTime()) {
 }
 
@@ -34,7 +35,7 @@ Stopwatch::~Stopwatch() {
 
   std::cout << message_ << " " << total_time << " sec";
   if (count_ > 0) {
-    std::cout << " (" << (count_ / total_time) << "/sec)";
+    std::cout << " (" << (count_ / total_time) << " " << unit_ << "/sec)";
   }
   std::cout << "\n";
 }

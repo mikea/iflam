@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   boost::gil::rgb8_image_t img(width, height);
   boost::gil::rgb8_view_t v(view(img));
   {
-    Stopwatch sw("Rendering took:");
+    Stopwatch sw("Rendering took:", width * height, "px");
     buffer.Render(&v);
   }
   boost::gil::png_write_view("render.png", v);
