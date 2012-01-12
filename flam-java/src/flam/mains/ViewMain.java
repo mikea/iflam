@@ -37,7 +37,7 @@ public class ViewMain {
             public void reset() {
             }
         });
-        flamComponent.setFps(5);
+        flamComponent.setFps(20);
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
         JMenuBar menuBar = new JMenuBar();

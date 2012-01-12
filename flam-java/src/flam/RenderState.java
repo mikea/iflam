@@ -117,31 +117,13 @@ class RenderState {
         int height = buffer.height;
         double[] accum = buffer.accum;
 
-        {
-            Graphics bg = image.getGraphics();
-            bg.setColor(Color.BLACK);
-            bg.fillRect(0, 0, image.getWidth(), image.getHeight());
-        }
-
-        int vib_gam_n = 1;
         double vibrancy = genome.vibrancy;
-        vibrancy /= vib_gam_n;
-        double gamma = 1.0 / (genome.gamma / vib_gam_n);
+        double gamma = 1.0 / (genome.gamma);
         double highpow = genome.highlightPower;
 
-        int nbatches = genome.nbatches;
-        double oversample = 1.0; // genome.oversample
-        // double sample_density = genome.quality * scale * scale;
-        // double nsamples = sample_density * width * height;
-
-        double sample_density = ((double) (samples)) / (width * height);
-        double batch_filter = 1 / nbatches;
-
-        double k1 = (genome.contrast * genome.brightness * PREFILTER_WHITE * 268.0 * batch_filter) / 256;
-        double area = width * height / (ppux * ppuy);
-        double sumfilt = 1;
-        double k2 = (oversample * oversample * nbatches) /
-                (genome.contrast * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
+        double samples_per_unit = ((double) samples) / (ppux * ppuy);
+        double k1 = (genome.contrast * genome.brightness * PREFILTER_WHITE * 268.0) / 256;
+        double k2 = 1.0 / (genome.contrast * samples_per_unit);
 
         int[] line = new int[width];
         double[] newrgb = new double[4];
