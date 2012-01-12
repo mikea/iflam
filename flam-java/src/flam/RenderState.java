@@ -171,45 +171,49 @@ class RenderState {
                 double cb = accum[offset + 2];
                 double freq = accum[offset + 3];
 
+
                 if (freq != 0) {
                     double ls = (k1 * log(1.0 + freq * k2)) / freq;
                     freq *= ls;
                     cr *= ls;
                     cg *= ls;
                     cb *= ls;
-                }
+                    double alpha;
 
-                double alpha, ls;
+                    if (freq <= 0) {
+                        alpha = 0.0;
+                        ls = 0.0;
+                    } else {
+                        double tmp = freq / PREFILTER_WHITE;
+                        alpha = calcAlpha(tmp, gamma, linrange, linRangePowGamma);
+                        ls = vibrancy * 256.0 * alpha / tmp;
+                        if (alpha < 0.0) alpha = 0.0;
+                        if (alpha > 1.0) alpha = 1.0;
+                    }
 
-                if (freq <= 0) {
-                    alpha = 0.0;
-                    ls = 0.0;
+                    double[] t = {cr, cg, cb, freq};
+                    calcNewRgb(t, newrgb, ls, highpow);
+
+                    for (int rgbi = 0; rgbi < 3; rgbi++) {
+                        double a = newrgb[rgbi];
+                        a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / PREFILTER_WHITE, gamma);
+
+                        a += ((1.0 - alpha) * genome.background[rgbi]);
+
+
+                        if (a > 255) a = 255;
+                        if (a < 0) a = 0;
+                        t[rgbi] = a;
+                    }
+
+
+                    t[3] = alpha;
+                    line[x] = ((int) (t[0]) << 16) | ((int) (t[1]) << 8) | (int) (t[2]);
                 } else {
-                    double tmp = freq / PREFILTER_WHITE;
-                    alpha = calcAlpha(tmp, gamma, linrange, linRangePowGamma);
-                    ls = vibrancy * 256.0 * alpha / tmp;
-                    if (alpha < 0.0) alpha = 0.0;
-                    if (alpha > 1.0) alpha = 1.0;
-                }
-
-                double[] t = {cr, cg, cb, freq};
-                calcNewRgb(t, newrgb, ls, highpow);
-
-                for (int rgbi = 0; rgbi < 3; rgbi++) {
-                    double a = newrgb[rgbi];
-                    a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / PREFILTER_WHITE, gamma);
-
-                    a += ((1.0 - alpha) * genome.background[rgbi]);
-
-
-                    if (a > 255) a = 255;
-                    if (a < 0) a = 0;
-                    t[rgbi] = a;
+                    line[x] = ((int) (genome.background[0]) << 16) | ((int) (genome.background[1]) << 8) | (int) (genome.background[2]);
                 }
 
 
-                t[3] = alpha;
-                line[x] = ((int) (t[0]) << 16) | ((int) (t[1]) << 8) | (int) (t[2]);
             }
 
             setLine(image, width, line, y);

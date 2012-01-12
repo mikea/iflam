@@ -112,26 +112,26 @@ void RenderBuffer::Render(Image* image) {
       Float cb = accum_[offset + 2];
       Float freq = accum_[offset + 3];
 
-      if (freq != 0) {
-        Float ls = (k1 * log(1.0 + freq * k2)) / freq;
-        freq *= ls;
-        cr *= ls;
-        cg *= ls;
-        cb *= ls;
+      if (freq == 0) {
+        image->Set(x, y,
+            genome_.background()[0],
+            genome_.background()[1],
+            genome_.background()[2],
+            255);
+        continue;
       }
 
-      Float alpha, ls;
+      Float ls = (k1 * log(1.0 + freq * k2)) / freq;
+      freq *= ls;
+      cr *= ls;
+      cg *= ls;
+      cb *= ls;
 
-      if (freq <= 0) {
-        alpha = 0.0;
-        ls = 0.0;
-      } else {
-        Float tmp = freq / kPrefilterWhite;
-        alpha = pow(tmp, gamma);
-        ls = vibrancy * 256.0 * alpha / tmp;
-        if (alpha < 0.0) alpha = 0.0;
-        if (alpha > 1.0) alpha = 1.0;
-      }
+      Float tmp = freq / kPrefilterWhite;
+      Float alpha = pow(tmp, gamma);
+      ls = vibrancy * 256.0 * alpha / tmp;
+      if (alpha < 0.0) alpha = 0.0;
+      if (alpha > 1.0) alpha = 1.0;
 
       Float t[4] = {cr, cg, cb, freq};
       CalcNewRgb(t, newrgb, ls, highpow);
