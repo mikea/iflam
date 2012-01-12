@@ -28,6 +28,4 @@
     CGContextRef bitmap_context2_;
 }
 
-- (void)computeImage;
-
 @end

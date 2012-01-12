@@ -337,7 +337,7 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           Float phi = atan2(y, x);
           Float p1 = julian_power_;
           Float p2 = julian_dist_;
-          Float p3 = floor(abs(p1) * rnd->rnd());
+          Float p3 = floor(fabs(p1) * rnd->rnd());
           Float t = (phi + 2 * kPI * p3) / p1;
           Float z = pow(r, p2 / p1);
           dx = z * cos(t);

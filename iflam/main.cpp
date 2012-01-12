@@ -14,6 +14,22 @@ void UnhandledExceptionHandler()
    std::cerr << boost::diagnostic_information(boost::current_exception());
 }
 
+class Rgb8Image {
+  public:
+    Rgb8Image(boost::gil::rgb8_view_t* view) : view_(view) { }
+    typedef boost::gil::rgb8_view_t::reference pixel_t_ref;
+
+    void Set(int x, int y, Float r, Float g, Float b, Float a) {
+      pixel_t_ref pixel = (*view_)(x, y);
+      pixel[0] = r;
+      pixel[1] = g;
+      pixel[2] = b;
+    }
+
+  private:
+    boost::gil::rgb8_view_t* view_;
+};
+
 int main(int argc, char *argv[]) {
   std::set_terminate(UnhandledExceptionHandler);
 
@@ -54,27 +70,15 @@ int main(int argc, char *argv[]) {
     state.Iterate(iterations);
   }
 
-  boost::scoped_array<uint8_t> buffer(new uint8_t[width * height * 4]);
-  {
-    Stopwatch sw("Rendering took:", width * height, "px");
-    render_buffer.Render(buffer.get());
-  }
-
-  typedef boost::gil::rgb8_view_t view_t;
-  typedef view_t::reference pixel_t_ref;
-
   boost::gil::rgb8_image_t img(width, height);
   boost::gil::rgb8_view_t v(view(img));
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x) {
-      int offset = (x + (height - y) * width) * 4;
-      pixel_t_ref pixel = v(x, y);
-      pixel[0] = buffer[offset];
-      pixel[1] = buffer[offset + 1];
-      pixel[2] = buffer[offset + 2];
-    }
+
+  {
+    Stopwatch sw("Rendering took:", width * height, "px");
+    Rgb8Image rgb8_image(&v);
+    render_buffer.Render(&rgb8_image);
   }
-  
+
   boost::gil::png_write_view("render.png", v);
 
   return 0;

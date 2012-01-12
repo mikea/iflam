@@ -8,13 +8,14 @@ const size_t kVLen = 6;
 const size_t kFLen = 6 + kVLen;
 const size_t kChooseXformGrain = 16384;
 const Float kGamma = 2.5;
-const Float kPrefilterWhite = 255;
 
 void assertSane(Float dx) {
     assert(!boost::math::isnan(dx));
     assert(dx < 1e20 && dx > -1e20);
     assert(dx > 1e-20 || dx < -1e-20);
 }
+
+}  // namespace
 
 Float AdjustPercentage(Float p) {
   if (p == 0) {
@@ -78,8 +79,6 @@ void CalcNewRgb(Float* rgb, Float* newRgb, Float ls, Float highpow) {
   }
 }
 
-}
-
 RenderBuffer::RenderBuffer(const Genome& genome, size_t width, size_t height)
   : genome_(genome),
     width_(width),
@@ -88,7 +87,9 @@ RenderBuffer::RenderBuffer(const Genome& genome, size_t width, size_t height)
     ppux_(genome_.pixels_per_unit() * scale_),
     ppuy_(genome_.pixels_per_unit() * scale_),
     samples_(0),
-    accum_(new Float[width * height * 4]) { }
+    accum_(new Float[width * height * 4]) {
+  memset(accum_.get(), 0, width * height * 4 * sizeof(Float));
+}
 
 RenderBuffer::~RenderBuffer() { }
 
@@ -106,84 +107,6 @@ void RenderBuffer::Update(int x, int y,
   accum_[offset + 3] += opacity;
   ++samples_;
 }
-
-void RenderBuffer::Render(uint8_t* image) {
-  int vib_gam_n = 1;
-  Float vibrancy = genome_.vibrancy();
-  vibrancy /= vib_gam_n;
-  Float gamma = 1.0 / (genome_.gamma() / vib_gam_n);
-  Float highpow = genome_.highlight_power();
-
-  int nbatches = 1; // genome_.nbatches();
-  Float oversample = 1.0; // genome.oversample
-  // Float sample_density = genome.quality * scale * scale;
-  // Float nsamples = sample_density * width * height;
-
-  Float batch_filter = 1 / nbatches;
-
-  Float k1 = (genome_.contrast() * genome_.brightness() * kPrefilterWhite *
-      268.0 * batch_filter) / 256;
-  Float sumfilt = 1;
-  Float samples_per_unit = Float(samples_) / (ppux_ * ppuy_);
-  Float k2 = (oversample * oversample * nbatches) /
-    (genome_.contrast() * /* WHITE_LEVEL * */ samples_per_unit * sumfilt);
-
-  Float newrgb[4] = {0, 0, 0, 0};
-
-  for (size_t y = 0; y < height_; ++y) {
-    for (size_t x = 0; x < width_; ++x) {
-      size_t offset = (x + width_ * y) * 4;
-      Float cr = accum_[offset];
-      Float cg = accum_[offset + 1];
-      Float cb = accum_[offset + 2];
-      Float freq = accum_[offset + 3];
-
-      if (freq != 0) {
-        Float ls = (k1 * log(1.0 + freq * k2)) / freq;
-        freq *= ls;
-        cr *= ls;
-        cg *= ls;
-        cb *= ls;
-      }
-
-      Float alpha, ls;
-
-      if (freq <= 0) {
-        alpha = 0.0;
-        ls = 0.0;
-      } else {
-        Float tmp = freq / kPrefilterWhite;
-        alpha = pow(tmp, gamma);
-        ls = vibrancy * 256.0 * alpha / tmp;
-        if (alpha < 0.0) alpha = 0.0;
-        if (alpha > 1.0) alpha = 1.0;
-      }
-
-      Float t[4] = {cr, cg, cb, freq};
-      CalcNewRgb(t, newrgb, ls, highpow);
-
-      for (int rgbi = 0; rgbi < 3; rgbi++) {
-        Float a = newrgb[rgbi];
-        a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / kPrefilterWhite, gamma);
-        a += ((1.0 - alpha) * genome_.background()[rgbi]);
-        if (a > 255) a = 255;
-        if (a < 0) a = 0;
-        t[rgbi] = a;
-      }
-
-      t[3] = alpha;
-
-      { // Update image
-        size_t image_offset = (x + width_ * (height_ - y - 1)) * 4;
-        image[image_offset] = uint8_t(t[0]);
-        image[image_offset + 1] = uint8_t(t[1]);
-        image[image_offset + 2] = uint8_t(t[2]);
-        image[image_offset + 3] = 255;
-      }
-    }
-  }
-}
-
 
 RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
   : genome_(genome),

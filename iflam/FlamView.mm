@@ -33,16 +33,18 @@
         bitmap_context_ = NULL;
         delete[] image_data_;
     }
-
+    
     width_ = result.width;
     height_ = result.height;
     image_data_ = result.image;
 
-    size_t bitmapBytesPerRow = width_ * 4;
+    size_t bytes_per_row = width_ * 4;
+    bytes_per_row += (16 - bytes_per_row % 16) % 16;
+    
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    bitmap_context_ = CGBitmapContextCreate(image_data_, width_, height_, 8, bitmapBytesPerRow, colorSpace, kCGImageAlphaNoneSkipLast);
-    // CGColorSpaceRelease(colorSpace);
-    // CGContextSetAllowsAntialiasing(bitmap_context_, FALSE);
+    bitmap_context_ = CGBitmapContextCreate(image_data_, width_, height_, 8, bytes_per_row, colorSpace, kCGImageAlphaNoneSkipLast);
+    
+    CGColorSpaceRelease(colorSpace);
 
     [image_lock_ unlock];
 

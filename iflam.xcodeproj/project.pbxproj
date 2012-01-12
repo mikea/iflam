@@ -430,8 +430,13 @@
 					__ASSERTMACROS__,
 				);
 				GCC_VERSION = 4.2;
-				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
+				HEADER_SEARCH_PATHS = (
+					/Users/aizatsky/Packages/boost_1_48_0,
+					/usr/X11/include/,
+				);
 				INFOPLIST_FILE = "iflam/iflam-Info.plist";
+				LIBRARY_SEARCH_PATHS = /usr/X11/lib/;
+				OTHER_LDFLAGS = "-lpng";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -453,8 +458,13 @@
 					__ASSERTMACROS__,
 				);
 				GCC_VERSION = 4.2;
-				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
+				HEADER_SEARCH_PATHS = (
+					/Users/aizatsky/Packages/boost_1_48_0,
+					/usr/X11/include/,
+				);
 				INFOPLIST_FILE = "iflam/iflam-Info.plist";
+				LIBRARY_SEARCH_PATHS = /usr/X11/lib/;
+				OTHER_LDFLAGS = "-lpng";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
 				USER_HEADER_SEARCH_PATHS = "";
