@@ -8,6 +8,8 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
+void UnhandledExceptionHandler();
+  
 // type definition
 typedef double Float;
 

@@ -26,6 +26,8 @@ class RenderBuffer {
 
     template<typename Image>
     void Render(Image* image);
+
+    const Float* const accum() const { return accum_.get(); }
   private:
     const Genome& genome_;
     const size_t width_;

@@ -8,12 +8,6 @@
 namespace po = boost::program_options;
 using std::string;
 
-void UnhandledExceptionHandler()
-{
-   std::cerr << "Unhandled exception:\n";
-   std::cerr << boost::diagnostic_information(boost::current_exception());
-}
-
 class Rgb8Image {
   public:
     Rgb8Image(boost::gil::rgb8_view_t* view) : view_(view) { }

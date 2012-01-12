@@ -49,3 +49,9 @@ double Stopwatch::WallTime() {
 
   return double(tv.tv_sec) + tv.tv_usec / 1e6;
 }
+
+void UnhandledExceptionHandler() {
+   std::cerr << "Unhandled exception:\n";
+   std::cerr << boost::diagnostic_information(boost::current_exception());
+}
+

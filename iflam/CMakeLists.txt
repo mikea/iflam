@@ -28,7 +28,6 @@ endif()
 
 ########################################################
 
-
 add_library(tinyxml
   tinyxml/tinyxml.cpp
   tinyxml/tinystr.cpp
@@ -70,3 +69,20 @@ if (PNG_FOUND)
   include_directories(${PNG_INCLUDE_DIR})
   target_link_libraries(iflam ${PNG_LIBRARIES})
 endif()
+
+set(ENV{HDF5_ROOT} "$ENV{HOME}/Packages/hdf5")
+
+if (UNIX)
+  find_package(HDF5 1.8.8 REQUIRED)
+endif()
+
+if (HDF5_FOUND)
+  message(STATUS "HDF5 include dir: ${HDF5_INCLUDE_DIR}")
+  message(STATUS "HDF5 libraries: ${HDF5_LIBRARIES}")
+
+  add_executable(hdf5_render hdf5_main.cpp)
+  target_link_libraries(hdf5_render impl
+    ${HDF5_LIBRARIES} ${PNG_LIBRARIES} tinyxml ${Boost_LIBRARIES})
+  include_directories(${HDF5_INCLUDE_DIR})
+endif()
+
