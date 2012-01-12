@@ -160,7 +160,8 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
         alpha = 0.0;
         ls = 0.0;
       } else {
-        alpha = pow(freq / kPrefilterWhite, gamma);
+        Float tmp = freq / kPrefilterWhite;
+        alpha = pow(tmp, gamma);
         ls = vibrancy * 256.0 * alpha / tmp;
         if (alpha < 0.0) alpha = 0.0;
         if (alpha > 1.0) alpha = 1.0;
