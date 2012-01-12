@@ -13,7 +13,6 @@ class RenderState {
     final FlamGenome genome;
     private final RenderBuffer buffer;
     private static final double PREFILTER_WHITE = 255;
-    private final double scale;
     private final double ppux;
     private final double ppuy;
     public long samples = 0;
@@ -27,7 +26,7 @@ class RenderState {
         this.genome = genome;
         this.buffer = buffer;
 
-        scale = pow(2.0, genome.zoom);
+        double scale = pow(2.0, genome.zoom);
         ppux = genome.pixelsPerUnit * scale;
         ppuy = genome.pixelsPerUnit * scale;
 
@@ -41,20 +40,6 @@ class RenderState {
         viewWidth = genomeWidth / ppux;
 
         reseed();
-    }
-
-    // density is the only variable that varies from pixel to pixel.
-    static double calcAlpha(double density, double gamma, double linearRange, double linRangePowGamma) {
-        if (density > 0) {
-            if (density < linearRange) {
-                double frac = density / linearRange;
-                return (1.0 - frac) * density * linRangePowGamma + frac * pow(density, gamma);
-            } else {
-                return pow(density, gamma);
-            }
-        } else {
-            return 0;
-        }
     }
 
     static void calcNewRgb(double[] rgb, double[] newRgb, double ls, double highpow) {
@@ -141,7 +126,6 @@ class RenderState {
         int vib_gam_n = 1;
         double vibrancy = genome.vibrancy;
         vibrancy /= vib_gam_n;
-        double linrange = genome.gammaLinearThreshold;
         double gamma = 1.0 / (genome.gamma / vib_gam_n);
         double highpow = genome.highlightPower;
 
@@ -158,7 +142,6 @@ class RenderState {
         double sumfilt = 1;
         double k2 = (oversample * oversample * nbatches) /
                 (genome.contrast * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
-        double linRangePowGamma = pow(linrange, gamma) / linrange;
 
         int[] line = new int[width];
         double[] newrgb = new double[4];
@@ -166,54 +149,41 @@ class RenderState {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 int offset = (x + width * y) * 4;
-                double cr = accum[offset];
-                double cg = accum[offset + 1];
-                double cb = accum[offset + 2];
                 double freq = accum[offset + 3];
 
-
-                if (freq != 0) {
-                    double ls = (k1 * log(1.0 + freq * k2)) / freq;
-                    freq *= ls;
-                    cr *= ls;
-                    cg *= ls;
-                    cb *= ls;
-                    double alpha;
-
-                    if (freq <= 0) {
-                        alpha = 0.0;
-                        ls = 0.0;
-                    } else {
-                        double tmp = freq / PREFILTER_WHITE;
-                        alpha = calcAlpha(tmp, gamma, linrange, linRangePowGamma);
-                        ls = vibrancy * 256.0 * alpha / tmp;
-                        if (alpha < 0.0) alpha = 0.0;
-                        if (alpha > 1.0) alpha = 1.0;
-                    }
-
-                    double[] t = {cr, cg, cb, freq};
-                    calcNewRgb(t, newrgb, ls, highpow);
-
-                    for (int rgbi = 0; rgbi < 3; rgbi++) {
-                        double a = newrgb[rgbi];
-                        a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / PREFILTER_WHITE, gamma);
-
-                        a += ((1.0 - alpha) * genome.background[rgbi]);
-
-
-                        if (a > 255) a = 255;
-                        if (a < 0) a = 0;
-                        t[rgbi] = a;
-                    }
-
-
-                    t[3] = alpha;
-                    line[x] = ((int) (t[0]) << 16) | ((int) (t[1]) << 8) | (int) (t[2]);
-                } else {
+                if (freq == 0) {
                     line[x] = ((int) (genome.background[0]) << 16) | ((int) (genome.background[1]) << 8) | (int) (genome.background[2]);
+                    continue;
+                }
+
+                double ls = (k1 * log(1.0 + freq * k2)) / freq;
+
+                freq *= ls;
+                double r = accum[offset] * ls;
+                double g = accum[offset + 1] * ls;
+                double b = accum[offset + 2] * ls;
+
+                double tmp = freq / PREFILTER_WHITE;
+                double alpha = pow(tmp, gamma);
+                ls = vibrancy * 256.0 * alpha / tmp;
+                if (alpha < 0.0) alpha = 0.0;
+                if (alpha > 1.0) alpha = 1.0;
+
+                double[] t = {r, g, b, freq};
+                calcNewRgb(t, newrgb, ls, highpow);
+
+                for (int rgbi = 0; rgbi < 3; rgbi++) {
+                    double a = newrgb[rgbi];
+                    a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / PREFILTER_WHITE, gamma);
+                    a += ((1.0 - alpha) * genome.background[rgbi]);
+                    if (a > 255) a = 255;
+                    if (a < 0) a = 0;
+                    t[rgbi] = a;
                 }
 
 
+                t[3] = alpha;
+                line[x] = ((int) (t[0]) << 16) | ((int) (t[1]) << 8) | (int) (t[2]);
             }
 
             setLine(image, width, line, y);
