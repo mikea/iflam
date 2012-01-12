@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 
+project(iflam)
+
 #set(CMAKE_CXX_COMPILER clang++)
 #set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_FLAGS "-g -Wall -O3")
+set(CMAKE_CXX_FLAGS "-g -Wall -O0")
 add_definitions(-DTIXML_USE_STL)
 
 ########################################################
@@ -10,6 +12,7 @@ add_definitions(-DTIXML_USE_STL)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_DEBUG ON)
 set(BOOST_ROOT "$ENV{HOME}/Packages/boost_1_48_0")
+set(BOOST_LIBRARYDIR "${BOOST_ROOT}/stage/lib")
 find_package(Boost 1.48 REQUIRED exception program_options unit_test_framework)
 
 if (Boost_FOUND)
@@ -22,7 +25,6 @@ endif()
 
 ########################################################
 
-project(iflam)
 
 add_library(tinyxml
   tinyxml/tinyxml.cpp

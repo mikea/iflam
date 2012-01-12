@@ -7,14 +7,27 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "renderer.h"
 #import "genome.h"
 
 
 @interface FlamView : NSView {
 @private
-    CGContextRef bitmapContext;
-    Genome * def;
+    NSLock* image_lock_;
+    
+    NSOperationQueue* operation_queue_;
+    Genome *genome_;
+
+    
+    size_t width_;
+    size_t height_;
+    
+    uint8_t* image_data_;
+    CGContextRef bitmap_context_;
+
+    uint8_t* image_data2_;
+    CGContextRef bitmap_context2_;
 }
+
+- (void)computeImage;
 
 @end

@@ -8,7 +8,7 @@ boost::random::uniform_real_distribution<> crndDist(-1, 1);
 boost::random::uniform_int_distribution<> brndDist(0, 1);
 }
 
-boost::random::mt19937 Random::rng_(std::time(0));
+Random::Random() : rng_(std::time(0)) { }
 
 Float Random::rnd() {
   return rndDist(rng_);

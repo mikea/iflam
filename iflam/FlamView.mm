@@ -1,79 +1,94 @@
 #import "FlamView.h"
-
+#import "IterateOperation.h"
 
 @implementation FlamView
 
-class CGBitmapContextPixelInterface : public PixelInterface {
-public:
-    CGBitmapContextPixelInterface(CGContextRef bitmapContext)
-    : bitmapContext_(bitmapContext) { }
-
-    virtual void SetPixel(int x, int y, float r, float g, float b) {
-        CGContextSetRGBFillColor(bitmapContext_, r, g, b, 1.0f);
-        CGContextFillRect (bitmapContext_, CGRectMake(x, y, 1.0f, 1.0f));
-    }
-
-private:
-    CGContextRef bitmapContext_;
-};
 
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code here.
-        def = new Genome();
-        def->Randomize();
+        genome_ = new Genome();
+        genome_->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_1.flam3");
+        bitmap_context_ = nil;
+
+        image_lock_ = [[NSLock alloc] init];
+        operation_queue_ = [NSOperationQueue new];
+        width_ = 0;
+        height_ = 0;
     }
 
     return self;
 }
 
+- (void)iterateDone:(id) id_result {
+    [image_lock_ lock];
+
+    IterationResult* result = (IterationResult*) id_result;
+    NSLog(@"iterateDone: %lu x %lu", result.width, result.height);
+
+    if (bitmap_context_ != NULL) {
+        CGContextRelease(bitmap_context_);
+        bitmap_context_ = NULL;
+        delete[] image_data_;
+    }
+
+    width_ = result.width;
+    height_ = result.height;
+    image_data_ = result.image;
+
+    size_t bitmapBytesPerRow = width_ * 4;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    bitmap_context_ = CGBitmapContextCreate(image_data_, width_, height_, 8, bitmapBytesPerRow, colorSpace, kCGImageAlphaNoneSkipLast);
+    // CGColorSpaceRelease(colorSpace);
+    // CGContextSetAllowsAntialiasing(bitmap_context_, FALSE);
+
+    [image_lock_ unlock];
+
+    [self setNeedsDisplay:YES];
+}
+
 
 - (void) drawRect:(NSRect)rect {
+    [image_lock_ lock];
+    
     NSRect bounds = self.bounds;
-    int width = (int) bounds.size.width;
-    int height = (int) bounds.size.width;
+    size_t width = (size_t) bounds.size.width;
+    size_t height = (size_t) bounds.size.height;
 
-    if (bitmapContext != NULL) {
-        if (width != CGBitmapContextGetWidth(bitmapContext) ||
-            height != CGBitmapContextGetHeight(bitmapContext)) {
-            CGContextRelease(bitmapContext);
-            bitmapContext = NULL;
-        }
-    }
+    if (width_ != width || height_ != height) {
+        IterateOperation* operation = [[IterateOperation alloc] initWithDelegate: self genome:genome_ width:width height:height];
+        [operation_queue_ addOperation:operation];
+    } 
+    
+    if (bitmap_context_ != nil) {
+        [[NSColor redColor] set];
+        [NSBezierPath fillRect:rect];
 
-    if (bitmapContext == NULL) {
-        int bitmapBytesPerRow = (width * 4);
-        bitmapBytesPerRow += (16 - bitmapBytesPerRow%16)%16; // make it 16-aligned
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        NSLog(@"Drawing bitmap of %d x %d size onto %d x %d view",
+              CGBitmapContextGetWidth(bitmap_context_),
+              CGBitmapContextGetHeight(bitmap_context_),
+              width,
+              height);
+        CGImageRef im = CGBitmapContextCreateImage(bitmap_context_);
 
-        bitmapContext = CGBitmapContextCreate(NULL, width, height, 8, bitmapBytesPerRow, colorSpace, kCGImageAlphaNoneSkipFirst);
-        CGColorSpaceRelease(colorSpace);
+        CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+        CGContextDrawImage(context, CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height), im);
+        CGImageRelease(im); 
+    } 
 
-
-        CGContextSetAllowsAntialiasing(bitmapContext, FALSE);
-
-        CGBitmapContextPixelInterface pixelInterface(bitmapContext);
-
-        FlamRender render(width, height);
-        render.Render(*def);
-        render.Visualize(&pixelInterface);
-    }
-
-    CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-    CGImageRef im = CGBitmapContextCreateImage(self->bitmapContext);
-    CGContextDrawImage(context, CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height), im);
-    CGImageRelease(im);
+    [image_lock_ unlock];
 }
 
 
 - (void)dealloc
 {
-    if (bitmapContext != NULL) {
-        CGContextRelease(bitmapContext);
+    if (bitmap_context_ != NULL) {
+        CGContextRelease(bitmap_context_);
+        delete[] image_data_;
     }
-    delete def;
+    delete genome_;
     [super dealloc];
 }
 

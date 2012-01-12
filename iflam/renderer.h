@@ -7,6 +7,7 @@
 #include <boost/utility.hpp>
 #include <boost/gil/gil_all.hpp>
 
+#include "common.h"
 #include "genome.h"
 
 class RenderBuffer {
@@ -19,7 +20,7 @@ class RenderBuffer {
 
     void Update(int x, int y, const Color& c, Float opacity);
 
-    void Render(boost::gil::rgb8_view_t* image);
+    void Render(uint8_t* image);
   private:
     const Genome& genome_;
     const size_t width_;
@@ -63,6 +64,8 @@ class RenderState {
     boost::scoped_array<int> xform_distrib_;  // xforms.size() * kChooseXformGrain
     bool chaos_enabled_;
     size_t last_xform_;
+
+    Random rnd;
 };
 
 class PixelInterface {

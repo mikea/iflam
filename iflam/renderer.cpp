@@ -99,7 +99,7 @@ void RenderBuffer::Update(int x, int y,
     return;
   }
 
-  int offset = (x + width_ * y) * 4;
+  size_t offset = (x + width_ * y) * 4;
   accum_[offset] += color[0];
   accum_[offset + 1] += color[1];
   accum_[offset + 2] += color[2];
@@ -107,14 +107,7 @@ void RenderBuffer::Update(int x, int y,
   ++samples_;
 }
 
-void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
-  typedef boost::gil::rgb8_view_t view_t;
-  typedef view_t::reference pixel_t_ref;
-
-  if (image->width() != width_ || image->height() != height_) {
-    BOOST_THROW_EXCEPTION(error());
-  }
-
+void RenderBuffer::Render(uint8_t* image) {
   int vib_gam_n = 1;
   Float vibrancy = genome_.vibrancy();
   vibrancy /= vib_gam_n;
@@ -137,9 +130,9 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
 
   Float newrgb[4] = {0, 0, 0, 0};
 
-  for (int y = 0; y < height_; ++y) {
-    for (int x = 0; x < width_; ++x) {
-      int offset = (x + width_ * y) * 4;
+  for (size_t y = 0; y < height_; ++y) {
+    for (size_t x = 0; x < width_; ++x) {
+      size_t offset = (x + width_ * y) * 4;
       Float cr = accum_[offset];
       Float cg = accum_[offset + 1];
       Float cb = accum_[offset + 2];
@@ -179,10 +172,14 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
       }
 
       t[3] = alpha;
-      pixel_t_ref pixel = (*image)(x, y);
-      pixel[0] = int(t[0]);
-      pixel[1] = int(t[1]);
-      pixel[2] = int(t[2]);
+
+      { // Update image
+        size_t image_offset = (x + width_ * (height_ - y - 1)) * 4;
+        image[image_offset] = uint8_t(t[0]);
+        image[image_offset + 1] = uint8_t(t[1]);
+        image[image_offset + 2] = uint8_t(t[2]);
+        image[image_offset + 3] = 255;
+      }
     }
   }
 }
@@ -271,9 +268,9 @@ void RenderState::CreateXformDist(int xi, int k) {
 RenderState::~RenderState() { }
 
 void RenderState::Reseed() {
-  xyc_[0] = Random::crnd();
-  xyc_[1] = Random::crnd();
-  xyc_[2] = Random::crnd();
+  xyc_[0] = rnd.crnd();
+  xyc_[1] = rnd.crnd();
+  xyc_[2] = rnd.crnd();
 }
 
 void RenderState::Iterate(int iterations) {
@@ -290,7 +287,7 @@ void RenderState::Iterate(int iterations) {
 
   for (int i = -20; i < iterations; ++i) {
     const Xform& xform = PickRandomXform();
-    if (!xform.Apply(xyc_.c_array(), xyc_.c_array())) {
+    if (!xform.Apply(xyc_.c_array(), xyc_.c_array(), &rnd)) {
       std::cout << "Apply resulted in error\n";
       ++consequent_errors_;
       if (consequent_errors_ < 5) {
@@ -312,7 +309,7 @@ void RenderState::Iterate(int iterations) {
     }
 
     if (genome_.has_final_xform()) {
-      genome_.final_xform().Apply(xyc_.c_array(), xyc2.c_array());
+      genome_.final_xform().Apply(xyc_.c_array(), xyc2.c_array(), &rnd);
     } else {
       xyc2[0] = xyc_[0];
       xyc2[1] = xyc_[1];
@@ -351,7 +348,7 @@ const Xform& RenderState::PickRandomXform() {
   boost::random::uniform_int_distribution<> randomGrain(
       0, kChooseXformGrain - 1);
 
-  size_t r = randomGrain(Random::rng_);
+  size_t r = randomGrain(rnd.rng_);
 
   if (chaos_enabled_) {
     k = xform_distrib_[last_xform_ * kChooseXformGrain + r];

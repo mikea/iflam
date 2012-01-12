@@ -56,8 +56,10 @@ BOOST_AUTO_TEST_CASE(hsv2rgb_test)
 }
 
 BOOST_AUTO_TEST_CASE(rgb2hsv_random_test) {
+  Random rnd;
+
   for (int i = 0; i < 10000; ++i) {
-    double in[] = {Random::rnd(), Random::rnd(), Random::rnd()};
+    double in[] = {rnd.rnd(), rnd.rnd(), rnd.rnd()};
     double out1[] = {0, 0, 0};
     double out2[] = {0, 0, 0};
     rgb2hsv(in, out1);

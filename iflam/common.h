@@ -32,11 +32,13 @@ const Float kEpsilon = 1e-10;
 
 class Random {
   public:
-    static Float rnd();
-    static Float crnd();
-    static bool brnd();
+    Random();
 
-    static boost::random::mt19937 rng_;
+    Float rnd();
+    Float crnd();
+    bool brnd();
+
+    boost::random::mt19937 rng_;
 };
 
 

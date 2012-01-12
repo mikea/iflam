@@ -128,7 +128,7 @@ Xform::Xform()
 
 Xform::~Xform() { }
 
-bool Xform::Apply(Float* in, Float* out) const {
+bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
   Float x = in[0];
   Float y = in[1];
   Float cc = in[2];
@@ -255,7 +255,7 @@ bool Xform::Apply(Float* in, Float* out) const {
         case 13: // julia
         {
           Float theta = atan2(x, y);
-          Float omega = Random::brnd() ? 0 : kPI;
+          Float omega = rnd->brnd() ? 0 : kPI;
           dx = sqrt(r) * cos(theta / 2 + omega);
           dy = sqrt(r) * sin(theta / 2 + omega);
           break;
@@ -337,7 +337,7 @@ bool Xform::Apply(Float* in, Float* out) const {
           Float phi = atan2(y, x);
           Float p1 = julian_power_;
           Float p2 = julian_dist_;
-          Float p3 = floor(abs(p1) * Random::rnd());
+          Float p3 = floor(abs(p1) * rnd->rnd());
           Float t = (phi + 2 * kPI * p3) / p1;
           Float z = pow(r, p2 / p1);
           dx = z * cos(t);
@@ -346,8 +346,8 @@ bool Xform::Apply(Float* in, Float* out) const {
         }
         case 34: // blur
         {
-          Float xi1 = Random::rnd();
-          Float xi2 = Random::rnd();
+          Float xi1 = rnd->rnd();
+          Float xi2 = rnd->rnd();
           dx = xi1 * cos(2 * kPI * xi2);
           dy = xi1 * sin(2 * kPI * xi2);
           break;
@@ -356,7 +356,7 @@ bool Xform::Apply(Float* in, Float* out) const {
         {
           Float phi = atan2(y, x);
           Float p1 = radial_blur_angle_ * kPI / 2;
-          Float t1 = w * (Random::rnd() + Random::rnd() + Random::rnd() + Random::rnd() - 2);
+          Float t1 = w * (rnd->rnd() + rnd->rnd() + rnd->rnd() + rnd->rnd() - 2);
           Float t2 = phi + t1 * sin(p1);
           Float t3 = t1 * cos(p1) - 1;
           dx = (r * cos(t2) + t3 * x) / w;
@@ -364,7 +364,7 @@ bool Xform::Apply(Float* in, Float* out) const {
         }
         case 45:  // blade
         {
-          Float xi = Random::rnd();
+          Float xi = rnd->rnd();
           dx = x * (cos(xi * r * w) + sin(xi * r * w));
           dy = x * (cos(xi * r * w) - sin(xi * r * w));
         }

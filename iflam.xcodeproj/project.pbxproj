@@ -25,6 +25,9 @@
 		322FDCFB14B3F5A4003DB16F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB16E /* tinyxml.cpp */; };
 		322FDCFB14B3F5A4003DB172 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB171 /* tinyxmlerror.cpp */; };
 		322FDCFB14B3F5A4003DB174 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB173 /* tinyxmlparser.cpp */; };
+		32F73D8214BD26F4003F2664 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F73D8014BD26F4003F2664 /* common.cpp */; };
+		32F73D8D14BEA0A8003F2664 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F73D8B14BEA0A8003F2664 /* color.cpp */; };
+		32F73D9114BEB22C003F2664 /* IterateOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32F73D9014BEB22B003F2664 /* IterateOperation.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +73,12 @@
 		322FDCFB14B3F5A4003DB170 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
 		322FDCFB14B3F5A4003DB171 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
 		322FDCFB14B3F5A4003DB173 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
+		32F73D8014BD26F4003F2664 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
+		32F73D8114BD26F4003F2664 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		32F73D8B14BEA0A8003F2664 /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color.cpp; sourceTree = "<group>"; };
+		32F73D8C14BEA0A8003F2664 /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = color.h; sourceTree = "<group>"; };
+		32F73D8F14BEB22B003F2664 /* IterateOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterateOperation.h; sourceTree = "<group>"; };
+		32F73D9014BEB22B003F2664 /* IterateOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IterateOperation.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +142,10 @@
 		322FDCC814B3F37D003DB166 /* iflam */ = {
 			isa = PBXGroup;
 			children = (
+				32F73D8B14BEA0A8003F2664 /* color.cpp */,
+				32F73D8C14BEA0A8003F2664 /* color.h */,
+				32F73D8014BD26F4003F2664 /* common.cpp */,
+				32F73D8114BD26F4003F2664 /* common.h */,
 				322FDCFB14B3F5A4003DB168 /* genome.cpp */,
 				322FDCFB14B3F5A4003DB167 /* genome.h */,
 				322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */,
@@ -145,6 +158,8 @@
 				322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */,
 				322FDCC914B3F37D003DB166 /* Supporting Files */,
 				322FDCFB14B3F5A4003DB16A /* tinyxml */,
+				32F73D8F14BEB22B003F2664 /* IterateOperation.h */,
+				32F73D9014BEB22B003F2664 /* IterateOperation.mm */,
 			);
 			path = iflam;
 			sourceTree = "<group>";
@@ -309,6 +324,9 @@
 				322FDCFB14B3F5A4003DB16F /* tinyxml.cpp in Sources */,
 				322FDCFB14B3F5A4003DB172 /* tinyxmlerror.cpp in Sources */,
 				322FDCFB14B3F5A4003DB174 /* tinyxmlparser.cpp in Sources */,
+				32F73D8214BD26F4003F2664 /* common.cpp in Sources */,
+				32F73D8D14BEA0A8003F2664 /* color.cpp in Sources */,
+				32F73D9114BEB22C003F2664 /* IterateOperation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,6 +425,11 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iflam/iflam-Prefix.pch";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					TIXML_USE_STL,
+					__ASSERTMACROS__,
+				);
+				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "iflam/iflam-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -425,6 +448,11 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iflam/iflam-Prefix.pch";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					TIXML_USE_STL,
+					__ASSERTMACROS__,
+				);
+				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "iflam/iflam-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";

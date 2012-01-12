@@ -47,20 +47,34 @@ int main(int argc, char *argv[]) {
   Genome genome;
   genome.Read(vm["file"].as<string>());
 
-  RenderBuffer buffer(genome, width, height);
-  RenderState state(genome, &buffer);
+  RenderBuffer render_buffer(genome, width, height);
+  RenderState state(genome, &render_buffer);
   {
     Stopwatch sw("Iterations took:", iterations);
     state.Iterate(iterations);
   }
 
+  boost::scoped_array<uint8_t> buffer(new uint8_t[width * height * 4]);
+  {
+    Stopwatch sw("Rendering took:", width * height, "px");
+    render_buffer.Render(buffer.get());
+  }
+
+  typedef boost::gil::rgb8_view_t view_t;
+  typedef view_t::reference pixel_t_ref;
 
   boost::gil::rgb8_image_t img(width, height);
   boost::gil::rgb8_view_t v(view(img));
-  {
-    Stopwatch sw("Rendering took:", width * height, "px");
-    buffer.Render(&v);
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      int offset = (x + (height - y) * width) * 4;
+      pixel_t_ref pixel = v(x, y);
+      pixel[0] = buffer[offset];
+      pixel[1] = buffer[offset + 1];
+      pixel[2] = buffer[offset + 2];
+    }
   }
+  
   boost::gil::png_write_view("render.png", v);
 
   return 0;

@@ -23,7 +23,7 @@ class Xform : boost::noncopyable {
     Float weight() const { return weight_; }
     Float opacity() const { return opacity_; }
 
-    bool Apply(Float* in, Float* out) const;
+    bool Apply(Float* in, Float* out, Random* rnd) const;
   private:
     void Init();
 
