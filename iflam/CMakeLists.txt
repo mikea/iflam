@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 
 project(iflam)
 
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_FLAGS "-g -Wall -O0")
+if (APPLE)
+  set(CMAKE_CXX_COMPILER clang++)
+  set(CMAKE_C_COMPILER clang)
+endif()
+
+set(CMAKE_CXX_FLAGS "-g -Wall -O3")
 add_definitions(-DTIXML_USE_STL)
 
 ########################################################
