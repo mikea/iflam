@@ -10,7 +10,7 @@
     if (self) {
         // Initialization code here.
         genome_ = new Genome();
-        genome_->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_1.flam3");
+        genome_->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_2.flam3");
         bitmap_context_ = nil;
 
         image_lock_ = [[NSLock alloc] init];
@@ -60,6 +60,7 @@
     size_t height = (size_t) bounds.size.height;
 
     if (width_ != width || height_ != height) {
+        [operation_queue_ cancelAllOperations];
         IterateOperation* operation = [[IterateOperation alloc] initWithDelegate: self genome:genome_ width:width height:height];
         [operation_queue_ addOperation:operation];
     } 

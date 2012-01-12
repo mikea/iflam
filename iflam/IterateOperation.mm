@@ -92,13 +92,17 @@ private:
         return;
     }
     
-    size_t iterations = 10000;
+    size_t iterations = 1000000;
     NSLog(@"IterateOperation: Starting %lu iterations", iterations);
     
     RenderBuffer render_buffer(*genome_, width_, height_);
     RenderState state(*genome_, &render_buffer);
     state.Iterate(iterations);
     
+    if (self.isCancelled) {
+        return;
+    }
+
     NSLog(@"IterateOperation: Rendering %u x %u", width_, height_);
     
     size_t bytes_per_row = width_ * 4;
