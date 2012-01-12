@@ -52,5 +52,9 @@ class Stopwatch {
     double start_time_;
 };
 
+#define BOOST_ASSERT_RANGE(x, a, b)  BOOST_ASSERT_MSG((a) <= (x) && (x) <= (b),\
+    (std::string("Bad value for ") + #x + ": " + \
+     boost::lexical_cast<std::string>(x)).c_str())
+
 #endif
 

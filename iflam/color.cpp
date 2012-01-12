@@ -6,6 +6,10 @@ void rgb2hsv(Float* rgb, Float* hsv) {
   Float g = rgb[1];
   Float b = rgb[2];
 
+  BOOST_ASSERT_RANGE(r, 0, 1);
+  BOOST_ASSERT_RANGE(g, 0, 1);
+  BOOST_ASSERT_RANGE(b, 0, 1);
+
   Float max = std::max(r, std::max(g, b));
 
   if (max == 0.0) {
@@ -33,9 +37,19 @@ void rgb2hsv(Float* rgb, Float* hsv) {
     if (h < 0) h += 6;
   }
 
+  double s = c / max;
+  double v = max;
+
+  BOOST_ASSERT_RANGE(h, 0, 6);
+  BOOST_ASSERT_RANGE(s, 0, 1);
+  BOOST_ASSERT_RANGE(v, 0, 1);
+  BOOST_ASSERT(0 <= h && h <= 6);
+  BOOST_ASSERT(0 <= s && s <= 1);
+  BOOST_ASSERT_MSG(0 <= v && v <= 1, ("bad v: " + boost::lexical_cast<std::string>(v)).c_str());
+
   hsv[0] = h;
-  hsv[1] = c / max;  // s
-  hsv[2] = max;      // v
+  hsv[1] = s;
+  hsv[2] = v;
 }
 
 void hsv2rgb(Float* hsv, Float* rgb) {
@@ -46,6 +60,7 @@ void hsv2rgb(Float* hsv, Float* rgb) {
   while (h >= 6.0) h = h - 6.0;
   while (h < 0.0) h = h + 6.0;
   int j = (int) floor(h);
+
   Float f = h - j;
   Float p = v * (1 - s);
   Float q = v * (1 - (s * f));
