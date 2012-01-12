@@ -25,19 +25,6 @@ Float AdjustPercentage(Float p) {
 }
 
 
-Float CalcAlpha(Float density, Float gamma, Float linearRange, Float linRangePowGamma) {
-  if (density > 0) {
-    if (density < linearRange) {
-      Float frac = density / linearRange;
-      return (1.0 - frac) * density * linRangePowGamma + frac * pow(density, gamma);
-    } else {
-      return pow(density, gamma);
-    }
-  } else {
-    return 0;
-  }
-}
-
 void CalcNewRgb(Float* rgb, Float* newRgb, Float ls, Float highpow) {
   if (ls == 0.0 || (rgb[0] == 0.0 && rgb[1] == 0.0 && rgb[2] == 0.0)) {
     newRgb[0] = 0.0;
@@ -49,26 +36,27 @@ void CalcNewRgb(Float* rgb, Float* newRgb, Float ls, Float highpow) {
   /* Identify the most saturated channel */
   Float maxA = -1.0;
   Float maxC = 0;
+  Float maxComponent = -1;
   for (int i = 0; i < 3; i++) {
-    Float a = ls * (rgb[i] / kPrefilterWhite);
-    if (a > maxA) {
-      maxA = a;
-      maxC = rgb[i] / kPrefilterWhite;
+    Float c = rgb[i];
+    if (c > maxComponent) {
+      maxA = ls * (c / kPrefilterWhite);
+      maxC = c / kPrefilterWhite;
+      maxComponent = c;
     }
   }
 
-  /* If a channel is saturated and we have a non-negative highlight power */
-  /* modify the color to prevent hue shift                                */
+  // If a channel is saturated and we have a non-negative highlight power
+  // modify the color to prevent hue shift
   if (maxA > 255 && highpow >= 0.0) {
-    Float newls = 255.0 / maxC;
-    /* Calculate the max-value color (ranged 0 - 1) */
+    // Calculate the max-value color (ranged 0 - 1)
     for (int i = 0; i < 3; i++)
-      newRgb[i] = newls * (rgb[i] / kPrefilterWhite) / 255.0;
+      newRgb[i] = rgb[i] / maxComponent;
 
-    /* Reduce saturation by the lsratio */
+    // Reduce saturation by the lsratio
     boost::scoped_array<Float> newHsv(new Float[3]);
     rgb2hsv(newRgb, newHsv.get());
-    newHsv[1] *= pow(newls / ls, highpow);
+    newHsv[1] *= pow(255.0 / (ls * maxC), highpow);
     hsv2rgb(newHsv.get(), newRgb);
 
     for (int i = 0; i < 3; i++) {
@@ -77,14 +65,15 @@ void CalcNewRgb(Float* rgb, Float* newRgb, Float ls, Float highpow) {
   } else {
     Float newLs = 255.0 / maxC;
     Float adjHlp = -highpow;
-    if (adjHlp > 1)
+    if (adjHlp > 1 || maxA <= 255) {
       adjHlp = 1;
-    if (maxA <= 255)
-      adjHlp = 1.0;
+    }
+
+    double k = ((1.0 - adjHlp) * newLs + adjHlp * ls);
 
     /* Calculate the max-value color (ranged 0 - 1) interpolated with the old behaviour */
     for (int i = 0; i < 3; i++) {
-      newRgb[i] = ((1.0 - adjHlp) * newLs + adjHlp * ls) * (rgb[i] / kPrefilterWhite);
+      newRgb[i] =  k * (rgb[i] / kPrefilterWhite);
     }
   }
 }
@@ -129,7 +118,6 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
   int vib_gam_n = 1;
   Float vibrancy = genome_.vibrancy();
   vibrancy /= vib_gam_n;
-  Float linrange = genome_.gamma_threshold();
   Float gamma = 1.0 / (genome_.gamma() / vib_gam_n);
   Float highpow = genome_.highlight_power();
 
@@ -147,7 +135,6 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
   Float sumfilt = 1;
   Float k2 = (oversample * oversample * nbatches) /
     (genome_.contrast() * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
-  Float linRangePowGamma = pow(linrange, gamma) / linrange;
 
   Float newrgb[4] = {0, 0, 0, 0};
 
@@ -173,8 +160,7 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
         alpha = 0.0;
         ls = 0.0;
       } else {
-        Float tmp = freq / kPrefilterWhite;
-        alpha = CalcAlpha(tmp, gamma, linrange, linRangePowGamma);
+        alpha = pow(freq / kPrefilterWhite, gamma);
         ls = vibrancy * 256.0 * alpha / tmp;
         if (alpha < 0.0) alpha = 0.0;
         if (alpha > 1.0) alpha = 1.0;
@@ -352,7 +338,7 @@ void RenderState::Iterate(int iterations) {
       buffer_->Update(
           x1,
           y1,
-          genome_.color((int) std::min(std::max(xyc2[2] * Float(255.0), 
+          genome_.color((int) std::min(std::max(xyc2[2] * Float(255.0),
                 Float(0.0)), Float(255.0))),
           opacity);
     }
