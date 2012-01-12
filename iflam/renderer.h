@@ -7,7 +7,7 @@
 #include <boost/utility.hpp>
 #include <boost/gil/gil_all.hpp>
 
-class Genome;
+#include "genome.h"
 
 class RenderBuffer {
   public:

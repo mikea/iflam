@@ -5,32 +5,56 @@ cmake_minimum_required(VERSION 2.6)
 set(CMAKE_CXX_FLAGS "-g -Wall -O3")
 add_definitions(-DTIXML_USE_STL)
 
-project(iflam)
-add_executable(iflam
-  common.cpp
-  genome.cpp
-  renderer.cpp
-  main.cpp
-  #########################
-  tinyxml/tinyxml.cpp
-  tinyxml/tinystr.cpp
-  tinyxml/tinyxmlerror.cpp
-  tinyxml/tinyxmlparser.cpp)
+########################################################
 
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_DEBUG ON)
 set(BOOST_ROOT "$ENV{HOME}/Packages/boost_1_48_0")
-find_package(Boost 1.48 REQUIRED exception program_options)
+find_package(Boost 1.48 REQUIRED exception program_options unit_test_framework)
 
 if (Boost_FOUND)
   message(STATUS "Boost include dir: ${Boost_INCLUDE_DIR}")
   message(STATUS "Boost library dir: ${Boost_INCLUDE_DIRS}")
-  message(STATUS "Boost libraries: ${_boost_LIBRARIES}")
-
+  message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
   include_directories(${Boost_INCLUDE_DIR})
   link_directories(${Boost_LIBRARY_DIRS})
-  target_link_libraries(iflam ${Boost_LIBRARIES})
 endif()
+
+########################################################
+
+project(iflam)
+
+add_library(tinyxml
+  tinyxml/tinyxml.cpp
+  tinyxml/tinystr.cpp
+  tinyxml/tinyxmlerror.cpp
+  tinyxml/tinyxmlparser.cpp
+  )
+
+add_library(impl
+  common.cpp
+  color.cpp
+  genome.cpp
+  renderer.cpp
+  )
+
+add_executable(iflam
+  main.cpp
+  )
+
+target_link_libraries(iflam impl tinyxml ${Boost_LIBRARIES})
+
+# Tests
+
+add_executable(color_test
+  color_test.cpp
+  )
+target_link_libraries(color_test impl tinyxml ${Boost_LIBRARIES})
+
+add_executable(perf_test
+  perf_test.cpp
+  )
+target_link_libraries(perf_test impl tinyxml ${Boost_LIBRARIES})
 
 find_package(PNG REQUIRED)
 
