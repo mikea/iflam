@@ -126,15 +126,14 @@ void RenderBuffer::Render(boost::gil::rgb8_view_t* image) {
   // Float sample_density = genome.quality * scale * scale;
   // Float nsamples = sample_density * width * height;
 
-  Float sample_density = ((Float) (samples_)) / (width_ * height_);
   Float batch_filter = 1 / nbatches;
 
   Float k1 = (genome_.contrast() * genome_.brightness() * kPrefilterWhite *
       268.0 * batch_filter) / 256;
-  Float area = width_ * height_ / (ppux_ * ppuy_);
   Float sumfilt = 1;
+  Float samples_per_unit = Float(samples_) / (ppux_ * ppuy_);
   Float k2 = (oversample * oversample * nbatches) /
-    (genome_.contrast() * area * /* WHITE_LEVEL * */ sample_density * sumfilt);
+    (genome_.contrast() * /* WHITE_LEVEL * */ samples_per_unit * sumfilt);
 
   Float newrgb[4] = {0, 0, 0, 0};
 
