@@ -26,8 +26,8 @@ class RenderBuffer {
 
     template<typename Image>
     void Render(Image* image);
-
     const Float* const accum() const { return accum_.get(); }
+    size_t samples() const { return samples_; }
   private:
     const Genome& genome_;
     const size_t width_;
@@ -82,25 +82,12 @@ public:
 
 template<typename Image>
 void RenderBuffer::Render(Image* image) {
-  int vib_gam_n = 1;
   Float vibrancy = genome_.vibrancy();
-  vibrancy /= vib_gam_n;
-  Float gamma = 1.0 / (genome_.gamma() / vib_gam_n);
+  Float gamma = 1.0 / genome_.gamma();
   Float highpow = genome_.highlight_power();
-
-  int nbatches = 1; // genome_.nbatches();
-  Float oversample = 1.0; // genome.oversample
-  // Float sample_density = genome.quality * scale * scale;
-  // Float nsamples = sample_density * width * height;
-
-  Float batch_filter = 1 / nbatches;
-
-  Float k1 = (genome_.contrast() * genome_.brightness() * kPrefilterWhite *
-      268.0 * batch_filter) / 256;
-  Float sumfilt = 1;
+  Float k1 = (genome_.contrast() * genome_.brightness() * kPrefilterWhite * 268.0) / 256;
   Float samples_per_unit = Float(samples_) / (ppux_ * ppuy_);
-  Float k2 = (oversample * oversample * nbatches) /
-    (genome_.contrast() * /* WHITE_LEVEL * */ samples_per_unit * sumfilt);
+  Float k2 = 1.0 / (genome_.contrast() * samples_per_unit);
 
   Float newrgb[4] = {0, 0, 0, 0};
 
