@@ -94,7 +94,7 @@ if (APPLE)
     main.m
     iflamAppDelegate.m
     FlamView.mm
-    IterateOperation.mm)
+    )
 
   set_target_properties(iflamapp PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/iflam-Info.plist"
