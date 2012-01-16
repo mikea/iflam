@@ -44,12 +44,10 @@ OSStatus MyIOProc(AudioDeviceID           inDevice,
                   AudioBufferList*        outOutputData,
                   const AudioTimeStamp*   inOutputTime,
                   void*                   inClientData) {
-  NSLog(@"MyIOProc");
   IOProcData* procData = (IOProcData*)inClientData;
 
   if (procData->fftManager->NeedsNewAudioData()) {
     procData->fftManager->GrabAudioData(inInputData);
-    NSLog(@"Grab %d", inInputData->mBuffers[0].mDataByteSize);
   } else {
     BOOST_ASSERT(procData->fftManager->HasNewAudioData());
     procData->fftManager->ComputeFFT(procData->buf);
