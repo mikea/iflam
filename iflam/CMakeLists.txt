@@ -92,15 +92,18 @@ if (APPLE)
     iflamapp
     MACOSX_BUNDLE
     main.m
-    iflamAppDelegate.m
+    iflamAppDelegate.mm
     FlamView.mm
+    fft/FFTBufferManager.cpp
+    fft/SpectrumAnalysis.cpp
+    fft/rad2fft.c
     )
 
   set_target_properties(iflamapp PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/iflam-Info.plist"
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.mikea.iflam")
 
-  target_link_libraries(iflamapp impl tinyxml "-framework Cocoa")
+  target_link_libraries(iflamapp impl tinyxml "-framework Cocoa -framework CoreAudio")
 
   set(iflamapp_xibs "en.lproj/MainMenu")
 
