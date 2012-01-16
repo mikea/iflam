@@ -28,6 +28,7 @@ class RenderBuffer {
     void Render(Image* image);
 
     const Float* const accum() const { return accum_.get(); }
+    size_t samples() const { return samples_; }
   private:
     const Genome& genome_;
     const size_t width_;
@@ -47,6 +48,9 @@ class RenderState {
     ~RenderState();
 
     void Iterate(int iterations);
+
+    Float view_height() const { return view_height_; }
+    Float view_width() const { return view_width_; }
   private:
     void Reseed();
 

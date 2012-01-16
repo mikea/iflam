@@ -42,8 +42,6 @@ class RenderState;
 
 @end
 
-
-
 @interface FlamView : NSView {
 @private
     NSLock* lock;

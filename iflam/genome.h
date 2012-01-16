@@ -78,6 +78,10 @@ public:
 
     void Magnify(Float magnification) { zoom_ += magnification; }
     void Rotate(Float rotation) { rotate_ += rotation; }
+    void Move(Float deltaX, Float deltaY) {
+      center_[0] += deltaX;
+      center_[1] += deltaY;
+    }
 
 private:
     Float brightness_;

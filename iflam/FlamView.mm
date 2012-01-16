@@ -13,8 +13,7 @@ static size_t BytesPerRow(size_t width) {
 
 @synthesize viewState=_viewState;
 
-- (id)initWithFrame:(NSRect)frame
-{
+- (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code here.
@@ -22,9 +21,10 @@ static size_t BytesPerRow(size_t width) {
 
         lock = [[NSLock alloc] init];
         operation_queue_ = [NSOperationQueue new];
+        [operation_queue_ setMaxConcurrentOperationCount: 1];
 
         genome = new Genome();
-        genome->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_2.flam3");
+        genome->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_6.flam3");
         _viewState = [[ViewState alloc] initWithGenome: genome
                                                  width: 0
                                                 height: 0];
@@ -35,47 +35,38 @@ static size_t BytesPerRow(size_t width) {
 
 - (void)iterateDone:(ViewState*) aViewState {
     [lock lock];
+    [aViewState lock];
 
-    do {
-      if (aViewState != self.viewState) {
-        NSLog(@"Skipping iteration result for other state.");
-        break;
-      }
+    if (bitmap_context_ != NULL) {
+      CGContextRelease(bitmap_context_);
+      bitmap_context_ = NULL;
+    }
 
-      [self.viewState lock];
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    bitmap_context_ = CGBitmapContextCreate(
+        aViewState.imageData,
+        aViewState.width,
+        aViewState.height,
+        8,
+        BytesPerRow(aViewState.width),
+        colorSpace,
+        kCGImageAlphaNoneSkipLast);
 
-      NSLog(@"iterateDone: %lu x %lu",
-          self.viewState.width,
-          self.viewState.height);
+    CGColorSpaceRelease(colorSpace);
 
-      if (bitmap_context_ != NULL) {
-        CGContextRelease(bitmap_context_);
-        bitmap_context_ = NULL;
-      }
+    [aViewState unlock];
 
-      CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-      bitmap_context_ = CGBitmapContextCreate(
-          self.viewState.imageData,
-          self.viewState.width,
-          self.viewState.height,
-          8,
-          BytesPerRow(self.viewState.width),
-          colorSpace,
-          kCGImageAlphaNoneSkipLast);
-
-      CGColorSpaceRelease(colorSpace);
-
-      [self.viewState unlock];
-
+    if (aViewState == self.viewState) {
       // enqueue another iterate operation.
       IterateOperation* operation = [[[IterateOperation alloc]
         initWithDelegate: self
                viewState: self.viewState] autorelease];
       [operation_queue_ addOperation:operation];
-    } while (0);
+    }
 
     [lock unlock];
     [self setNeedsDisplay:YES];
+    [aViewState release];
 }
 
 
@@ -83,37 +74,8 @@ static size_t BytesPerRow(size_t width) {
     [lock lock];
 
     NSRect bounds = self.bounds;
-    size_t width = (size_t) bounds.size.width;
-    size_t height = (size_t) bounds.size.height;
-
-    if (self.viewState.width != width ||
-        self.viewState.height != height ||
-        self.viewState.genome != genome) {
-      NSLog(@"View changed. Creating new view state.");
-      [operation_queue_ cancelAllOperations];
-
-      ViewState* newState = [[[ViewState alloc]
-        initWithGenome: genome
-                 width: width
-                height: height] autorelease];
-
-      IterateOperation* operation = [[[IterateOperation alloc]
-        initWithDelegate: self
-               viewState: newState] autorelease];
-      [operation_queue_ addOperation:operation];
-
-      self.viewState = newState;
-    }
 
     if (bitmap_context_ != nil) {
-        [[NSColor redColor] set];
-        [NSBezierPath fillRect:rect];
-
-        /*NSLog(@"Drawing bitmap of %lu x %lu size onto %lu x %lu view",
-              CGBitmapContextGetWidth(bitmap_context_),
-              CGBitmapContextGetHeight(bitmap_context_),
-              width,
-              height);*/
         CGImageRef im = CGBitmapContextCreateImage(bitmap_context_);
 
         CGContextRef context = (CGContextRef)
@@ -129,12 +91,38 @@ static size_t BytesPerRow(size_t width) {
         CGImageRelease(im);
     }
 
+    ViewState* viewState = [[self.viewState retain] autorelease];
+
+    [viewState lock];
+    size_t width = (size_t) bounds.size.width;
+    size_t height = (size_t) bounds.size.height;
+    if (viewState.width != width ||
+        viewState.height != height ||
+        viewState.genome != genome) {
+      [operation_queue_ cancelAllOperations];
+
+      ViewState* newState = [[[ViewState alloc]
+        initWithGenome: genome
+                 width: width
+                height: height] autorelease];
+
+      IterateOperation* operation = [[[IterateOperation alloc]
+        initWithDelegate: self
+               viewState: newState] autorelease];
+      [operation_queue_ addOperation:operation];
+
+      [viewState unlock];
+      [newState lock];
+      self.viewState = newState;
+      viewState = newState;
+    }
+
+    [viewState unlock];
     [lock unlock];
 }
 
 
-- (void)dealloc
-{
+- (void)dealloc {
     if (bitmap_context_ != NULL) {
         CGContextRelease(bitmap_context_);
     }
@@ -147,22 +135,46 @@ static size_t BytesPerRow(size_t width) {
   Genome* old_genome = genome;
   genome = new Genome(*genome);
   genome->Magnify(magnification);
-  delete old_genome;
+  // delete old_genome;
   [lock unlock];
   [self setNeedsDisplay:YES];
 }
 
 - (void)rotateWithEvent:(NSEvent *)event {
   double rotation = [event rotation];
+  NSLog(@"rotate: %f", rotation);
   [lock lock];
   Genome* old_genome = genome;
   genome = new Genome(*genome);
   genome->Rotate(rotation);
-  delete old_genome;
+  // delete old_genome;
   [lock unlock];
   [self setNeedsDisplay:YES];
 }
 
+-(void)scrollWheel:(NSEvent *)event {
+  float deltaX = [event deltaX];
+  float deltaY = [event deltaY];
+  if (deltaX == 0 && deltaY == 0) {
+    return;
+  }
+
+  [lock lock];
+
+  NSRect bounds = self.bounds;
+  deltaX = 2 * deltaX * self.viewState.renderState->view_width() / bounds.size.width;
+  deltaY = - 2 * deltaY * self.viewState.renderState->view_height() / bounds.size.height;
+  Genome* old_genome = genome;
+  genome = new Genome(*genome);
+  genome->Move(deltaX, deltaY);
+  // delete old_genome;
+  [lock unlock];
+  [self setNeedsDisplay:YES];
+}
+
+-(BOOL)isOpaque {
+  return YES;
+}
 
 @end
 
@@ -205,47 +217,36 @@ private:
 
 
 -(void)main {
+  if (self.isCancelled) {
+    // We are already cancelled. Don't even bother to start.
+    return;
+  }
+
   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
   [self.viewState lock];
-  do {
+  size_t iterations = 100;
+  size_t batch = 1000;
+  //NSLog(@"IterateOperation: Starting %lu iterations", iterations);
+
+  for (size_t i = 0; i < iterations; ++i) {
+    self.viewState.renderState->Iterate(batch);
     if (self.isCancelled) {
-        break;
+      // We've already rendered something. Deliver results.
+      break;
     }
+  }
 
-    size_t iterations = 100;
-    size_t batch = 1000;
-    //NSLog(@"IterateOperation: Starting %lu iterations", iterations);
+  BufferImage image(
+      self.viewState.imageData,
+      BytesPerRow(self.viewState.width),
+      self.viewState.height);
+  self.viewState.renderBuffer->Render(&image);
 
-    for (size_t i = 0; i < iterations; ++i) {
-      self.viewState.renderState->Iterate(batch);
-      if (self.isCancelled) {
-        goto unlock;
-      }
-    }
+  [delegate_ performSelectorOnMainThread:@selector(iterateDone:)
+                              withObject:[self.viewState retain]
+                           waitUntilDone:NO];
 
-
-    /*NSLog(@"IterateOperation: Rendering %lu x %lu",
-        viewState.width, viewState.height);*/
-
-    BufferImage image(
-        self.viewState.imageData,
-        BytesPerRow(self.viewState.width),
-        self.viewState.height);
-    self.viewState.renderBuffer->Render(&image);
-
-    //NSLog(@"IterateOperation: done");
-
-    if (self.isCancelled) {
-        break;
-    }
-
-    [delegate_ performSelectorOnMainThread:@selector(iterateDone:)
-                                withObject:self.viewState
-                             waitUntilDone:NO];
-  } while (0);
-
-unlock:
   [self.viewState unlock];
   [pool release];
 }
@@ -288,7 +289,6 @@ unlock:
 }
 
 - (void)dealloc {
-  NSLog(@"ViewState::dealloc");
   delete renderBuffer;
   delete renderState;
   free(imageData);
