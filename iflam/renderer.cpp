@@ -9,12 +9,6 @@ const size_t kFLen = 6 + kVLen;
 const size_t kChooseXformGrain = 16384;
 const Float kGamma = 2.5;
 
-void assertSane(Float dx) {
-    assert(!boost::math::isnan(dx));
-    assert(dx < 1e20 && dx > -1e20);
-    assert(dx > 1e-20 || dx < -1e-20);
-}
-
 }  // namespace
 
 Float AdjustPercentage(Float p) {

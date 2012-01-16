@@ -12,10 +12,12 @@
 class TiXmlElement;
 
 
-class Xform : boost::noncopyable {
+class Xform {
   public:
     enum { kVariationsCount = 99 };
     Xform();
+    explicit Xform(const Xform& genome);
+
     ~Xform();
 
     void Parse(const TiXmlElement* element);
@@ -44,9 +46,11 @@ class Xform : boost::noncopyable {
     boost::scoped_ptr<array<Float, 6> > post_;
 };
 
-class Genome : boost::noncopyable {
+class Genome {
 public:
     Genome();
+    explicit Genome(const Genome& genome);
+
     ~Genome();
 
     void Randomize();
@@ -71,6 +75,9 @@ public:
     const Color& background() const { return background_; }
     const array<int, 2>& size() const { return size_; }
     Float rotate() const {return rotate_; }
+
+    void Magnify(Float magnification) { zoom_ += magnification; }
+    void Rotate(Float rotation) { rotate_ += rotation; }
 
 private:
     Float brightness_;

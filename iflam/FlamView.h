@@ -46,19 +46,25 @@ class RenderState;
 
 @interface FlamView : NSView {
 @private
-    NSLock* image_lock_;
+    NSLock* lock;
+    Genome* genome;
+
     NSOperationQueue* operation_queue_;
-    ViewState* viewState;
+    ViewState* _viewState;
     CGContextRef bitmap_context_;
 }
+
+@property (retain) ViewState* viewState;
 
 @end
 
 @interface IterateOperation : NSOperation {
 @private
     id delegate_;
-    ViewState* viewState;
+    ViewState* _viewState;
 }
+
+@property (retain) ViewState* viewState;
 
 -(id)initWithDelegate:(id)delegate
             viewState:(ViewState*)viewState;
