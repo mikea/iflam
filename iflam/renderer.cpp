@@ -11,6 +11,14 @@ const Float kGamma = 2.5;
 
 }  // namespace
 
+double _pow(double a, double b) {
+    int tmp = (*(1 + (int *)&a));
+    int tmp2 = (int)(b * (tmp - 1072632447) + 1072632447);
+    double p = 0.0;
+    *(1 + (int * )&p) = tmp2;
+    return p;
+}
+
 Float AdjustPercentage(Float p) {
   if (p == 0) {
     return p;

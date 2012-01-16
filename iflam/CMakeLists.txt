@@ -7,7 +7,7 @@ if (APPLE)
   #  set(CMAKE_C_COMPILER clang)
 endif()
 
-set(CMAKE_CXX_FLAGS "-g -Wall -O3")
+set(CMAKE_CXX_FLAGS "-g -Wall -O3 -fno-strict-aliasing")
 add_definitions(-DTIXML_USE_STL)
 
 ########################################################
