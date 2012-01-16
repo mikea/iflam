@@ -153,8 +153,8 @@ static size_t BytesPerRow(size_t width) {
 }
 
 -(void)scrollWheel:(NSEvent *)event {
-  float deltaX = [event deltaX];
-  float deltaY = [event deltaY];
+  double deltaX = [event deltaY];
+  double deltaY = [event deltaX];
   if (deltaX == 0 && deltaY == 0) {
     return;
   }
@@ -162,7 +162,7 @@ static size_t BytesPerRow(size_t width) {
   [lock lock];
 
   NSRect bounds = self.bounds;
-  deltaX = 2 * deltaX * self.viewState.renderState->view_width() / bounds.size.width;
+  deltaX = - 2 * deltaX * self.viewState.renderState->view_width() / bounds.size.width;
   deltaY = - 2 * deltaY * self.viewState.renderState->view_height() / bounds.size.height;
   Genome* old_genome = genome;
   genome = new Genome(*genome);
