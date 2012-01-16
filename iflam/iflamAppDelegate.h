@@ -5,6 +5,7 @@
 @private
   NSWindow* window;
   FlamView* flamView;
+  Genome* _genome;
 }
 
 @property (assign) IBOutlet NSWindow *window;

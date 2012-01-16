@@ -53,7 +53,7 @@ OSStatus MyIOProc(AudioDeviceID           inDevice,
     BOOST_ASSERT(procData->fftManager->HasNewAudioData());
     procData->fftManager->ComputeFFT(procData->buf);
 
-    for (int i = 0; i < procData->frames / 2; ++i) {
+    for (size_t i = 0; i < procData->frames / 2; ++i) {
       procData->accum[i] += procData->buf[i];
     }
     procData->samples++;
@@ -87,8 +87,28 @@ OSStatus MyIOProc(AudioDeviceID           inDevice,
   // theError = AudioDeviceStop(inDevice, theIOProcID);
   // theError = AudioDeviceDestroyIOProcID(inDevice, theIOProcID);
 
-  Genome* genome = new Genome();
-  genome->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_6.flam3");
+  _genome = new Genome();
+  _genome->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_6.flam3");
+  [flamView setGenome: new Genome(*_genome)];
+
+  double fps = 25;
+
+  NSTimer *timer = [NSTimer
+    scheduledTimerWithTimeInterval:1/fps
+                            target:self
+                          selector:@selector(onTimer:)
+                          userInfo:nil
+                           repeats:YES];
+}
+
+- (void)onTimer:(NSTimer*)theTimer {
+  Genome* genome = new Genome(*_genome);
+
+  NSTimeInterval time = [NSDate timeIntervalSinceReferenceDate];
+
+  genome->Move(sin(time * .1), cos(time * .1));
+
+
   [flamView setGenome: genome];
 }
 

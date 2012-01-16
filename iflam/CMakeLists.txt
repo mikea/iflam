@@ -7,7 +7,7 @@ if (APPLE)
   #  set(CMAKE_C_COMPILER clang)
 endif()
 
-set(CMAKE_CXX_FLAGS "-g -Wall -O0")
+set(CMAKE_CXX_FLAGS "-g -Wall -O3")
 add_definitions(-DTIXML_USE_STL)
 
 ########################################################
