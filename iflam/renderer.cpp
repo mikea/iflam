@@ -125,13 +125,16 @@ RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
 //    xform_distrib_[i] = 0;
 //  }
 
-  // setup xform_distrib_
-  CreateXformDist(-1, 0);
-  chaos_enabled_ = genome_.is_chaos_enabled();
-  if (chaos_enabled_) {
-    chaos_enabled_ = true;
-    for (size_t i = 0; i < xforms_size; ++i) {
-      CreateXformDist(i, i);
+
+  if (xforms_size > 0) {
+    // setup xform_distrib_
+    CreateXformDist(-1, 0);
+    chaos_enabled_ = genome_.is_chaos_enabled();
+    if (chaos_enabled_) {
+      chaos_enabled_ = true;
+      for (size_t i = 0; i < xforms_size; ++i) {
+        CreateXformDist(i, i);
+      }
     }
   }
 

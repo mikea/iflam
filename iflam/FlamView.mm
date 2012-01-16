@@ -17,20 +17,47 @@ static size_t BytesPerRow(size_t width) {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code here.
-        bitmap_context_ = nil;
-
-        lock = [[NSLock alloc] init];
-        operation_queue_ = [NSOperationQueue new];
-        [operation_queue_ setMaxConcurrentOperationCount: 1];
-
-        genome = new Genome();
-        genome->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_6.flam3");
-        _viewState = [[ViewState alloc] initWithGenome: genome
-                                                 width: 0
-                                                height: 0];
+        NSLog(@"initWithFrame");
+        [self resetDefaults];
     }
 
     return self;
+}
+
+-(void)awakeFromNib {
+  NSLog(@"awakeFromNib");
+}
+
+-(void)resetDefaults {
+  bitmap_context_ = nil;
+
+  lock = [[NSLock alloc] init];
+  operation_queue_ = [NSOperationQueue new];
+  [operation_queue_ setMaxConcurrentOperationCount: 1];
+
+  _genome = new Genome();
+  _viewState = [[ViewState alloc] initWithGenome: _genome
+                                           width: self.bounds.size.width
+                                          height: self.bounds.size.height];
+}
+
+-(void)setGenome:(Genome*) aGenome {
+  [operation_queue_ cancelAllOperations];
+
+  [lock lock];
+  _genome = aGenome;
+  ViewState* newState = [[[ViewState alloc]
+    initWithGenome: _genome
+             width: self.viewState.width
+            height: self.viewState.height] autorelease];
+
+  IterateOperation* operation = [[[IterateOperation alloc]
+    initWithDelegate: self
+           viewState: newState] autorelease];
+  [operation_queue_ addOperation:operation];
+
+  self.viewState = newState;
+  [lock unlock];
 }
 
 - (void)iterateDone:(ViewState*) aViewState {
@@ -98,11 +125,11 @@ static size_t BytesPerRow(size_t width) {
     size_t height = (size_t) bounds.size.height;
     if (viewState.width != width ||
         viewState.height != height ||
-        viewState.genome != genome) {
+        viewState.genome != _genome) {
       [operation_queue_ cancelAllOperations];
 
       ViewState* newState = [[[ViewState alloc]
-        initWithGenome: genome
+        initWithGenome: _genome
                  width: width
                 height: height] autorelease];
 
@@ -132,9 +159,9 @@ static size_t BytesPerRow(size_t width) {
 - (void)magnifyWithEvent:(NSEvent *)event {
   double magnification = [event magnification];
   [lock lock];
-  Genome* old_genome = genome;
-  genome = new Genome(*genome);
-  genome->Magnify(magnification);
+  Genome* old_genome = _genome;
+  _genome = new Genome(*_genome);
+  _genome->Magnify(magnification);
   // delete old_genome;
   [lock unlock];
   [self setNeedsDisplay:YES];
@@ -144,9 +171,9 @@ static size_t BytesPerRow(size_t width) {
   double rotation = [event rotation];
   NSLog(@"rotate: %f", rotation);
   [lock lock];
-  Genome* old_genome = genome;
-  genome = new Genome(*genome);
-  genome->Rotate(rotation);
+  Genome* old_genome = _genome;
+  _genome = new Genome(*_genome);
+  _genome->Rotate(rotation);
   // delete old_genome;
   [lock unlock];
   [self setNeedsDisplay:YES];
@@ -164,9 +191,9 @@ static size_t BytesPerRow(size_t width) {
   NSRect bounds = self.bounds;
   deltaX = - 2 * deltaX * self.viewState.renderState->view_width() / bounds.size.width;
   deltaY = - 2 * deltaY * self.viewState.renderState->view_height() / bounds.size.height;
-  Genome* old_genome = genome;
-  genome = new Genome(*genome);
-  genome->Move(deltaX, deltaY);
+  Genome* old_genome = _genome;
+  _genome = new Genome(*_genome);
+  _genome->Move(deltaX, deltaY);
   // delete old_genome;
   [lock unlock];
   [self setNeedsDisplay:YES];
@@ -256,43 +283,43 @@ private:
 
 @implementation ViewState
 
-@synthesize genome;
-@synthesize width;
-@synthesize height;
-@synthesize imageData;
-@synthesize renderBuffer;
-@synthesize renderState;
+@synthesize genome=_genome;
+@synthesize width=_width;
+@synthesize height=_height;
+@synthesize imageData=_imageData;
+@synthesize renderBuffer=_renderBuffer;
+@synthesize renderState=_renderState;
 
 - (id)initWithGenome:(Genome*) aGenome
                width: (size_t) aWidth
               height: (size_t) aHeight {
     self = [super init];
     if (self) {
-      lock = [[NSLock alloc] init];
-      genome = aGenome;
-      width = aWidth;
-      height = aHeight;
-      imageData = (uint8_t*) calloc(BytesPerRow(width) * height, 1);
-      renderBuffer = new RenderBuffer(*genome, width, height);
-      renderState = new RenderState(*genome, renderBuffer);
+      _lock = [[NSLock alloc] init];
+      _genome = aGenome;
+      _width = aWidth;
+      _height = aHeight;
+      _imageData = (uint8_t*) calloc(BytesPerRow(_width) * _height, 1);
+      _renderBuffer = new RenderBuffer(*_genome, _width, _height);
+      _renderState = new RenderState(*_genome, _renderBuffer);
     }
 
     return self;
 }
 
 -(void)lock {
-  [lock lock];
+  [_lock lock];
 }
 
 -(void)unlock {
-  [lock unlock];
+  [_lock unlock];
 }
 
 - (void)dealloc {
-  delete renderBuffer;
-  delete renderState;
-  free(imageData);
-  [lock release];
+  delete _renderBuffer;
+  delete _renderState;
+  free(_imageData);
+  [_lock release];
   [super dealloc];
 }
 

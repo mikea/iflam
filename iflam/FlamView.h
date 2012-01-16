@@ -14,16 +14,14 @@ class RenderState;
 
 
 @interface ViewState : NSObject {
-@private
-  NSLock* lock;
+  NSLock*   _lock;
+  Genome*   _genome;
+  size_t    _width;
+  size_t    _height;
+  uint8_t*  _imageData;
 
-  Genome*   genome;
-  size_t    width;
-  size_t    height;
-  uint8_t*  imageData;
-
-  RenderBuffer* renderBuffer;
-  RenderState* renderState;
+  RenderBuffer* _renderBuffer;
+  RenderState* _renderState;
 }
 
 @property (readonly) size_t width;
@@ -45,7 +43,7 @@ class RenderState;
 @interface FlamView : NSView {
 @private
     NSLock* lock;
-    Genome* genome;
+    Genome* _genome;
 
     NSOperationQueue* operation_queue_;
     ViewState* _viewState;
@@ -53,6 +51,9 @@ class RenderState;
 }
 
 @property (retain) ViewState* viewState;
+
+-(void)setGenome:(Genome*) genome;
+-(void)resetDefaults;
 
 @end
 

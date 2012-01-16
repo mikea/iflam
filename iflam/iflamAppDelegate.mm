@@ -10,6 +10,7 @@
 #import <CoreAudio/CoreAudio.h>
 #import <boost/assert.hpp>
 #import "fft/FFTBufferManager.h"
+#import "genome.h"
 
 struct IOProcData {
   UInt32 frames;
@@ -64,6 +65,7 @@ OSStatus MyIOProc(AudioDeviceID           inDevice,
 @implementation iflamAppDelegate
 
 @synthesize window;
+@synthesize flamView;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   AudioDeviceID inDevice = GetDefaultInputDevice();
@@ -84,6 +86,10 @@ OSStatus MyIOProc(AudioDeviceID           inDevice,
   BOOST_VERIFY(!AudioDeviceStart(inDevice, theIOProcID));
   // theError = AudioDeviceStop(inDevice, theIOProcID);
   // theError = AudioDeviceDestroyIOProcID(inDevice, theIOProcID);
+
+  Genome* genome = new Genome();
+  genome->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_6.flam3");
+  [flamView setGenome: genome];
 }
 
 - (void)dealloc {
