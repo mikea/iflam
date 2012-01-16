@@ -34,38 +34,46 @@ static size_t BytesPerRow(size_t width) {
 - (void)iterateDone:(ViewState*) aViewState {
     [image_lock_ lock];
 
-    if (aViewState != viewState) {
-      NSLog(@"Skipping iteration result for other genome.");
-      return;
-    }
+    do {
+      if (aViewState != viewState) {
+        NSLog(@"Skipping iteration result for other genome.");
+        break;
+      }
 
-    NSLog(@"iterateDone: %lu x %lu",
-        viewState.width,
-        viewState.height);
 
-    if (bitmap_context_ != NULL) {
+      [viewState lock];
+
+      NSLog(@"iterateDone: %lu x %lu",
+          viewState.width,
+          viewState.height);
+
+      if (bitmap_context_ != NULL) {
         CGContextRelease(bitmap_context_);
         bitmap_context_ = NULL;
-    }
+      }
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    bitmap_context_ = CGBitmapContextCreate(
-        viewState.imageData,
-        viewState.width,
-        viewState.height,
-        8,
-        BytesPerRow(viewState.width),
-        colorSpace,
-        kCGImageAlphaNoneSkipLast);
+      CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+      bitmap_context_ = CGBitmapContextCreate(
+          viewState.imageData,
+          viewState.width,
+          viewState.height,
+          8,
+          BytesPerRow(viewState.width),
+          colorSpace,
+          kCGImageAlphaNoneSkipLast);
 
-    CGColorSpaceRelease(colorSpace);
+      CGColorSpaceRelease(colorSpace);
+
+      [viewState unlock];
+
+      // enqueue another iterate operation.
+      IterateOperation* operation = [[IterateOperation alloc]
+        initWithDelegate: self
+               viewState: viewState];
+      [operation_queue_ addOperation:operation];
+    } while (0);
 
     [image_lock_ unlock];
-
-    IterateOperation* operation = [[IterateOperation alloc]
-      initWithDelegate: self
-             viewState: viewState];
-    [operation_queue_ addOperation:operation];
     [self setNeedsDisplay:YES];
 }
 
@@ -165,8 +173,10 @@ private:
 
 
 -(void)main {
+  [viewState lock];
+  do {
     if (self.isCancelled) {
-        return;
+        break;
     }
 
     size_t iterations = 100000;
@@ -175,7 +185,7 @@ private:
     viewState.renderState->Iterate(iterations);
 
     if (self.isCancelled) {
-        return;
+        break;
     }
 
     NSLog(@"IterateOperation: Rendering %u x %u",
@@ -190,12 +200,15 @@ private:
     NSLog(@"IterateOperation: done");
 
     if (self.isCancelled) {
-        return;
+        break;
     }
 
     [delegate_ performSelectorOnMainThread:@selector(iterateDone:)
                                 withObject:viewState
                              waitUntilDone:NO];
+  } while (0);
+
+  [viewState unlock];
 }
 
 @end
@@ -215,6 +228,7 @@ private:
               height: (size_t) aHeight {
     self = [super init];
     if (self) {
+      lock = [[NSLock alloc] init];
       genome = aGenome;
       width = aWidth;
       height = aHeight;
@@ -224,6 +238,14 @@ private:
     }
 
     return self;
+}
+
+-(void)lock {
+  [lock lock];
+}
+
+-(void)unlock {
+  [lock unlock];
 }
 
 @end

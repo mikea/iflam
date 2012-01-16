@@ -15,6 +15,8 @@ class RenderState;
 
 @interface ViewState : NSObject {
 @private
+  NSLock* lock;
+
   Genome*   genome;
   size_t    width;
   size_t    height;
@@ -24,16 +26,19 @@ class RenderState;
   RenderState* renderState;
 }
 
--(id)initWithGenome:(Genome*) genome
-              width:(size_t) width
-             height:(size_t) height;
-
 @property (readonly) size_t width;
 @property (readonly) size_t height;
 @property (readonly) Genome* genome;
 @property (readonly) uint8_t* imageData;
 @property (readonly) RenderBuffer* renderBuffer;
 @property (readonly) RenderState* renderState;
+
+-(id)initWithGenome:(Genome*) genome
+              width:(size_t) width
+             height:(size_t) height;
+
+-(void)lock;
+-(void)unlock;
 
 @end
 
