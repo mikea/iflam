@@ -102,14 +102,14 @@ OSStatus MyIOProc(AudioDeviceID           inDevice,
 }
 
 - (void)onTimer:(NSTimer*)theTimer {
-  Genome* genome = new Genome(*_genome);
+  // Genome* genome = new Genome(*_genome);
 
-  NSTimeInterval time = [NSDate timeIntervalSinceReferenceDate];
+  // NSTimeInterval time = [NSDate timeIntervalSinceReferenceDate];
 
-  genome->Move(sin(time * .1), cos(time * .1));
+  // genome->Move(sin(time * .1), cos(time * .1));
 
 
-  [flamView setGenome: genome];
+  // [flamView setGenome: genome];
 }
 
 - (void)dealloc {

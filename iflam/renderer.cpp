@@ -202,6 +202,10 @@ void RenderState::Reseed() {
 }
 
 void RenderState::Iterate(int iterations) {
+  if (genome_.xforms().empty()) {
+    return;
+  }
+
   int consequent_errors_ = 0;
   array<Float, 3> xyc2;
 

@@ -22,6 +22,7 @@ class RenderState;
 
   RenderBuffer* _renderBuffer;
   RenderState* _renderState;
+  CGContextRef _bitmapContext;
 }
 
 @property (readonly) size_t width;
@@ -30,6 +31,7 @@ class RenderState;
 @property (readonly) uint8_t* imageData;
 @property (readonly) RenderBuffer* renderBuffer;
 @property (readonly) RenderState* renderState;
+@property (readonly) CGContextRef bitmapContext;
 
 -(id)initWithGenome:(Genome*) genome
               width:(size_t) width
@@ -45,9 +47,7 @@ class RenderState;
     NSLock* lock;
     Genome* _genome;
 
-    NSOperationQueue* operation_queue_;
     ViewState* _viewState;
-    CGContextRef bitmap_context_;
 }
 
 @property (retain) ViewState* viewState;
@@ -56,17 +56,3 @@ class RenderState;
 -(void)resetDefaults;
 
 @end
-
-@interface IterateOperation : NSOperation {
-@private
-    id delegate_;
-    ViewState* _viewState;
-}
-
-@property (retain) ViewState* viewState;
-
--(id)initWithDelegate:(id)delegate
-            viewState:(ViewState*)viewState;
-
-@end
-
