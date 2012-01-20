@@ -84,19 +84,7 @@ private:
       self.viewState.height);
   self.viewState.renderBuffer->Render(&image);
 
-  CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-  CGContextRef bitmap_context_ = CGBitmapContextCreate(
-      self.viewState.imageData,
-      self.viewState.width,
-      self.viewState.height,
-      8,
-      BytesPerRow(self.viewState.width),
-      colorSpace,
-      kCGImageAlphaNoneSkipLast);
-
-  CGColorSpaceRelease(colorSpace);
-
-  CGImageRef im = CGBitmapContextCreateImage(bitmap_context_);
+  CGImageRef im = CGBitmapContextCreateImage(self.viewState.bitmapContext);
 
   CGContextRef context = (CGContextRef)
     [[NSGraphicsContext currentContext] graphicsPort];
@@ -191,6 +179,19 @@ private:
       _imageData = (uint8_t*) calloc(BytesPerRow(_width) * _height, 1);
       _renderBuffer = new RenderBuffer(*_genome, _width, _height);
       _renderState = new RenderState(*_genome, _renderBuffer);
+
+      CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+      CGContextRef _bitmapContext = CGBitmapContextCreate(
+          _imageData,
+          _width,
+          _height,
+          8,
+          BytesPerRow(_width),
+          colorSpace,
+          kCGImageAlphaNoneSkipLast);
+
+      CGColorSpaceRelease(colorSpace);
+
     }
 
     return self;
