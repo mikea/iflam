@@ -26,6 +26,8 @@ class Xform {
     Float opacity() const { return opacity_; }
 
     bool Apply(Float* in, Float* out, Random* rnd) const;
+
+    array<Float, 6>* mutable_coefs() { return &coefs_; }
   private:
     void Init();
 
@@ -82,6 +84,8 @@ public:
       center_[0] += deltaX;
       center_[1] += deltaY;
     }
+
+    boost::ptr_vector<Xform>* mutable_xforms() { return &xforms_;}
 
 private:
     Float brightness_;

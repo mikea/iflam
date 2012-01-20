@@ -55,7 +55,9 @@ private:
 }
 
 -(void)setGenome:(Genome*) aGenome {
+  // NSLog(@"setGenome");
   [lock lock];
+  delete _genome;
   _genome = aGenome;
   ViewState* newState = [[[ViewState alloc]
     initWithGenome: _genome
@@ -73,7 +75,7 @@ private:
 
 - (void) drawRect:(NSRect)rect {
   [lock lock];
-  NSLog(@"drawRect");
+ // NSLog(@"drawRect");
 
   NSRect bounds = self.bounds;
 
@@ -166,6 +168,7 @@ private:
 @synthesize imageData=_imageData;
 @synthesize renderBuffer=_renderBuffer;
 @synthesize renderState=_renderState;
+@synthesize bitmapContext=_bitmapContext;
 
 - (id)initWithGenome:(Genome*) aGenome
                width: (size_t) aWidth
@@ -181,7 +184,7 @@ private:
       _renderState = new RenderState(*_genome, _renderBuffer);
 
       CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-      CGContextRef _bitmapContext = CGBitmapContextCreate(
+      _bitmapContext = CGBitmapContextCreate(
           _imageData,
           _width,
           _height,

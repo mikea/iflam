@@ -103,7 +103,7 @@ if (APPLE)
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/iflam-Info.plist"
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.mikea.iflam")
 
-  target_link_libraries(iflamapp impl tinyxml "-framework Cocoa -framework CoreAudio")
+  target_link_libraries(iflamapp impl tinyxml "-framework Cocoa -framework CoreAudio -framework AudioUnit")
 
   set(iflamapp_xibs "en.lproj/MainMenu")
 
