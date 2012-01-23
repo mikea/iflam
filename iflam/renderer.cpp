@@ -9,13 +9,15 @@ const size_t kFLen = 6 + kVLen;
 const size_t kChooseXformGrain = 16384;
 const Float kGamma = 2.5;
 
-void assertSane(Float dx) {
-    assert(!boost::math::isnan(dx));
-    assert(dx < 1e20 && dx > -1e20);
-    assert(dx > 1e-20 || dx < -1e-20);
-}
-
 }  // namespace
+
+double _pow(double a, double b) {
+    int tmp = (*(1 + (int *)&a));
+    int tmp2 = (int)(b * (tmp - 1072632447) + 1072632447);
+    double p = 0.0;
+    *(1 + (int * )&p) = tmp2;
+    return p;
+}
 
 Float AdjustPercentage(Float p) {
   if (p == 0) {
@@ -131,13 +133,16 @@ RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
 //    xform_distrib_[i] = 0;
 //  }
 
-  // setup xform_distrib_
-  CreateXformDist(-1, 0);
-  chaos_enabled_ = genome_.is_chaos_enabled();
-  if (chaos_enabled_) {
-    chaos_enabled_ = true;
-    for (size_t i = 0; i < xforms_size; ++i) {
-      CreateXformDist(i, i);
+
+  if (xforms_size > 0) {
+    // setup xform_distrib_
+    CreateXformDist(-1, 0);
+    chaos_enabled_ = genome_.is_chaos_enabled();
+    if (chaos_enabled_) {
+      chaos_enabled_ = true;
+      for (size_t i = 0; i < xforms_size; ++i) {
+        CreateXformDist(i, i);
+      }
     }
   }
 
@@ -197,6 +202,10 @@ void RenderState::Reseed() {
 }
 
 void RenderState::Iterate(int iterations) {
+  if (genome_.xforms().empty()) {
+    return;
+  }
+
   int consequent_errors_ = 0;
   array<Float, 3> xyc2;
 

@@ -12,7 +12,6 @@
 		322FDCCD14B3F37D003DB166 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCCB14B3F37D003DB166 /* InfoPlist.strings */; };
 		322FDCD014B3F37D003DB166 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCCF14B3F37D003DB166 /* main.m */; };
 		322FDCD314B3F37E003DB166 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCD114B3F37E003DB166 /* Credits.rtf */; };
-		322FDCD614B3F37E003DB166 /* iflamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */; };
 		322FDCD914B3F37E003DB166 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 322FDCD714B3F37E003DB166 /* MainMenu.xib */; };
 		322FDCDC14B3F37E003DB166 /* iflam.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */; };
 		322FDCE314B3F37F003DB166 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322FDCC214B3F37D003DB166 /* Cocoa.framework */; };
@@ -25,9 +24,12 @@
 		322FDCFB14B3F5A4003DB16F /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB16E /* tinyxml.cpp */; };
 		322FDCFB14B3F5A4003DB172 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB171 /* tinyxmlerror.cpp */; };
 		322FDCFB14B3F5A4003DB174 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322FDCFB14B3F5A4003DB173 /* tinyxmlparser.cpp */; };
+		32BC0FF414C4CA3E0095D3DC /* FFTBufferManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BC0FED14C4CA3D0095D3DC /* FFTBufferManager.cpp */; };
+		32BC0FF514C4CA3E0095D3DC /* rad2fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 32BC0FEF14C4CA3D0095D3DC /* rad2fft.c */; };
+		32BC0FF614C4CA3E0095D3DC /* SpectrumAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BC0FF114C4CA3D0095D3DC /* SpectrumAnalysis.cpp */; };
+		32BC0FF714C4CA3E0095D3DC /* iflamAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32BC0FF314C4CA3D0095D3DC /* iflamAppDelegate.mm */; };
 		32F73D8214BD26F4003F2664 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F73D8014BD26F4003F2664 /* common.cpp */; };
 		32F73D8D14BEA0A8003F2664 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F73D8B14BEA0A8003F2664 /* color.cpp */; };
-		32F73D9114BEB22C003F2664 /* IterateOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32F73D9014BEB22B003F2664 /* IterateOperation.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,7 +56,6 @@
 		322FDCCF14B3F37D003DB166 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		322FDCD214B3F37E003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iflamAppDelegate.h; sourceTree = "<group>"; };
-		322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iflamAppDelegate.m; sourceTree = "<group>"; };
 		322FDCD814B3F37E003DB166 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		322FDCDB14B3F37E003DB166 /* iflam.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = iflam.xcdatamodel; sourceTree = "<group>"; };
 		322FDCE214B3F37F003DB166 /* iflamTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iflamTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,12 +74,17 @@
 		322FDCFB14B3F5A4003DB170 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml.h; sourceTree = "<group>"; };
 		322FDCFB14B3F5A4003DB171 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlerror.cpp; sourceTree = "<group>"; };
 		322FDCFB14B3F5A4003DB173 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
+		32BC0FED14C4CA3D0095D3DC /* FFTBufferManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FFTBufferManager.cpp; path = fft/FFTBufferManager.cpp; sourceTree = "<group>"; };
+		32BC0FEE14C4CA3D0095D3DC /* FFTBufferManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FFTBufferManager.h; path = fft/FFTBufferManager.h; sourceTree = "<group>"; };
+		32BC0FEF14C4CA3D0095D3DC /* rad2fft.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rad2fft.c; path = fft/rad2fft.c; sourceTree = "<group>"; };
+		32BC0FF014C4CA3D0095D3DC /* rad2fft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rad2fft.h; path = fft/rad2fft.h; sourceTree = "<group>"; };
+		32BC0FF114C4CA3D0095D3DC /* SpectrumAnalysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpectrumAnalysis.cpp; path = fft/SpectrumAnalysis.cpp; sourceTree = "<group>"; };
+		32BC0FF214C4CA3D0095D3DC /* SpectrumAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpectrumAnalysis.h; path = fft/SpectrumAnalysis.h; sourceTree = "<group>"; };
+		32BC0FF314C4CA3D0095D3DC /* iflamAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iflamAppDelegate.mm; sourceTree = "<group>"; };
 		32F73D8014BD26F4003F2664 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
 		32F73D8114BD26F4003F2664 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		32F73D8B14BEA0A8003F2664 /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = color.cpp; sourceTree = "<group>"; };
 		32F73D8C14BEA0A8003F2664 /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = color.h; sourceTree = "<group>"; };
-		32F73D8F14BEB22B003F2664 /* IterateOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IterateOperation.h; sourceTree = "<group>"; };
-		32F73D9014BEB22B003F2664 /* IterateOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IterateOperation.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +148,13 @@
 		322FDCC814B3F37D003DB166 /* iflam */ = {
 			isa = PBXGroup;
 			children = (
+				32BC0FED14C4CA3D0095D3DC /* FFTBufferManager.cpp */,
+				32BC0FEE14C4CA3D0095D3DC /* FFTBufferManager.h */,
+				32BC0FEF14C4CA3D0095D3DC /* rad2fft.c */,
+				32BC0FF014C4CA3D0095D3DC /* rad2fft.h */,
+				32BC0FF114C4CA3D0095D3DC /* SpectrumAnalysis.cpp */,
+				32BC0FF214C4CA3D0095D3DC /* SpectrumAnalysis.h */,
+				32BC0FF314C4CA3D0095D3DC /* iflamAppDelegate.mm */,
 				32F73D8B14BEA0A8003F2664 /* color.cpp */,
 				32F73D8C14BEA0A8003F2664 /* color.h */,
 				32F73D8014BD26F4003F2664 /* common.cpp */,
@@ -149,7 +162,6 @@
 				322FDCFB14B3F5A4003DB168 /* genome.cpp */,
 				322FDCFB14B3F5A4003DB167 /* genome.h */,
 				322FDCD414B3F37E003DB166 /* iflamAppDelegate.h */,
-				322FDCD514B3F37E003DB166 /* iflamAppDelegate.m */,
 				322FDCF914B3F5A4003DB166 /* FlamView.h */,
 				322FDCFA14B3F5A4003DB166 /* FlamView.mm */,
 				32160C1914B3FCA000E2408D /* renderer.cpp */,
@@ -158,8 +170,6 @@
 				322FDCDA14B3F37E003DB166 /* iflam.xcdatamodeld */,
 				322FDCC914B3F37D003DB166 /* Supporting Files */,
 				322FDCFB14B3F5A4003DB16A /* tinyxml */,
-				32F73D8F14BEB22B003F2664 /* IterateOperation.h */,
-				32F73D9014BEB22B003F2664 /* IterateOperation.mm */,
 			);
 			path = iflam;
 			sourceTree = "<group>";
@@ -315,7 +325,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				322FDCD014B3F37D003DB166 /* main.m in Sources */,
-				322FDCD614B3F37E003DB166 /* iflamAppDelegate.m in Sources */,
 				322FDCDC14B3F37E003DB166 /* iflam.xcdatamodeld in Sources */,
 				322FDCFB14B3F5A4003DB166 /* FlamView.mm in Sources */,
 				32160C1B14B3FCA000E2408D /* renderer.cpp in Sources */,
@@ -326,7 +335,10 @@
 				322FDCFB14B3F5A4003DB174 /* tinyxmlparser.cpp in Sources */,
 				32F73D8214BD26F4003F2664 /* common.cpp in Sources */,
 				32F73D8D14BEA0A8003F2664 /* color.cpp in Sources */,
-				32F73D9114BEB22C003F2664 /* IterateOperation.mm in Sources */,
+				32BC0FF414C4CA3E0095D3DC /* FFTBufferManager.cpp in Sources */,
+				32BC0FF514C4CA3E0095D3DC /* rad2fft.c in Sources */,
+				32BC0FF614C4CA3E0095D3DC /* SpectrumAnalysis.cpp in Sources */,
+				32BC0FF714C4CA3E0095D3DC /* iflamAppDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

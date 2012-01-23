@@ -10,6 +10,8 @@
 #include "common.h"
 #include "genome.h"
 
+double _pow(double x, double y);
+
 void CalcNewRgb(Float* rgb, Float* newRgb, Float ls, Float highpow);
 Float AdjustPercentage(Float p);
 const Float kPrefilterWhite = 255;
@@ -47,6 +49,9 @@ class RenderState {
     ~RenderState();
 
     void Iterate(int iterations);
+
+    Float view_height() const { return view_height_; }
+    Float view_width() const { return view_width_; }
   private:
     void Reseed();
 
@@ -115,7 +120,7 @@ void RenderBuffer::Render(Image* image) {
       cb *= ls;
 
       Float tmp = freq / kPrefilterWhite;
-      Float alpha = pow(tmp, gamma);
+      Float alpha = _pow(tmp, gamma);
       ls = vibrancy * 256.0 * alpha / tmp;
       if (alpha < 0.0) alpha = 0.0;
       if (alpha > 1.0) alpha = 1.0;
@@ -125,7 +130,7 @@ void RenderBuffer::Render(Image* image) {
 
       for (int rgbi = 0; rgbi < 3; rgbi++) {
         Float a = newrgb[rgbi];
-        a += (1.0 - vibrancy) * 256.0 * pow(t[rgbi] / kPrefilterWhite, gamma);
+        a += (1.0 - vibrancy) * 256.0 * _pow(t[rgbi] / kPrefilterWhite, gamma);
         a += ((1.0 - alpha) * genome_.background()[rgbi]);
         if (a > 255) a = 255;
         if (a < 0) a = 0;

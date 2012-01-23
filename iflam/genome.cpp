@@ -126,6 +126,26 @@ Xform::Xform()
    opacity_(1.0),
    weight_(1.0) { }
 
+Xform::Xform(const Xform& xform) {
+  coefs_ = xform.coefs_;
+  variations_ = xform.variations_;
+  color_ = xform.color_;
+  color_speed_ = xform.color_speed_;
+  opacity_ = xform.opacity_;
+  weight_ = xform.weight_;
+  animate_ = xform.animate_;
+  julian_dist_ = xform.julian_dist_;
+  julian_power_ = xform.julian_power_;
+  perspective_angle_ = xform.perspective_angle_;
+  perspective_dist_ = xform.perspective_dist_;
+  radial_blur_angle_ = xform.radial_blur_angle_;
+  rings2_val_ = xform.rings2_val_;
+  if (xform.post_.get() != NULL) {
+    post_.reset(new array<Float, 6>(*xform.post_));
+  }
+  Init();
+}
+
 Xform::~Xform() { }
 
 bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
@@ -416,6 +436,47 @@ Genome::Genome()
    quality_(1),
    vibrancy_(1),
    zoom_(0) {
+}
+
+Genome::Genome(const Genome& genome) {
+  brightness_ = genome.brightness_;
+  contrast_ = genome.contrast_;
+  gamma_ = genome.gamma_;
+  gamma_threshold_ = genome.gamma_threshold_;
+  highlight_power_ = genome.highlight_power_;
+  passes_ = genome.passes_;
+  pixels_per_unit_ = genome.pixels_per_unit_;
+  quality_ = genome.quality_;
+  vibrancy_ = genome.vibrancy_;
+  zoom_ = genome.zoom_;
+  name_ = genome.name_;
+  time_ = genome.time_;
+  size_ = genome.size_;
+  center_ = genome.center_;
+  background_ = genome.background_;
+  colors_ = genome.colors_;
+  rotate_ = genome.rotate_;
+  supersample_ = genome.supersample_;
+  filter_ = genome.filter_;
+  filter_shape_ = genome.filter_shape_;
+  temporal_filter_type_ = genome.temporal_filter_type_;
+  temporal_filter_width_ = genome.temporal_filter_width_;
+  temporal_samples_ = genome.temporal_samples_;
+  estimator_radius_ = genome.estimator_radius_;
+  estimator_minimum_ = genome.estimator_minimum_;
+  estimator_curve_ = genome.estimator_curve_;
+  palette_mode_ = genome.palette_mode_;
+  interpolation_type_ = genome.interpolation_type_;
+  url_ = genome.url_;
+  nick_ = genome.nick_;
+  notes_ = genome.notes_;
+
+  for (int i = 0; i < genome.xforms_.size(); ++i) {
+    xforms_.push_back(new Xform(genome.xforms_[i]));
+  }
+  if (genome.final_xform_.get() != NULL) {
+    final_xform_.reset(new Xform(*genome.final_xform_));
+  }
 }
 
 Genome::~Genome() {
