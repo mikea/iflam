@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
-
 project(iflam)
+
+include("CMakeFunctions.txt")
+ADD_BOOST()
 
 if (APPLE)
   #  set(CMAKE_CXX_COMPILER clang++)
@@ -10,55 +12,24 @@ endif()
 set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O0 -fno-strict-aliasing")
 add_definitions(-DTIXML_USE_STL)
 
-########################################################
-
-set(Boost_USE_STATIC_LIBS ON)
-# set(Boost_DEBUG ON)
-set(BOOST_ROOT "$ENV{HOME}/Packages/boost_1_48_0")
-set(BOOST_LIBRARYDIR "${BOOST_ROOT}/stage/lib")
-find_package(Boost 1.48 REQUIRED exception program_options unit_test_framework)
-
-if (Boost_FOUND)
-  message(STATUS "Boost include dir: ${Boost_INCLUDE_DIR}")
-  message(STATUS "Boost library dir: ${Boost_INCLUDE_DIRS}")
-  message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
-  include_directories(${Boost_INCLUDE_DIR})
-  link_directories(${Boost_LIBRARY_DIRS})
-endif()
+add_subdirectory(core)
 
 ########################################################
 
-add_library(tinyxml
-  tinyxml/tinyxml.cpp
-  tinyxml/tinystr.cpp
-  tinyxml/tinyxmlerror.cpp
-  tinyxml/tinyxmlparser.cpp
-  )
-
-add_library(impl
-  common.cpp
-  color.cpp
-  genome.cpp
-  renderer.cpp
-  )
+include_directories(core)
 
 add_executable(iflam
   main.cpp
   )
 
-target_link_libraries(iflam impl tinyxml ${Boost_LIBRARIES})
+target_link_libraries(iflam core tinyxml ${Boost_LIBRARIES})
 
 # Tests
-
-add_executable(color_test
-  color_test.cpp
-  )
-target_link_libraries(color_test impl tinyxml ${Boost_LIBRARIES})
 
 add_executable(perf_test
   perf_test.cpp
   )
-target_link_libraries(perf_test impl tinyxml ${Boost_LIBRARIES})
+target_link_libraries(perf_test core tinyxml ${Boost_LIBRARIES})
 
 find_package(PNG REQUIRED)
 
@@ -79,11 +50,11 @@ endif()
 if (HDF5_FOUND)
   message(STATUS "HDF5 include dir: ${HDF5_INCLUDE_DIR}")
   message(STATUS "HDF5 libraries: ${HDF5_LIBRARIES}")
+  include_directories(${HDF5_INCLUDE_DIR})
 
   add_executable(hdf5_render hdf5_main.cpp)
-  target_link_libraries(hdf5_render impl
+  target_link_libraries(hdf5_render core
     ${HDF5_LIBRARIES} ${PNG_LIBRARIES} tinyxml ${Boost_LIBRARIES})
-  include_directories(${HDF5_INCLUDE_DIR})
 endif()
 
 if (APPLE)
@@ -118,7 +89,7 @@ if (APPLE)
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/iflam-Info.plist"
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.mikea.iflam")
 
-  target_link_libraries(iflamapp impl tinyxml "-framework Cocoa -framework CoreAudio -framework AudioUnit -framework CoreFoundation -framework AudioToolbox -framework Accelerate")
+  target_link_libraries(iflamapp core tinyxml "-framework Cocoa -framework CoreAudio -framework AudioUnit -framework CoreFoundation -framework AudioToolbox -framework Accelerate")
 
   set(iflamapp_xibs "en.lproj/MainMenu")
 

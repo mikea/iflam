@@ -1,5 +1,5 @@
 #include <boost/program_options.hpp>
-#include<exception>
+#include <exception>
 #include <hdf5.h>
 
 #include "common.h"
