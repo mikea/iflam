@@ -18,3 +18,24 @@ macro(ADD_BOOST)
   endif()
 endmacro(ADD_BOOST)
 
+macro(ADD_PNG)
+  find_package(PNG REQUIRED)
+
+  set(PNG_INCLUDE_DIR "/usr/X11/include/")
+  if (PNG_FOUND)
+    message(STATUS "PNG include dir: ${PNG_INCLUDE_DIR}")
+    include_directories(${PNG_INCLUDE_DIR})
+  endif()
+endmacro(ADD_PNG)
+
+macro(ADD_HDF5)
+  find_package(HDF5 1.8.8 REQUIRED)
+  if (HDF5_FOUND)
+    message(STATUS "HDF5 include dir: ${HDF5_INCLUDE_DIR}")
+    message(STATUS "HDF5 libraries: ${HDF5_LIBRARIES}")
+    include_directories(${HDF5_INCLUDE_DIR})
+
+  endif()
+
+endmacro(ADD_HDF5)
+

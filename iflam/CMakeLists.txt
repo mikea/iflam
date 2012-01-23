@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 project(iflam)
 
 include("CMakeFunctions.txt")
@@ -10,57 +10,15 @@ if (APPLE)
 endif()
 
 set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O0 -fno-strict-aliasing")
-add_definitions(-DTIXML_USE_STL)
 
 add_subdirectory(core)
+add_subdirectory(cmd)
 
 ########################################################
-
-include_directories(core)
-
-add_executable(iflam
-  main.cpp
-  )
-
-target_link_libraries(iflam core ${Boost_LIBRARIES})
-
-# Tests
-
-add_executable(perf_test
-  perf_test.cpp
-  )
-target_link_libraries(perf_test core ${Boost_LIBRARIES})
-
-find_package(PNG REQUIRED)
-
-set(PNG_INCLUDE_DIR "/usr/X11/include/")
-if (PNG_FOUND)
-  message(STATUS "PNG include dir: ${PNG_INCLUDE_DIR}")
-
-  include_directories(${PNG_INCLUDE_DIR})
-  target_link_libraries(iflam ${PNG_LIBRARIES})
-endif()
-
-set(ENV{HDF5_ROOT} "$ENV{HOME}/Packages/hdf5")
-
-if (UNIX AND (NOT APPLE))
-  find_package(HDF5 1.8.8 REQUIRED)
-endif()
-
-if (HDF5_FOUND)
-  message(STATUS "HDF5 include dir: ${HDF5_INCLUDE_DIR}")
-  message(STATUS "HDF5 libraries: ${HDF5_LIBRARIES}")
-  include_directories(${HDF5_INCLUDE_DIR})
-
-  add_executable(hdf5_render hdf5_main.cpp)
-  target_link_libraries(hdf5_render core
-    ${HDF5_LIBRARIES} ${PNG_LIBRARIES} ${Boost_LIBRARIES})
-endif()
 
 if (APPLE)
   add_definitions(-D__ASSERTMACROS__)
   include_directories("CA/PublicUtility" "CA/AUBase" "CA/Utility")
-
 
   add_executable(
     iflamapp
@@ -100,6 +58,8 @@ if (APPLE)
 
   foreach(xib ${iflamapp_xibs})
     set(_nib_file ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/iflamapp.app/Contents/Resources/${xib}.nib)
+    # TODO: add DEPENDS section
+    # TODO: extract
     add_custom_command (TARGET iflamapp POST_BUILD
       COMMAND mkdir -p `dirname ${_nib_file}` &&
       ${IBTOOL} --errors --warnings --notices --output-format human-readable-text
@@ -108,7 +68,4 @@ if (APPLE)
       COMMENT "Compiling ${CMAKE_CURRENT_SOURCE_DIR}/${xib}.xib")
 
   endforeach()
-
-
-
 endif()
