@@ -268,11 +268,14 @@ public:
 
 
 - (void)newFFtDataAvailable:(Float32*) fftData size:(size_t) size min:(Float32)aMin max:(Float32)aMax {
-  Float32 dist = aMax / 1000.0;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  Float32 dist = aMax / 300.0;
   // NSLog(@"%f", dist);
   Genome* genome = new Genome(*_genome);
-  genome->mutable_xforms()->at(0).mutable_coefs()->at(0) += dist;
+  genome->mutable_xforms()->at(0).mutable_coefs()->at(3) += dist;
   [flamView setGenome: genome];
+  [pool release];
 }
 
 - (void)onTimer:(NSTimer*)theTimer {

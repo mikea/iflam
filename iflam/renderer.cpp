@@ -220,6 +220,9 @@ void RenderState::Iterate(int iterations) {
   for (int i = -20; i < iterations; ++i) {
     const Xform& xform = PickRandomXform();
     if (!xform.Apply(xyc_.c_array(), xyc_.c_array(), &rnd)) {
+      xyc_[0] = rnd.crnd();
+      xyc_[1] = rnd.crnd();
+      xyc_[2] = rnd.crnd();
       std::cout << "Apply resulted in error\n";
       ++consequent_errors_;
       if (consequent_errors_ < 5) {

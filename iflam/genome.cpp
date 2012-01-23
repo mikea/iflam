@@ -416,7 +416,7 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
 
   bool good = true;
   if (BadValue(x) || BadValue(y)) {
-    abort();
+    good = false;
   }
 
   out[0] = x;

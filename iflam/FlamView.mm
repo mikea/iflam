@@ -59,13 +59,12 @@ private:
   [lock lock];
   delete _genome;
   _genome = aGenome;
-  ViewState* newState = [[ViewState alloc]
+  ViewState* newState = [[[ViewState alloc]
     initWithGenome: _genome
              width: self.viewState.width
-            height: self.viewState.height];
+            height: self.viewState.height] autorelease];
 
-  [_viewState release];
-  _viewState = newState;
+  self.viewState = newState;
   [lock unlock];
   [self setNeedsDisplay:YES];
 }
