@@ -24,11 +24,11 @@ class RenderBuffer {
     size_t height() const { return height_; }
     size_t width() const { return width_; }
 
-    void Update(int x, int y, const Color& c, Float opacity);
+    void Update(size_t x, size_t y, const Color& c, Float opacity);
 
     template<typename Image>
     void Render(Image* image);
-    const Float* const accum() const { return accum_.get(); }
+    const Float* accum() const { return accum_.get(); }
     size_t samples() const { return samples_; }
   private:
     const Genome& genome_;
@@ -96,8 +96,8 @@ void RenderBuffer::Render(Image* image) {
 
   Float newrgb[4] = {0, 0, 0, 0};
 
-  for (int y = 0; y < height_; ++y) {
-    for (int x = 0; x < width_; ++x) {
+  for (size_t y = 0; y < height_; ++y) {
+    for (size_t x = 0; x < width_; ++x) {
       size_t offset = (x + width_ * y) * 4;
       Float cr = accum_[offset];
       Float cg = accum_[offset + 1];

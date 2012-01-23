@@ -13,7 +13,7 @@ class Rgb8Image {
     Rgb8Image(boost::gil::rgb8_view_t* view) : view_(view) { }
     typedef boost::gil::rgb8_view_t::reference pixel_t_ref;
 
-    void Set(int x, int y, Float r, Float g, Float b, Float a) {
+    void Set(int x, int y, Float r, Float g, Float b, Float /* a */) {
       pixel_t_ref pixel = (*view_)(x, y);
       pixel[0] = r;
       pixel[1] = g;

@@ -2,7 +2,7 @@
 
 #include "color.h"
 
-int main(int argc, char *argv[]) {
+int main(int /* argc */, char* /*argv*/[]) {
   Random rnd;
 
   {  // rgb2hsv

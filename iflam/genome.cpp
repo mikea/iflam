@@ -471,7 +471,7 @@ Genome::Genome(const Genome& genome) {
   nick_ = genome.nick_;
   notes_ = genome.notes_;
 
-  for (int i = 0; i < genome.xforms_.size(); ++i) {
+  for (size_t i = 0; i < genome.xforms_.size(); ++i) {
     xforms_.push_back(new Xform(genome.xforms_[i]));
   }
   if (genome.final_xform_.get() != NULL) {

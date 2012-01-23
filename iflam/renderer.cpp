@@ -96,9 +96,9 @@ RenderBuffer::RenderBuffer(const Genome& genome, size_t width, size_t height)
 RenderBuffer::~RenderBuffer() { }
 
 
-void RenderBuffer::Update(int x, int y,
+void RenderBuffer::Update(size_t x, size_t y,
     const Color& color, Float opacity) {
-  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
+  if (x >= width_ || y >= height_) {
     return;
   }
 
@@ -264,12 +264,15 @@ void RenderState::Iterate(int iterations) {
       int y1 = (int) ((xyc2[1] - view_bottom_) *
           buffer_->height() / view_height_ + 0.5);
 
-      buffer_->Update(
-          x1,
-          y1,
-          genome_.color((int) std::min(std::max(xyc2[2] * Float(255.0),
-                Float(0.0)), Float(255.0))),
-          opacity);
+      // todo: move check into Update.
+      if (x1 >= 0 && y1 >= 0) {
+        buffer_->Update(
+            x1,
+            y1,
+            genome_.color((int) std::min(std::max(xyc2[2] * Float(255.0),
+                  Float(0.0)), Float(255.0))),
+            opacity);
+      }
     }
   }
 }
