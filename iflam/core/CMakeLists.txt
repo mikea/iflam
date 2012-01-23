@@ -14,13 +14,14 @@ add_library(tinyxml
   tinyxml/tinyxmlparser.cpp
   )
 
-
 add_library(core
   common.cpp
   color.cpp
   genome.cpp
   renderer.cpp
   )
+
+target_link_libraries(core tinyxml ${Boost_LIBRARIES})
 
 add_executable(color_test
   color_test.cpp

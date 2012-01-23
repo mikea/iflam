@@ -22,14 +22,14 @@ add_executable(iflam
   main.cpp
   )
 
-target_link_libraries(iflam core tinyxml ${Boost_LIBRARIES})
+target_link_libraries(iflam core ${Boost_LIBRARIES})
 
 # Tests
 
 add_executable(perf_test
   perf_test.cpp
   )
-target_link_libraries(perf_test core tinyxml ${Boost_LIBRARIES})
+target_link_libraries(perf_test core ${Boost_LIBRARIES})
 
 find_package(PNG REQUIRED)
 
@@ -54,7 +54,7 @@ if (HDF5_FOUND)
 
   add_executable(hdf5_render hdf5_main.cpp)
   target_link_libraries(hdf5_render core
-    ${HDF5_LIBRARIES} ${PNG_LIBRARIES} tinyxml ${Boost_LIBRARIES})
+    ${HDF5_LIBRARIES} ${PNG_LIBRARIES} ${Boost_LIBRARIES})
 endif()
 
 if (APPLE)
@@ -89,7 +89,7 @@ if (APPLE)
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/iflam-Info.plist"
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.mikea.iflam")
 
-  target_link_libraries(iflamapp core tinyxml "-framework Cocoa -framework CoreAudio -framework AudioUnit -framework CoreFoundation -framework AudioToolbox -framework Accelerate")
+  target_link_libraries(iflamapp core "-framework Cocoa -framework CoreAudio -framework AudioUnit -framework CoreFoundation -framework AudioToolbox -framework Accelerate")
 
   set(iflamapp_xibs "en.lproj/MainMenu")
 
