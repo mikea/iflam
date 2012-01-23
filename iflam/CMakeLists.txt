@@ -7,7 +7,7 @@ if (APPLE)
   #  set(CMAKE_C_COMPILER clang)
 endif()
 
-set(CMAKE_CXX_FLAGS "-g -Wall -O3 -fno-strict-aliasing")
+set(CMAKE_CXX_FLAGS "-g -Wall -O0 -fno-strict-aliasing")
 add_definitions(-DTIXML_USE_STL)
 
 ########################################################
@@ -92,7 +92,7 @@ if (APPLE)
     iflamapp
     MACOSX_BUNDLE
     main.m
-    iflamAppDelegate.mm
+    AppDelegate.mm
     FlamView.mm
     fft/FFTBufferManager.cpp
     fft/SpectrumAnalysis.cpp
@@ -122,5 +122,8 @@ if (APPLE)
       COMMENT "Compiling ${CMAKE_CURRENT_SOURCE_DIR}/${xib}.xib")
 
   endforeach()
+
+  include_directories("CoreAudioPublicUtility")
+
 
 endif()

@@ -61,5 +61,24 @@ class Stopwatch {
     (std::string("Bad value for ") + #x + ": " + \
      boost::lexical_cast<std::string>(x)).c_str())
 
+#if defined(BOOST_DISABLE_ASSERTS) || ( !defined(BOOST_ENABLE_ASSERT_HANDLER) && defined(NDEBUG) )
+#define BOOST_VERIFY_MSG(expr, msg) ((void)(expr))
+#else
+#define BOOST_VERIFY_MSG(expr, msg) BOOST_ASSERT_MSG(expr, msg)
+
+#define VERIFY_OSSTATUS_MSG(exp, msg) \
+    do { \
+       OSStatus __err = (exp); \
+       BOOST_VERIFY_MSG(__err == 0, (std::string(msg) + ", OSStatus=" + boost::lexical_cast<std::string>(__err)).c_str()); \
+    } while(0)
+
+#define VERIFY_OSSTATUS(exp) \
+    do { \
+       OSStatus __err = (exp); \
+       BOOST_VERIFY_MSG(__err == 0, (std::string("OSStatus=") + boost::lexical_cast<std::string>(__err)).c_str()); \
+    } while(0)
+
+#endif
+
 #endif
 
