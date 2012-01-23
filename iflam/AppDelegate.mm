@@ -5,7 +5,16 @@
 #import "fft/FFTBufferManager.h"
 #import "genome.h"
 
-
+#include "CAStreamBasicDescription.h"
+#include "CAComponent.h"
+#include "CAHALAudioSystemObject.h"
+#include "CAAudioUnit.h"
+#include "CAHALAudioDevice.h"
+#include "CAAudioUnitOutputCapturer.h"
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreFoundation/CFURL.h>
+#include "CASpectralProcessor.h"
+#include "CABufferList.h"
 
 double clamp(double min,double x,double max) { return (x < min ? min : (x > max ? max : x)); }
 
@@ -54,118 +63,143 @@ public:
   }
 
   void ConfigureAU() {
-    UInt32  param;
+    NSLog(@"ConfigureAU");
 
     {
-      // Open the AudioOutputUnit
-      // There are several different types of Audio Units.
-      // Some audio units serve as Outputs, Mixers, or DSP
-      // units. See AUComponent.h for listing
-      Component component;
-      ComponentDescription description;
-      description.componentType = kAudioUnitType_Output;
-      description.componentSubType = kAudioUnitSubType_HALOutput;
-      description.componentManufacturer = kAudioUnitManufacturer_Apple;
-      description.componentFlags = 0;
-      description.componentFlagsMask = 0;
-      component = FindNextComponent(NULL, &description);
-      BOOST_ASSERT(component);
-      VERIFY_OSSTATUS(OpenAComponent(component, &fAudioUnit));
+      // Open the output unit
+      AudioComponentDescription desc;
+      desc.componentType = kAudioUnitType_Output;
+      desc.componentSubType = kAudioUnitSubType_HALOutput; // iphone: kAudioUnitSubType_RemoteIO;
+      desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+      desc.componentFlags = 0;
+      desc.componentFlagsMask = 0;
+
+      CAComponent halOutput(desc);
+      halOutput.Print();
+      BOOST_ASSERT(halOutput.IsValid());
+
+      VERIFY_OSSTATUS(CAAudioUnit::Open(halOutput, audio_unit_));
+      BOOST_ASSERT(audio_unit_.IsValid());
     }
 
-    // Configure the AudioOutputUnit
-    // You must enable the Audio Unit (AUHAL) for input and output for the same  device.
-    // When using AudioUnitSetProperty the 4th parameter in the method
-    // refer to an AudioUnitElement.  When using an AudioOutputUnit
-    // for input the element will be '1' and the output element will be '0'.
-
-    // Enable input on the AUHAL
-    param = 1;
-    VERIFY_OSSTATUS(AudioUnitSetProperty(fAudioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, 1, &param, sizeof(UInt32)));
-    // Disable Output on the AUHAL
-    param = 0;
-    VERIFY_OSSTATUS(AudioUnitSetProperty(fAudioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(UInt32)));
-
-    // Select the default input device
-    param = sizeof(AudioDeviceID);
-    VERIFY_OSSTATUS(AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice, &param, &fInputDeviceID));
-
-    // Set the current device to the default input unit.
-    VERIFY_OSSTATUS(AudioUnitSetProperty(fAudioUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &fInputDeviceID, sizeof(AudioDeviceID)));
+    {
+      // Enable input.
+      UInt32 enableInput = 1;
+      AudioUnitElement inputBus = 1;
+      VERIFY_OSSTATUS(audio_unit_.SetProperty(kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input, inputBus, &enableInput, sizeof(enableInput)));
+    }
 
     {
+      // Disable output.
+      UInt32 enableOutput = 0;
+      AudioUnitElement outputBus = 0;
+      VERIFY_OSSTATUS(audio_unit_.SetProperty(kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, outputBus, &enableOutput, sizeof (enableOutput)));
+    }
+
+    {
+      // Set the current device to the input unit.
+      AudioDeviceID defaultInput = 0;
+      UInt32 size = sizeof(AudioDeviceID);
+      AudioObjectPropertyAddress propertyAddress = {kAudioHardwarePropertyDefaultInputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster};
+      VERIFY_OSSTATUS(AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &size, &defaultInput));
+      VERIFY_OSSTATUS(audio_unit_.SetProperty(kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &defaultInput, sizeof(defaultInput)));
+    }
+
+
+    UInt32 bufferFrameSize;
+    {
+       UInt32 size = sizeof(UInt32);
+        VERIFY_OSSTATUS(audio_unit_.GetProperty(kAudioDevicePropertyBufferFrameSize, kAudioUnitScope_Global, 0, &bufferFrameSize, &size));
+    }
+
+    {
+      // Set output format format.
+      CAStreamBasicDescription outFormat;
+      outFormat.SetAUCanonical(2, false);
+      outFormat.mSampleRate = 44100;
+
+      VERIFY_OSSTATUS(audio_unit_.SetProperty(kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &outFormat, sizeof(outFormat)));
+
+      {
+        // Create buffers
+
+        audio_buffer_ = AllocateAudioBufferList(outFormat.NumberChannels(), outFormat.FramesToBytes(bufferFrameSize));
+        BOOST_ASSERT(audio_buffer_);
+      }
+    }
+
+    {
+      // Set callback.
       AURenderCallbackStruct callback;
-      // Setup render callback
-      // This will be called when the AUHAL has input data
-      callback.inputProc = FFTCollector::AudioInputProc; // defined as static in the header file
+      callback.inputProc = FFTCollector::AudioInputProc;
       callback.inputProcRefCon = this;
-      VERIFY_OSSTATUS(AudioUnitSetProperty(fAudioUnit, kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 0, &callback, sizeof(AURenderCallbackStruct)));
+
+      VERIFY_OSSTATUS(audio_unit_.SetProperty(kAudioOutputUnitProperty_SetInputCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback)));
     }
 
-    // get hardware device format
-    param = sizeof(AudioStreamBasicDescription);
-    VERIFY_OSSTATUS(AudioUnitGetProperty(fAudioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 1, &fDeviceFormat, &param));
+    VERIFY_OSSTATUS(audio_unit_.Initialize());
 
-    // Twiddle the format to our liking
-    fAudioChannels = MAX(fDeviceFormat.mChannelsPerFrame, 2);
-    fOutputFormat.mChannelsPerFrame = fAudioChannels;
-    fOutputFormat.mSampleRate = fDeviceFormat.mSampleRate;
-    fOutputFormat.mFormatID = kAudioFormatLinearPCM;
-    fOutputFormat.mFormatFlags = kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked | kAudioFormatFlagIsNonInterleaved;
-    if (fOutputFormat.mFormatID == kAudioFormatLinearPCM && fAudioChannels == 1) {
-      fOutputFormat.mFormatFlags &= ~kLinearPCMFormatFlagIsNonInterleaved;
-    }
-    #if __BIG_ENDIAN__
-        fOutputFormat.mFormatFlags |= kAudioFormatFlagIsBigEndian;
-    #endif
-    fOutputFormat.mBitsPerChannel = sizeof(Float32) * 8;
-    fOutputFormat.mBytesPerFrame = fOutputFormat.mBitsPerChannel / 8;
-    fOutputFormat.mFramesPerPacket = 1;
-    fOutputFormat.mBytesPerPacket = fOutputFormat.mBytesPerFrame;
+    UInt32 block_size = 1024;
+    UInt32 num_bins = block_size >> 1;
+    UInt32 num_channels = 2;
+    UInt32 sample_rate = 44100;
 
-    // Set the AudioOutputUnit output data format
-    VERIFY_OSSTATUS(AudioUnitSetProperty(fAudioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &fOutputFormat, sizeof(  AudioStreamBasicDescription)));
 
-    // Get the number of frames in the IO buffer(s)
-    param = sizeof(UInt32);
-    VERIFY_OSSTATUS(AudioUnitGetProperty(fAudioUnit, kAudioDevicePropertyBufferFrameSize, kAudioUnitScope_Global, 0, &fAudioSamples, &param));
+    spectral_processor_ = new CASpectralProcessor(block_size, num_bins, 1 /* channels */, bufferFrameSize);
 
-    UInt32 maxFPS;
-    param = sizeof(maxFPS);
-    VERIFY_OSSTATUS(AudioUnitGetProperty(fAudioUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, &maxFPS, &param));
+    CAStreamBasicDescription  bufClientDesc;
+    bufClientDesc.SetCanonical(num_channels, false);
+    bufClientDesc.mSampleRate = sample_rate;
 
-    fftBufferManager = new FFTBufferManager(maxFPS);
-    fft_data_ = new int32_t[maxFPS/2];
-    fft_data_size_ = maxFPS / 2;
-
-    // Initialize the AU
-    VERIFY_OSSTATUS(AudioUnitInitialize(fAudioUnit));
-
-    // Allocate our audio buffers
-    audio_buffer_ = AllocateAudioBufferList(fOutputFormat.mChannelsPerFrame, fAudioSamples * fOutputFormat.mBytesPerFrame);
-    BOOST_ASSERT(audio_buffer_);
+    spectral_data_buffer_ = CABufferList::New("spectral_data_buffer_", bufClientDesc);
+    spectral_data_buffer_->AllocateBuffers(block_size * num_bins * sizeof(Float32) / 2);
   }
 
   void Start() {
-    VERIFY_OSSTATUS(AudioOutputUnitStart(fAudioUnit));
+    NSLog(@"StartAU");
+
+    if (0) {
+      AudioStreamBasicDescription anASBD;
+      anASBD.mFormatID         = kAudioFormatLinearPCM;
+      anASBD.mFormatFlags      = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsBigEndian | kAudioFormatFlagIsPacked;
+      anASBD.mSampleRate       = 44100;
+      anASBD.mChannelsPerFrame = 2;
+      anASBD.mFramesPerPacket  = 1;
+      anASBD.mBytesPerPacket   = anASBD.mChannelsPerFrame * sizeof (SInt16);
+      anASBD.mBytesPerFrame    = anASBD.mChannelsPerFrame * sizeof (SInt16);
+      anASBD.mBitsPerChannel   = 16;
+
+      CFURLRef fileUrl = CFURLCreateWithFileSystemPath(NULL, CFSTR("/tmp/recording.aiff"), kCFURLPOSIXPathStyle, false);
+      VERIFY_OSSTATUS(ExtAudioFileCreateWithURL(fileUrl, kAudioFileAIFFType, &anASBD, NULL, kAudioFileFlags_EraseFile, &audio_file_));
+
+      CAStreamBasicDescription clientFormat;
+      clientFormat.SetAUCanonical(2, false);
+      clientFormat.mSampleRate = 44100;
+
+      VERIFY_OSSTATUS(ExtAudioFileSetProperty(audio_file_, kExtAudioFileProperty_ClientDataFormat, sizeof(clientFormat), &clientFormat));
+      VERIFY_OSSTATUS(ExtAudioFileWriteAsync(audio_file_, 0, NULL));
+    }
+
+    VERIFY_OSSTATUS(AudioOutputUnitStart(audio_unit_.AU()));
+    audio_unit_.Print();
   }
 
   void Stop() {
-    VERIFY_OSSTATUS(AudioOutputUnitStop(fAudioUnit));
+    NSLog(@"StopAU");
+    VERIFY_OSSTATUS(AudioOutputUnitStop(audio_unit_.AU()));
+
+    /*
+    if (audio_file_) {
+      VERIFY_OSSTATUS(ExtAudioFileDispose(audio_file_));
+    }
+    */
   }
 
   void ProcessAudioInput() {
-    NSLog(@"Data: %d", audio_buffer_->mBuffers[0].mDataByteSize);
-    if (fftBufferManager->NeedsNewAudioData()) {
-      fftBufferManager->GrabAudioData(audio_buffer_);
-    } else {
-      BOOST_ASSERT(fftBufferManager->HasNewAudioData());
-      // memset(fft_data_, 0, sizeof(int32_t)*fft_data_size_);
-      fftBufferManager->ComputeFFT(fft_data_);
-      // memset(fft_data_, 0, sizeof(int32_t)*fft_data_size_);
-      [delegate_ newFFtDataAvailable:fft_data_ size:fft_data_size_];
-    }
-  }
+    Float32 minAmp = 0, maxAmp = 0;
+    spectral_processor_->GetMagnitude(&spectral_data_buffer_->GetModifiableBufferList(), &minAmp, &maxAmp);
+    [delegate_ newFFtDataAvailable: nil size: -1 min:minAmp max:maxAmp];
+}
 
 
   static OSStatus AudioInputProc(
@@ -176,25 +210,24 @@ public:
       UInt32 inNumberFrames,
       AudioBufferList* ioData) {
     FFTCollector *THIS = (FFTCollector*)inRefCon;
-    // Render into audio buffer
-    VERIFY_OSSTATUS(AudioUnitRender(THIS->fAudioUnit, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, THIS->audio_buffer_));
-    // VERIFY_OSSTATUS(ExtAudioFileWriteAsync(afr->fOutputAudioFile, inNumberFrames, afr->fAudioBuffer));
+    VERIFY_OSSTATUS(THIS->audio_unit_.Render(ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, THIS->audio_buffer_));
+    // VERIFY_OSSTATUS(ExtAudioFileWriteAsync(THIS->audio_file_, inNumberFrames, THIS->audio_buffer_));
 
-    THIS->ProcessAudioInput();
-
+    if (THIS->spectral_processor_->ProcessForwards(inNumberFrames, THIS->audio_buffer_)) {
+      THIS->ProcessAudioInput();
+    }
     return noErr;
   }
 
 
   AppDelegate*                delegate_;
   AudioBufferList*            audio_buffer_;
-  AudioUnit                   fAudioUnit;
-  AudioDeviceID               fInputDeviceID;
-  UInt32                      fAudioChannels;
-  UInt32                      fAudioSamples;
-  AudioStreamBasicDescription fOutputFormat;
-  AudioStreamBasicDescription fDeviceFormat;
-  FSRef                       fOutputDirectory;
+  CASpectralProcessor*        spectral_processor_;
+  CAAudioUnit                 audio_unit_;
+  CAAudioUnitOutputCapturer*  capturer_;
+  ExtAudioFileRef             audio_file_;
+  CABufferList* spectral_data_buffer_;
+
 
   FFTBufferManager*           fftBufferManager;
   int32_t*                    fft_data_;
@@ -208,9 +241,11 @@ public:
 @synthesize flamView;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-  FFTCollector* collector = new FFTCollector(self);
-  collector->ConfigureAU();
-  collector->Start();
+  NSLog(@"applicationDidFinishLaunching");
+
+  collector_ = new FFTCollector(self);
+  collector_->ConfigureAU();
+  collector_->Start();
 
 /*  double fps = 25;
 
@@ -225,11 +260,19 @@ public:
   [flamView setGenome: new Genome(*_genome)];
 }
 
-- (void)newFFtDataAvailable:(int32_t*) fftData size:(size_t) size {
-  SInt8 f = (fftData[20]& 0xFF000000) >> 24;
-  double v = (f + 80) / 64.;
-  v = clamp(0, v, 1.);
-  NSLog(@"%d", f);
+- (void)applicationWillTerminate:(NSNotification *)aNotification {
+  NSLog(@"applicationWillTerminate");
+  collector_->Stop();
+  delete collector_;
+}
+
+
+- (void)newFFtDataAvailable:(Float32*) fftData size:(size_t) size min:(Float32)aMin max:(Float32)aMax {
+  Float32 dist = aMax / 1000.0;
+  // NSLog(@"%f", dist);
+  Genome* genome = new Genome(*_genome);
+  genome->mutable_xforms()->at(0).mutable_coefs()->at(0) += dist;
+  [flamView setGenome: genome];
 }
 
 - (void)onTimer:(NSTimer*)theTimer {

@@ -38,24 +38,23 @@
 			STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
 			POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef _CABundleLocker_h_
-#define _CABundleLocker_h_
+#ifndef __AUOutput_h__
+#define __AUOutput_h__
 
-/*
-some bundle operations are not thread safe, notably CFCopyLocalizedStringFromTableInBundle
-*/
+#include "AUScopeElement.h"
+#include "AUBuffer.h"
 
-class CABundleLocker
-{
+	/*! @class AUOutputElement */
+class AUOutputElement : public AUIOElement {
 public:
+	/*! @ctor AUOutputElement */
+						AUOutputElement(AUBase *audioUnit);
 
-#if TARGET_OS_MAC
-	CABundleLocker();
-	~CABundleLocker();
-#else
-	CABundleLocker() {}
-	~CABundleLocker() {}
-#endif
+	// AUElement override
+	/*! @method SetStreamFormat */
+	virtual OSStatus	SetStreamFormat(const CAStreamBasicDescription &desc);
+	/*! @method NeedsBufferSpace */
+	virtual bool		NeedsBufferSpace() const { return true; }
 };
 
-#endif
+#endif // __AUOutput_h__

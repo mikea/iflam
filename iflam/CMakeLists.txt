@@ -88,6 +88,9 @@ endif()
 
 if (APPLE)
   add_definitions(-D__ASSERTMACROS__)
+  include_directories("CA/PublicUtility" "CA/AUBase" "CA/Utility")
+
+
   add_executable(
     iflamapp
     MACOSX_BUNDLE
@@ -97,13 +100,25 @@ if (APPLE)
     fft/FFTBufferManager.cpp
     fft/SpectrumAnalysis.cpp
     fft/rad2fft.c
+    "CA/PublicUtility/CAComponent.cpp"
+    "CA/PublicUtility/CAAudioUnit.cpp"
+    "CA/PublicUtility/CAHALAudioSystemObject.cpp"
+    "CA/PublicUtility/CAHALAudioDevice.cpp"
+    "CA/PublicUtility/CAAudioChannelLayout.cpp"
+    "CA/PublicUtility/CAAudioChannelLayoutObject.cpp"
+    "CA/PublicUtility/CAHALAudioObject.cpp"
+    "CA/PublicUtility/CAComponentDescription.cpp"
+    "CA/PublicUtility/CAStreamBasicDescription.cpp"
+    "CA/PublicUtility/CAHALAudioStream.cpp"
+    "CA/PublicUtility/CASpectralProcessor.cpp"
+    "CA/PublicUtility/CABufferList.cpp"
     )
 
   set_target_properties(iflamapp PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/iflam-Info.plist"
     MACOSX_BUNDLE_GUI_IDENTIFIER "com.mikea.iflam")
 
-  target_link_libraries(iflamapp impl tinyxml "-framework Cocoa -framework CoreAudio -framework AudioUnit")
+  target_link_libraries(iflamapp impl tinyxml "-framework Cocoa -framework CoreAudio -framework AudioUnit -framework CoreFoundation -framework AudioToolbox -framework Accelerate")
 
   set(iflamapp_xibs "en.lproj/MainMenu")
 
@@ -123,7 +138,6 @@ if (APPLE)
 
   endforeach()
 
-  include_directories("CoreAudioPublicUtility")
 
 
 endif()
