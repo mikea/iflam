@@ -10,6 +10,7 @@ if (APPLE)
 endif()
 
 set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O0 -fno-strict-aliasing")
+enable_testing()
 
 add_subdirectory(core)
 add_subdirectory(cmd)

@@ -27,3 +27,5 @@ target_link_libraries(core tinyxml ${Boost_LIBRARIES})
 add_executable(color_test color_test.cpp)
 target_link_libraries(color_test core)
 
+enable_testing()
+add_test(color_test color_test)
