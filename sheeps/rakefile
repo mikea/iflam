@@ -8,18 +8,18 @@ FileList["*.flam3"].each do |flam3|
 
   # file iflam_render => [flam3, "../build/cmd/iflam"] do
   file iflam_render => [flam3] do
-    sh "../build/cmd/iflam --file #{flam3} --out #{iflam_render} --iterations 1000000" do |ok, res|
-      if ! ok
+    sh "../build/cmd/iflam --file #{flam3} --out #{iflam_render} --iterations 10000000" do |ok, res|
+      if !ok
         # raise "Error executing iflam"
       end
     end
   end
 
-  task :expected => [expected_render]
+  task :flam3 => [expected_render]
   task :iflam => [iflam_render]
 end
 
-task :expected do
+task :flam3 do
 end
 
 task :iflam do

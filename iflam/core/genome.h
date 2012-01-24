@@ -51,6 +51,10 @@ class Xform {
     Float juliascope_dist_;
     Float fan2_x_;
     Float fan2_y_;
+    Float curl_c1_;
+    Float curl_c2_;
+    Float parabola_height_;
+    Float parabola_width_;
     boost::scoped_ptr<array<Float, 6> > post_;
 };
 

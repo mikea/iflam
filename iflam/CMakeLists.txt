@@ -9,7 +9,7 @@ if (APPLE)
   #  set(CMAKE_C_COMPILER clang)
 endif()
 
-set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O0 -fno-strict-aliasing")
+set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing")
 enable_testing()
 
 add_subdirectory(core)

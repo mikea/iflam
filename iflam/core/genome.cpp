@@ -150,6 +150,10 @@ Xform::Xform(const Xform& xform) {
   juliascope_dist_ = xform.juliascope_dist_;
   fan2_x_ = xform.fan2_x_;
   fan2_y_ = xform.fan2_y_;
+  curl_c1_ = xform.curl_c1_;
+  curl_c2_ = xform.curl_c2_;
+  parabola_height_ = xform.parabola_height_;
+  parabola_width_ = xform.parabola_width_;
 
   Init();
 }
@@ -413,6 +417,7 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           Float t2 = rnd->rnd();
           dx = t1 * cos(2 * kPI * t2);
           dy = t1 * sin(2 * kPI * t2);
+          break;
         }
         case 36:  // radial_blur
         {
@@ -423,6 +428,18 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           Float t3 = t1 * cos(p1) - 1;
           dx = (r * cos(t2) + t3 * x) / w;
           dy = (r * sin(t2) + t3 * y) / w;
+          break;
+        }
+        case 39:  // curl
+        {
+          Float p1 = curl_c1_;
+          Float p2 = curl_c2_;
+          Float t1 = 1 + p1 * x + p2 * (x * x - y * y);
+          Float t2 = p1 * y + 2 * p2 * x * y;
+          Float t3 = 1 / (t1 * t1 +t2 * t2);
+          dx = t3 * (x * t1 + y * t2);
+          dy = t3 * (y * t1 - x * t2);
+          break;
         }
         case 40:  // rectangles
         {
@@ -430,17 +447,28 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           Float p2 = rectangles_y_;
           dx = (2 * floor(x / p1) + 1) * p1 - x;
           dy = (2 * floor(y / p2) + 1) * p2 - y;
+          break;
         }
         case 45:  // blade
         {
           Float xi = rnd->rnd();
           dx = x * (cos(xi * r * w) + sin(xi * r * w));
           dy = x * (cos(xi * r * w) - sin(xi * r * w));
+          break;
         }
         case 46:  // secant2
         {
           dx = x;
           dy = 1 / (w * cos(w * r));
+          break;
+        }
+        case 53:  // parabola
+        {
+          Float sr = sin(r);
+          Float cr = cos(r);
+          dx = parabola_height_ * sr * sr * rnd->rnd();
+          dy = parabola_width_ * cr * rnd->rnd();
+          break;
         }
       }
 
@@ -745,6 +773,14 @@ void Xform::Parse(const TiXmlElement* element) {
       ParseScalar(attr->ValueStr(), &fan2_x_);
     } else if (attr_name == "fan2_y") {
       ParseScalar(attr->ValueStr(), &fan2_y_);
+    } else if (attr_name == "curl_c1") {
+      ParseScalar(attr->ValueStr(), &curl_c1_);
+    } else if (attr_name == "curl_c2") {
+      ParseScalar(attr->ValueStr(), &curl_c2_);
+    } else if (attr_name == "parabola_height") {
+      ParseScalar(attr->ValueStr(), &parabola_height_);
+    } else if (attr_name == "parabola_width") {
+      ParseScalar(attr->ValueStr(), &parabola_width_);
     } else if (attr_name == "post") {
       post_.reset(new array<Float, 6>);
       ParseArray<Float, 6>(attr->ValueStr(), post_.get());
