@@ -143,6 +143,14 @@ Xform::Xform(const Xform& xform) {
   if (xform.post_.get() != NULL) {
     post_.reset(new array<Float, 6>(*xform.post_));
   }
+
+  rectangles_x_ = xform.rectangles_x_;
+  rectangles_y_ = xform.rectangles_y_;
+  juliascope_power_ = xform.juliascope_power_;
+  juliascope_dist_ = xform.juliascope_dist_;
+  fan2_x_ = xform.fan2_x_;
+  fan2_y_ = xform.fan2_y_;
+
   Init();
 }
 
@@ -323,6 +331,21 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           }
           break;
         }
+        case 25: // fan2
+        {
+          Float p1 = kPI * fan2_x_ * fan2_x_;
+          Float p2 = fan2_y_;
+          Float theta = atan2(x, y);
+          Float t = theta + p2 - p1 *floor(2 * theta * p2 / p1);
+          if (t > p1/2) {
+            dx = r * sin(theta - p1 / 2);
+            dy = r * cos(theta - p1 / 2);
+          } else {
+            dx = r * sin(theta + p1/2);
+            dy = r * cos(theta + p1/2);
+          }
+          break;
+        }
         case 26: // rings2
         {
           Float theta = atan2(x, y);
@@ -364,6 +387,18 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = z * sin(t);
           break;
         }
+        case 33: // julia_scope
+        {
+          Float phi = atan2(y, x);
+          Float p1 = juliascope_power_;
+          Float p2 = juliascope_dist_;
+          Float p3 = floor(fabs(p1) * rnd->rnd());
+          Float t = (rnd->crnd() * phi + 2 * kPI * p3) / p1;
+          Float z = pow(r, p2 / p1);
+          dx = z * cos(t);
+          dy = z * sin(t);
+          break;
+        }
         case 34: // blur
         {
           Float xi1 = rnd->rnd();
@@ -371,6 +406,13 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dx = xi1 * cos(2 * kPI * xi2);
           dy = xi1 * sin(2 * kPI * xi2);
           break;
+        }
+        case 35:  // gaussian blur
+        {
+          Float t1 = w * (rnd->rnd() + rnd->rnd() + rnd->rnd() + rnd->rnd() - 2);
+          Float t2 = rnd->rnd();
+          dx = t1 * cos(2 * kPI * t2);
+          dy = t1 * sin(2 * kPI * t2);
         }
         case 36:  // radial_blur
         {
@@ -381,6 +423,13 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           Float t3 = t1 * cos(p1) - 1;
           dx = (r * cos(t2) + t3 * x) / w;
           dy = (r * sin(t2) + t3 * y) / w;
+        }
+        case 40:  // rectangles
+        {
+          Float p1 = rectangles_x_;
+          Float p2 = rectangles_y_;
+          dx = (2 * floor(x / p1) + 1) * p1 - x;
+          dy = (2 * floor(y / p2) + 1) * p2 - y;
         }
         case 45:  // blade
         {
@@ -684,6 +733,18 @@ void Xform::Parse(const TiXmlElement* element) {
       ParseScalar(attr->ValueStr(), &radial_blur_angle_);
     } else if (attr_name == "rings2_val") {
       ParseScalar(attr->ValueStr(), &rings2_val_);
+    } else if (attr_name == "rectangles_x") {
+      ParseScalar(attr->ValueStr(), &rectangles_x_);
+    } else if (attr_name == "rectangles_y") {
+      ParseScalar(attr->ValueStr(), &rectangles_y_);
+    } else if (attr_name == "juliascope_power") {
+      ParseScalar(attr->ValueStr(), &juliascope_power_);
+    } else if (attr_name == "juliascope_dist") {
+      ParseScalar(attr->ValueStr(), &juliascope_dist_);
+    } else if (attr_name == "fan2_x") {
+      ParseScalar(attr->ValueStr(), &fan2_x_);
+    } else if (attr_name == "fan2_y") {
+      ParseScalar(attr->ValueStr(), &fan2_y_);
     } else if (attr_name == "post") {
       post_.reset(new array<Float, 6>);
       ParseArray<Float, 6>(attr->ValueStr(), post_.get());

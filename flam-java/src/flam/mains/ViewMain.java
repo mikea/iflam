@@ -2,7 +2,7 @@ package flam.mains;
 
 import flam.DeepCopy;
 import flam.FlamComponent;
-import flam.FlamGenome;
+import flam.Genome;
 import flam.GenomeProvider;
 import org.xml.sax.SAXException;
 
@@ -16,11 +16,11 @@ import java.io.IOException;
 
 public class ViewMain {
 
-    private static FlamGenome genome;
+    private static Genome genome;
     private static final JFrame frame = new JFrame();
 
     public static void main(String[] args) throws IOException, SAXException {
-        openGenome("flams/e_1.flam3");
+        openGenome("../sheeps/228.flam3");
 
         frame.setPreferredSize(new Dimension(500, 500));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -29,7 +29,7 @@ public class ViewMain {
 
         FlamComponent flamComponent = new FlamComponent(new GenomeProvider() {
             @Override
-            public FlamGenome getGenome() {
+            public Genome getGenome() {
                 return genome;
             }
 
@@ -51,7 +51,7 @@ public class ViewMain {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File("sheeps"));
+                fileChooser.setCurrentDirectory(new File("../sheeps"));
                 fileChooser.setFileFilter(new FileNameExtensionFilter("flam3", "flam3"));
                 int val = fileChooser.showOpenDialog(frame);
                 if (val == JFileChooser.APPROVE_OPTION) {
@@ -65,7 +65,7 @@ public class ViewMain {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                Genome newGenome = (Genome) DeepCopy.copy(genome);
                 newGenome.zoom += .1;
                 genome = newGenome;
             }
@@ -73,7 +73,7 @@ public class ViewMain {
         toolBar.add(new AbstractAction("-") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                Genome newGenome = (Genome) DeepCopy.copy(genome);
                 newGenome.zoom -= .1;
                 genome = newGenome;
             }
@@ -83,7 +83,7 @@ public class ViewMain {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                Genome newGenome = (Genome) DeepCopy.copy(genome);
                 newGenome.center[0] += .1;
                 genome = newGenome;
             }
@@ -92,7 +92,7 @@ public class ViewMain {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                FlamGenome newGenome = (FlamGenome) DeepCopy.copy(genome);
+                Genome newGenome = (Genome) DeepCopy.copy(genome);
                 newGenome.center[0] -= .1;
                 genome = newGenome;
             }
@@ -110,7 +110,7 @@ public class ViewMain {
         try {
             System.out.println("***** Loading " + path);
             frame.setTitle(path);
-            genome = FlamGenome.parse(path);
+            genome = Genome.parse(path);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         } catch (SAXException e) {

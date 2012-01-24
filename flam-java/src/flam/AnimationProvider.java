@@ -7,7 +7,7 @@ import static flam.MyMath.sin;
  * @author mike
  */
 public class AnimationProvider implements GenomeProvider {
-    private FlamGenome genome;
+    private Genome genome;
     private int xFormIndex;
     private int coef;
     private CoefAnimator animator;
@@ -15,17 +15,17 @@ public class AnimationProvider implements GenomeProvider {
     public AnimationProvider() {
     }
 
-    public void setGenome(FlamGenome genome) {
+    public void setGenome(Genome genome) {
         this.genome = genome;
         reset();
     }
 
     @Override
-    public FlamGenome getGenome() {
+    public Genome getGenome() {
         double t = System.nanoTime() / 1e9;
 
-        FlamGenome result = (FlamGenome) DeepCopy.copy(genome);
-        FlamGenome.Xform xform = result.xforms.get(xFormIndex);
+        Genome result = (Genome) DeepCopy.copy(genome);
+        Xform xform = result.xforms.get(xFormIndex);
         animator.animate(xform.coefs, System.currentTimeMillis() / 1e3);
         final double a = xform.coefs[0];
         final double b = xform.coefs[2];

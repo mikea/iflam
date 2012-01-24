@@ -71,4 +71,8 @@ public class MyMath {
         else
             return (angle);
     }
+
+    public static double exp(double v) {
+        return FastMath.exp(v);
+    }
 }

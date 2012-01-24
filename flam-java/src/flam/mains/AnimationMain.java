@@ -2,8 +2,7 @@ package flam.mains;
 
 import flam.AnimationProvider;
 import flam.FlamComponent;
-import flam.FlamGenome;
-import flam.GenomeProvider;
+import flam.Genome;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -65,7 +64,7 @@ public class AnimationMain {
         System.out.println("*** Opening " + path);
         try {
             frame.setTitle(path);
-            animationProvider.setGenome(FlamGenome.parse(path));
+            animationProvider.setGenome(Genome.parse(path));
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         } catch (SAXException e) {

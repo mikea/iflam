@@ -1,7 +1,7 @@
 package flam.mains;
 
 import flam.FlamComponent;
-import flam.FlamGenome;
+import flam.Genome;
 import flam.GenomeProvider;
 import org.xml.sax.SAXException;
 
@@ -11,8 +11,8 @@ import java.io.IOException;
 
 public class TransitionMain {
     public static void main(String[] args) throws IOException, SAXException {
-        final FlamGenome genome1 = FlamGenome.parse("flams/e_4.flam3");
-        final FlamGenome genome2 = FlamGenome.parse("sheeps/1006.flam3");
+        final Genome genome1 = Genome.parse("flams/e_4.flam3");
+        final Genome genome2 = Genome.parse("sheeps/1006.flam3");
 
         final JFrame frame = new JFrame();
 
@@ -27,13 +27,13 @@ public class TransitionMain {
 
         final GenomeProvider provider = new GenomeProvider() {
             public int oldValue = slider.getValue();
-            public FlamGenome genome = genome1;
+            public Genome genome = genome1;
 
             @Override
-            public FlamGenome getGenome() {
+            public Genome getGenome() {
                 if (slider.getValue() != oldValue) {
 //                    System.out.println("slider.getValue() = " + slider.getValue());
-                    genome = new FlamGenome(genome1, genome2, slider.getValue() / 1024.0);
+                    genome = new Genome(genome1, genome2, slider.getValue() / 1024.0);
 
 //                    System.out.println(genome.toString());
 

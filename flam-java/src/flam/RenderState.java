@@ -1,8 +1,8 @@
 package flam;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static flam.MyMath.floor;
 import static flam.MyMath.log;
 import static flam.MyMath.pow;
 
@@ -10,7 +10,7 @@ import static flam.MyMath.pow;
  */
 class RenderState {
     double[] xyc = new double[3];
-    final FlamGenome genome;
+    final Genome genome;
     private final RenderBuffer buffer;
     private static final double PREFILTER_WHITE = 255;
     private final double ppux;
@@ -22,7 +22,7 @@ class RenderState {
     double viewBottom;
     private int lastxf = 0;
 
-    public RenderState(FlamGenome genome, RenderBuffer buffer) {
+    public RenderState(Genome genome, RenderBuffer buffer) {
         this.genome = genome;
         this.buffer = buffer;
 
@@ -99,13 +99,13 @@ class RenderState {
         xyc[2] = FlamComponent.rnd();
     }
 
-    FlamGenome.Xform pickRandomXform() {
+    Xform pickRandomXform() {
         int k;
         if (genome.chaosEnabled) {
-            k = genome.xformDistrib[lastxf][FlamComponent.random.nextInt(FlamGenome.CHOOSE_XFORM_GRAIN)];
+            k = genome.xformDistrib[lastxf][FlamComponent.random.nextInt(Genome.CHOOSE_XFORM_GRAIN)];
             lastxf = k + 1;
         } else {
-            k = genome.xformDistrib[0][FlamComponent.random.nextInt(FlamGenome.CHOOSE_XFORM_GRAIN)];
+            k = genome.xformDistrib[0][FlamComponent.random.nextInt(Genome.CHOOSE_XFORM_GRAIN)];
         }
         return genome.xforms.get(k);
     }
@@ -170,13 +170,70 @@ class RenderState {
 
             setLine(image, width, line, y);
         }
+
+        // filterImage();
+    }
+
+    private void filterImage() {
+        BufferedImage srcImage = buffer.image;
+        BufferedImage dstImage = buffer.filteredImage;
+        int width = buffer.width;
+        int height = buffer.height;
+        double[] accum = buffer.accum;
+
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                int offset = (x + width * y) * 4;
+                double freq = accum[offset + 3];
+
+                double dFilterWidth = genome.estimatorRadius / pow((freq + 1), genome.estimatorCurve);
+                if (dFilterWidth < genome.estimatorMinimum) {
+                    dFilterWidth = genome.estimatorMinimum;
+                }
+
+                int filterWidth = (int) floor(dFilterWidth);
+                if (filterWidth % 2 == 0) ++filterWidth;
+                // filterWidth = 5;
+
+                if (filterWidth <= 1) {
+                    dstImage.setRGB(x, y, srcImage.getRGB(x, y));
+                } else {
+                    double[][] filter = buffer.getFilter(filterWidth);
+                    double sr = 0;
+                    double sg = 0;
+                    double sb = 0;
+
+                    for (int fx = 0; fx < filterWidth; fx++) {
+                        for (int fy = 0; fy < filterWidth; fy++) {
+                            int xx = x + fx - filterWidth / 2;
+                            int yy = y + fy - filterWidth / 2;
+                            
+                            if (xx < 0 || yy < 0 || xx >= width || yy >= height) {
+                                continue;
+                            }
+
+                            int srcRgb = srcImage.getRGB(xx, yy);
+                            double r = (srcRgb & 0xFF0000) >> 16;
+                            double g = (srcRgb & 0xFF00) >> 8;
+                            double b = (srcRgb & 0xFF);
+                            sr += r * filter[fx][fy];
+                            sg += g * filter[fx][fy];
+                            sb += b * filter[fx][fy];
+                        }
+                    }
+
+                    int rgb = ((int) (sr) << 16) | ((int) (sg) << 8) | (int) (sb);
+                    dstImage.setRGB(x, y, rgb);
+                }
+            }
+        }
     }
 
     private void setLine(BufferedImage image, int width, int[] line, int y) {
         image.setRGB(0, y, width, 1, line, 0, 1);
     }
 
-    public boolean applyXform(FlamGenome.Xform xform) {
+    public boolean applyXform(Xform xform) {
         return xform.applyTo(xyc, xyc);
     }
 }

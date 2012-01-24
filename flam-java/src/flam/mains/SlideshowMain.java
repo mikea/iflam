@@ -1,8 +1,9 @@
 package flam.mains;
 
 import flam.FlamComponent;
-import flam.FlamGenome;
+import flam.Genome;
 import flam.GenomeProvider;
+import flam.Xform;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -11,8 +12,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class SlideshowMain {
-    private static FlamGenome prevGenome;
-    private static FlamGenome genome;
+    private static Genome prevGenome;
+    private static Genome genome;
     private static final JFrame frame = new JFrame();
     private static long lastChangeTime;
     public static final int DURATION_SEC = 60;
@@ -29,14 +30,14 @@ public class SlideshowMain {
 
          FlamComponent flamComponent = new FlamComponent(new GenomeProvider() {
             @Override
-            public FlamGenome getGenome() {
+            public Genome getGenome() {
                 long time = System.currentTimeMillis();
                 if (time - lastChangeTime > (DURATION_SEC + TRANSITION_SEC) *1000) {
                     reset(time);
                 } /*else if (time - lastChangeTime > 1 && time - lastChangeTime < TRANSITION_SEC * 1000 && prevGenome != null) {
                     double t = (time - lastChangeTime) / 1000.0 / TRANSITION_SEC;
                     System.out.println("t = " + t);
-                    return new FlamGenome(prevGenome, genome, t);
+                    return new Genome(prevGenome, genome, t);
                 }   */
                 return genome;
             }
@@ -78,8 +79,8 @@ public class SlideshowMain {
 
     private static boolean openGenome(String path) {
         try {
-            genome = FlamGenome.parse(path);
-            for (FlamGenome.Xform xform : genome.xforms) {
+            genome = Genome.parse(path);
+            for (Xform xform : genome.xforms) {
                 checkXform(xform);
             }
             
@@ -96,7 +97,7 @@ public class SlideshowMain {
         }
     }
 
-    private static void checkXform(FlamGenome.Xform xform) {
+    private static void checkXform(Xform xform) {
         xform.applyTo(new double[]{FlamComponent.crnd(), FlamComponent.crnd(), FlamComponent.crnd()}, new double[3]);
     }
 }

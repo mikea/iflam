@@ -30,14 +30,17 @@ int main(int argc, char *argv[]) {
   int iterations;
   int width;
   int height;
+  std::string in_file;
+  std::string out_file;
 
   po::options_description desc("Allowed options");
   desc.add_options()
     ("help", "produce help message")
-    ("file", po::value<string>(), "flam3 file")
+    ("file", po::value<string>(&in_file), "flam3 file")
     ("iterations", po::value<int>(&iterations)->default_value(1000000), "number of iterations")
     ("width", po::value<int>(&width)->default_value(1024), "render width")
     ("height", po::value<int>(&height)->default_value(768), "render height")
+    ("out", po::value<std::string>(&out_file)->default_value("render.png"), "output file name")
     ;
 
   po::variables_map vm;
@@ -50,12 +53,14 @@ int main(int argc, char *argv[]) {
   }
 
   if (!vm.count("file")) {
-    std::cout << "-file was not set.\n";
+    std::cout << "--file was not set.\n";
     return 1;
   }
 
+  std::cout << "Rendering " << in_file << " to " << out_file << "\n";
+
   Genome genome;
-  genome.Read(vm["file"].as<string>());
+  genome.Read(in_file);
 
   RenderBuffer render_buffer(genome, width, height);
   RenderState state(genome, &render_buffer);
@@ -73,7 +78,7 @@ int main(int argc, char *argv[]) {
     render_buffer.Render(&rgb8_image);
   }
 
-  boost::gil::png_write_view("render.png", v);
+  boost::gil::png_write_view(out_file, v);
 
   return 0;
 }
