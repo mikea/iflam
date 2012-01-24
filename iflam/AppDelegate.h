@@ -3,13 +3,7 @@
 
 class FFTCollector;
 class Genome;
-
-@protocol Animator
-
-@required
-
--(void)animateGenome:(Genome*)aGenome withTime:(double)time withMaxVolume:(double)maxVolume;
-@end
+class Animator;
 
 
 @interface AppDelegate : NSObject <NSApplicationDelegate> {
@@ -18,7 +12,7 @@ class Genome;
   FlamView* flamView;
   Genome* _genome;
   FFTCollector* collector_;
-  id <Animator> animator_;
+  Animator* animator_;
 }
 
 @property (assign) IBOutlet NSWindow *window;

@@ -1,20 +1,21 @@
 
 #import "AppDelegate.h"
-#import <CoreAudio/CoreAudio.h>
-#import <boost/assert.hpp>
-#import "fft/FFTBufferManager.h"
-#import "genome.h"
 
-#include "CAStreamBasicDescription.h"
-#include "CAComponent.h"
-#include "CAHALAudioSystemObject.h"
 #include "CAAudioUnit.h"
-#include "CAHALAudioDevice.h"
 #include "CAAudioUnitOutputCapturer.h"
-#include <CoreFoundation/CoreFoundation.h>
-#include <CoreFoundation/CFURL.h>
-#include "CASpectralProcessor.h"
 #include "CABufferList.h"
+#include "CAComponent.h"
+#include "CAHALAudioDevice.h"
+#include "CAHALAudioSystemObject.h"
+#include "CASpectralProcessor.h"
+#include "CAStreamBasicDescription.h"
+#include "animator.h"
+#include "fft/FFTBufferManager.h"
+#include "genome.h"
+#include <CoreAudio/CoreAudio.h>
+#include <CoreFoundation/CFURL.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <boost/assert.hpp>
 
 double clamp(double min,double x,double max) { return (x < min ? min : (x > max ? max : x)); }
 
@@ -106,10 +107,18 @@ public:
     }
 
 
+    {
+      UInt32 bufferSize = 256;
+      UInt32 size = sizeof(UInt32);
+      VERIFY_OSSTATUS(audio_unit_.SetProperty(kAudioDevicePropertyBufferFrameSize,
+            kAudioUnitScope_Global, 0, &bufferSize, size));
+    }
+
     UInt32 bufferFrameSize;
     {
-       UInt32 size = sizeof(UInt32);
-       VERIFY_OSSTATUS(audio_unit_.GetProperty(kAudioDevicePropertyBufferFrameSize, kAudioUnitScope_Global, 0, &bufferFrameSize, &size));
+      UInt32 size = sizeof(UInt32);
+      VERIFY_OSSTATUS(audio_unit_.GetProperty(kAudioDevicePropertyBufferFrameSize, kAudioUnitScope_Global, 0, &bufferFrameSize, &size));
+      NSLog(@"bufferFrameSize=%d", bufferFrameSize);
     }
 
     {
@@ -139,11 +148,10 @@ public:
 
     VERIFY_OSSTATUS(audio_unit_.Initialize());
 
-    UInt32 block_size = 32;
+    UInt32 block_size = bufferFrameSize / 8;
     UInt32 num_bins = block_size >> 1;
     UInt32 num_channels = 2;
     UInt32 sample_rate = 44100;
-
 
     spectral_processor_ = new CASpectralProcessor(block_size, num_bins, 1 /* channels */, bufferFrameSize);
 
@@ -242,10 +250,12 @@ public:
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   NSLog(@"applicationDidFinishLaunching");
+
+  animator_ = new Animator();
+
   collector_ = new FFTCollector(self);
   collector_->ConfigureAU();
   collector_->Start();
-  [self setRandomAnimator];
 
 /*  double fps = 25;
 
@@ -256,7 +266,8 @@ public:
                           userInfo:nil
                            repeats:YES];*/
   _genome = new Genome();
-  _genome->Read("/Users/aizatsky/Projects/iflam/sheeps/1268.flam3");
+  _genome->Read("/Users/aizatsky/Projects/iflam/sheeps/1250.flam3");
+  animator_->Randomize(*_genome);
   [flamView setGenome: new Genome(*_genome)];
 }
 
@@ -270,15 +281,9 @@ public:
 - (void)newFFtDataAvailable:(Float32*) fftData size:(size_t) size min:(Float32)aMin max:(Float32)aMax {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  Float32 dist = -aMax / 50.0;
-  // NSLog(@"%f", dist);
   Genome* genome = new Genome(*_genome);
-  genome->mutable_xforms()->at(1).mutable_coefs()->at(3) += dist * 10;
-  double t = WallTime();
-  t /= 10;
-  //genome->Move(sin(t), cos(t));
-  genome->Magnify(- sin(t/10) * sin(t/10) / 10);
-  genome->Rotate(sin(t / 10) * 50);
+  Signal signal(WallTime(), aMax / 32);
+  animator_->Animate(signal, genome);
 
   [flamView setGenome: genome];
   [pool release];
@@ -293,6 +298,7 @@ public:
 
 - (void)onMouseDown:(NSEvent*) anEvent {
   NSLog(@"onMouseDown");
+  animator_->Randomize(*_genome);
 }
 
 - (void)dealloc {

@@ -22,6 +22,11 @@ bool Random::brnd() {
   return brndDist(rng_) == 1;
 }
 
+size_t Random::irnd(size_t max) {
+  boost::random::uniform_int_distribution<> dist(0, max -1);
+  return dist(rng_);
+}
+
 double WallTime() {
   timeval tv;
 

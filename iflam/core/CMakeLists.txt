@@ -16,10 +16,11 @@ add_library(tinyxml
   )
 
 add_library(core
-  common.cpp
-  color.cpp
-  genome.cpp
-  renderer.cpp
+  common.cpp common.h
+  color.cpp color.h
+  genome.cpp genome.h
+  renderer.cpp renderer.h
+  animator.cpp animator.h
   )
 
 target_link_libraries(core tinyxml ${Boost_LIBRARIES})

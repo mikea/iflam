@@ -36,6 +36,8 @@ class Random {
   public:
     Random();
 
+    size_t irnd(size_t max);
+
     Float rnd();
     Float crnd();
     bool brnd();
