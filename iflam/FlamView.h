@@ -42,15 +42,22 @@ class RenderState;
 
 @end
 
+@protocol FlamViewDelegate 
+@optional
+- (void)onMouseDown:(NSEvent*) anEvent;
+@end
+
 @interface FlamView : NSView {
 @private
     NSLock* lock;
     Genome* _genome;
 
     ViewState* _viewState;
+    id delegate;
 }
 
 @property (retain) ViewState* viewState;
+@property (assign) IBOutlet id delegate;
 
 -(void)setGenome:(Genome*) genome;
 -(void)resetDefaults;

@@ -22,12 +22,22 @@ bool Random::brnd() {
   return brndDist(rng_) == 1;
 }
 
+double WallTime() {
+  timeval tv;
+
+  if (gettimeofday(&tv, NULL)) {
+    BOOST_THROW_EXCEPTION(error());
+  }
+
+  return double(tv.tv_sec) + tv.tv_usec / 1e6;
+}
+
 
 Stopwatch::Stopwatch(const std::string& message, long count, std::string unit)
   : message_(message),
     count_(count),
     unit_(unit == "" ? "it" : unit),
-    start_time_(Stopwatch::WallTime()) {
+    start_time_(WallTime()) {
 }
 
 Stopwatch::~Stopwatch() {
@@ -38,16 +48,6 @@ Stopwatch::~Stopwatch() {
     std::cout << " (" << (count_ / total_time) << " " << unit_ << "/sec)";
   }
   std::cout << "\n";
-}
-
-double Stopwatch::WallTime() {
-  timeval tv;
-
-  if (gettimeofday(&tv, NULL)) {
-    BOOST_THROW_EXCEPTION(error());
-  }
-
-  return double(tv.tv_sec) + tv.tv_usec / 1e6;
 }
 
 void UnhandledExceptionHandler() {

@@ -29,6 +29,7 @@ private:
 
 @implementation FlamView
 
+@synthesize delegate;
 @synthesize viewState=_viewState;
 
 - (id)initWithFrame:(NSRect)frame {
@@ -36,6 +37,7 @@ private:
     if (self) {
         // Initialization code here.
         NSLog(@"initWithFrame");
+        delegate = nil;
         [self resetDefaults];
     }
 
@@ -79,7 +81,7 @@ private:
 
   NSRect bounds = self.bounds;
 
-  self.viewState.renderState->Iterate(50000);
+  self.viewState.renderState->Iterate(100000);
   BufferImage image(
       self.viewState.imageData,
       BytesPerRow(self.viewState.width),
@@ -154,6 +156,12 @@ private:
 
 -(BOOL)isOpaque {
   return YES;
+}
+
+- (void)mouseDown:(NSEvent*) anEvent {
+  if (delegate && [delegate respondsToSelector:@selector(onMouseDown:)]) {
+    [delegate onMouseDown: anEvent];
+  }
 }
 
 @end

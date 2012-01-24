@@ -18,6 +18,8 @@ add_subdirectory(cmd)
 ########################################################
 
 if (APPLE)
+  include_directories("core")
+
   add_definitions(-D__ASSERTMACROS__)
   include_directories("CA/PublicUtility" "CA/AUBase" "CA/Utility")
 
@@ -25,8 +27,9 @@ if (APPLE)
     iflamapp
     MACOSX_BUNDLE
     main.m
-    AppDelegate.mm
-    FlamView.mm
+    en.lproj/MainMenu.xib
+    AppDelegate.mm AppDelegate.h
+    FlamView.mm FlamView.h
     fft/FFTBufferManager.cpp
     fft/SpectrumAnalysis.cpp
     fft/rad2fft.c

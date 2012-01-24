@@ -109,7 +109,7 @@ public:
     UInt32 bufferFrameSize;
     {
        UInt32 size = sizeof(UInt32);
-        VERIFY_OSSTATUS(audio_unit_.GetProperty(kAudioDevicePropertyBufferFrameSize, kAudioUnitScope_Global, 0, &bufferFrameSize, &size));
+       VERIFY_OSSTATUS(audio_unit_.GetProperty(kAudioDevicePropertyBufferFrameSize, kAudioUnitScope_Global, 0, &bufferFrameSize, &size));
     }
 
     {
@@ -139,7 +139,7 @@ public:
 
     VERIFY_OSSTATUS(audio_unit_.Initialize());
 
-    UInt32 block_size = 1024;
+    UInt32 block_size = 32;
     UInt32 num_bins = block_size >> 1;
     UInt32 num_channels = 2;
     UInt32 sample_rate = 44100;
@@ -242,10 +242,10 @@ public:
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   NSLog(@"applicationDidFinishLaunching");
-
   collector_ = new FFTCollector(self);
   collector_->ConfigureAU();
   collector_->Start();
+  [self setRandomAnimator];
 
 /*  double fps = 25;
 
@@ -256,7 +256,7 @@ public:
                           userInfo:nil
                            repeats:YES];*/
   _genome = new Genome();
-  _genome->Read("/Users/aizatsky/Projects/iflam/flam-java/flams/e_6.flam3");
+  _genome->Read("/Users/aizatsky/Projects/iflam/sheeps/1268.flam3");
   [flamView setGenome: new Genome(*_genome)];
 }
 
@@ -270,10 +270,16 @@ public:
 - (void)newFFtDataAvailable:(Float32*) fftData size:(size_t) size min:(Float32)aMin max:(Float32)aMax {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  Float32 dist = aMax / 300.0;
+  Float32 dist = -aMax / 50.0;
   // NSLog(@"%f", dist);
   Genome* genome = new Genome(*_genome);
-  genome->mutable_xforms()->at(0).mutable_coefs()->at(3) += dist;
+  genome->mutable_xforms()->at(1).mutable_coefs()->at(3) += dist * 10;
+  double t = WallTime();
+  t /= 10;
+  //genome->Move(sin(t), cos(t));
+  genome->Magnify(- sin(t/10) * sin(t/10) / 10);
+  genome->Rotate(sin(t / 10) * 50);
+
   [flamView setGenome: genome];
   [pool release];
 }
@@ -285,8 +291,15 @@ public:
   [flamView setGenome: genome]; */
 }
 
+- (void)onMouseDown:(NSEvent*) anEvent {
+  NSLog(@"onMouseDown");
+}
+
 - (void)dealloc {
     [super dealloc];
+}
+
+- (void)setRandomAnimator {
 }
 
 @end
