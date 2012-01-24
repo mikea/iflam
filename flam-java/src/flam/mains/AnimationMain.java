@@ -22,7 +22,7 @@ public class AnimationMain {
         frame = new JFrame();
 
         animationProvider = new AnimationProvider();
-        openGenome("flams/e_2.flam3");
+        openGenome("../sheeps/510.flam3");
 
 
         frame.setPreferredSize(new Dimension(500, 500));
@@ -47,7 +47,7 @@ public class AnimationMain {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File("sheeps"));
+                fileChooser.setCurrentDirectory(new File("../sheeps"));
                 fileChooser.setFileFilter(new FileNameExtensionFilter("flam3", "flam3"));
                 int val = fileChooser.showOpenDialog(frame);
                 if (val == JFileChooser.APPROVE_OPTION) {
