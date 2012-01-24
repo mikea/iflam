@@ -4,19 +4,19 @@ package flam;
  * @author mike
  */
 public class TransitionGenomeProvider implements GenomeProvider {
-    private FlamGenome g1;
-    private FlamGenome g2;
+    private Genome g1;
+    private Genome g2;
     private long startTime;
     private double lastT;
-    private FlamGenome currentGenome;
+    private Genome currentGenome;
 
-    public TransitionGenomeProvider(FlamGenome g1, FlamGenome g2) {
+    public TransitionGenomeProvider(Genome g1, Genome g2) {
         this.g1 = g1;
         this.g2 = g2;
     }
 
     @Override
-    public FlamGenome getGenome() {
+    public Genome getGenome() {
         if (currentGenome == null) {
             currentGenome = g1;
             startTime = System.currentTimeMillis();
@@ -27,7 +27,7 @@ public class TransitionGenomeProvider implements GenomeProvider {
             if (t != lastT) {
                 lastT = t;
                 System.out.println("******" + t);
-                currentGenome = new FlamGenome(g1, g2, t);
+                currentGenome = new Genome(g1, g2, t);
             }
             return currentGenome;
         }

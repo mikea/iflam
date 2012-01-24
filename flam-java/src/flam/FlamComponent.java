@@ -17,13 +17,14 @@ public class FlamComponent extends JComponent {
     public static final Random random = new Random();
 
     // state
-    private FlamGenome genome;
+    private Genome genome;
     private RenderState state;
     private RenderBuffer buffer;
     private GenomeProvider provider;
     private double fps = 10;
     public long iterTime = 0;
     public long renderTime = 0;
+    public long samples = 0;
     public int batches = 0;
     private int minimumSamples = 25000;
 
@@ -78,13 +79,14 @@ public class FlamComponent extends JComponent {
         batches = 0;
         renderTime = 0;
         iterTime = 0;
+        samples = 0;
     }
 
     public void setFps(double fps) {
         this.fps = fps;
     }
 
-    private void resetState(FlamGenome newGenome) {
+    private void resetState(Genome newGenome) {
         genome = newGenome;
         if (buffer == null || buffer.width != getWidth() || buffer.height != getHeight()) {
             buffer = new RenderBuffer(getWidth(), getHeight());
@@ -100,7 +102,7 @@ public class FlamComponent extends JComponent {
         updateGenome();
 
         long start = System.currentTimeMillis();
-        int i = iterateBatch(start);
+        samples += iterateBatch(start);
         long batchFinish = System.currentTimeMillis();
         iterTime += (batchFinish - start);
 
@@ -111,6 +113,9 @@ public class FlamComponent extends JComponent {
         renderTime += (bltFinish - batchFinish);
         batches++;
 
+        if (batches % 10 == 0) {
+            System.out.println("samples = " + samples);
+        }
 //        System.out.println(i + " : " + (batchFinish - start) + " : " + (bltFinish - batchFinish));
 
         graphics.drawImage(buffer.image, 0, 0, null);
@@ -138,7 +143,7 @@ public class FlamComponent extends JComponent {
         double avgRenderTime = batches == 0 ? 0 : renderTime / batches;
 
         for (; ; ++i, ++state.samples) {
-            FlamGenome.Xform xform = state.pickRandomXform();
+            Xform xform = state.pickRandomXform();
             if (!state.applyXform(xform)) {
                 consequentErrors++;
                 System.out.println("consequentErrors = " + consequentErrors);
@@ -189,7 +194,7 @@ public class FlamComponent extends JComponent {
     }
 
     private void updateGenome() {
-        FlamGenome newGenome = provider.getGenome();
+        Genome newGenome = provider.getGenome();
         if (state == null || buffer.width != getWidth() || buffer.height != getHeight() || state.genome != newGenome) {
             resetState(newGenome);
         }

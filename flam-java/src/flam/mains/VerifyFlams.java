@@ -1,7 +1,8 @@
 package flam.mains;
 
 import flam.FlamComponent;
-import flam.FlamGenome;
+import flam.Genome;
+import flam.Xform;
 
 import java.io.File;
 
@@ -9,7 +10,7 @@ import java.io.File;
  * @author mike
  */
 public class VerifyFlams {
-    private static FlamGenome genome;
+    private static Genome genome;
 
     public static void main(String[] args) {
         int invalid = 0;
@@ -30,8 +31,8 @@ public class VerifyFlams {
 
     private static boolean verifyGenome(String path) {
         try {
-            genome = FlamGenome.parse(path);
-            for (FlamGenome.Xform xform : genome.xforms) {
+            genome = Genome.parse(path);
+            for (Xform xform : genome.xforms) {
                 checkXform(xform);
             }
             
@@ -46,7 +47,7 @@ public class VerifyFlams {
         }
     }
 
-    private static void checkXform(FlamGenome.Xform xform) {
+    private static void checkXform(Xform xform) {
         xform.applyTo(new double[]{FlamComponent.crnd(), FlamComponent.crnd(), FlamComponent.crnd()}, new double[3]);
     }
 

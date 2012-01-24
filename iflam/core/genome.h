@@ -45,6 +45,16 @@ class Xform {
     Float perspective_dist_;
     Float radial_blur_angle_;
     Float rings2_val_;
+    Float rectangles_x_;
+    Float rectangles_y_;
+    Float juliascope_power_;
+    Float juliascope_dist_;
+    Float fan2_x_;
+    Float fan2_y_;
+    Float curl_c1_;
+    Float curl_c2_;
+    Float parabola_height_;
+    Float parabola_width_;
     boost::scoped_ptr<array<Float, 6> > post_;
 };
 

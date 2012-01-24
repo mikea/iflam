@@ -1,0 +1,27 @@
+FileList["*.flam3"].each do |flam3|
+  expected_render = "render/#{flam3}.expected.png"
+  iflam_render = "render/#{flam3}.iflam.png"
+
+  file expected_render => [flam3] do
+    sh "env in=#{flam3} out=#{expected_render} flam3-render"
+  end
+
+  # file iflam_render => [flam3, "../build/cmd/iflam"] do
+  file iflam_render => [flam3] do
+    sh "../build/cmd/iflam --file #{flam3} --out #{iflam_render} --iterations 10000000" do |ok, res|
+      if !ok
+        # raise "Error executing iflam"
+      end
+    end
+  end
+
+  task :flam3 => [expected_render]
+  task :iflam => [iflam_render]
+end
+
+task :flam3 do
+end
+
+task :iflam do
+end
+
