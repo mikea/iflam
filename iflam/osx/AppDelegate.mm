@@ -10,7 +10,6 @@
 #include "CASpectralProcessor.h"
 #include "CAStreamBasicDescription.h"
 #include "animator.h"
-#include "fft/FFTBufferManager.h"
 #include "genome.h"
 #include <CoreAudio/CoreAudio.h>
 #include <CoreFoundation/CFURL.h>
@@ -234,12 +233,7 @@ public:
   CAAudioUnit                 audio_unit_;
   CAAudioUnitOutputCapturer*  capturer_;
   ExtAudioFileRef             audio_file_;
-  CABufferList* spectral_data_buffer_;
-
-
-  FFTBufferManager*           fftBufferManager;
-  int32_t*                    fft_data_;
-  size_t                      fft_data_size_;
+  CABufferList*               spectral_data_buffer_;
 };
 
 
