@@ -422,6 +422,14 @@ public class Xform implements Serializable {
                         dy = xi1 * sin(2 * PI * xi2);
                         break;
                     }
+                    case 35:  // gaussian_blur
+                    {
+                        double t1 = w * (FlamComponent.random.nextDouble() + FlamComponent.random.nextDouble() + FlamComponent.random.nextDouble() + FlamComponent.random.nextDouble() - 2);
+                        double t2 = FlamComponent.random.nextDouble();
+                        dx = t1 * cos(2 * PI * t2);
+                        dy = t1 * sin(2 * PI * t2);
+                        break;
+                    }
                     case 36:  // radial_blur
                     {
                         double phi = atan2(y, x);
@@ -431,17 +439,28 @@ public class Xform implements Serializable {
                         double t3 = t1 * cos(p1) - 1;
                         dx = (r * cos(t2) + t3 * x) / w;
                         dy = (r * sin(t2) + t3 * y) / w;
+                        break;
                     }
                     case 45:  // blade
                     {
                         double xi = FlamComponent.random.nextDouble();
                         dx = x * (cos(xi * r * w) + sin(xi * r * w));
                         dy = x * (cos(xi * r * w) - sin(xi * r * w));
+                        break;
                     }
                     case 46:  // secant2
                     {
                         dx = x;
                         dy = 1 / (w * cos(w * r));
+                        break;
+                    }
+                    case 48:  // cross
+                    {
+                        double t = x*x - y*y;
+                        double t1 = sqrt(1/(t*t));
+                        dx = t1 * x;
+                        dy = t1 * y;
+                        break;
                     }
                 }
 

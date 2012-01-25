@@ -1,6 +1,9 @@
 package flam;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.util.ArrayList;
+import java.util.List;
 
 import static flam.MyMath.floor;
 import static flam.MyMath.log;
@@ -171,62 +174,162 @@ class RenderState {
             setLine(image, width, line, y);
         }
 
-        // filterImage();
+        if (Constants.FILTER_IMAGE) {
+            filterImage();
+        }
     }
 
     private void filterImage() {
-        BufferedImage srcImage = buffer.image;
+        final int width = buffer.width;
+        final int height = buffer.height;
+        final double[] accum = buffer.accum;
+        final double[] densityEstimate = buffer.densityEstimate;
+
+        System.out.println("Density estimation");
+        // Estimate density first.
+        double[][] estimatorFilter = GaussianFilter.getFilter((int) genome.estimatorRadius);
+        Convolution.convolve(new View2D() {
+                    @Override
+                    public int getHeight() {
+                        return height;
+                    }
+
+                    @Override
+                    public int getWidth() {
+                        return width;
+                    }
+
+                    @Override
+                    public void set(int x, int y, double d) {
+                        throw new UnsupportedOperationException("Method set not implemented in  .");
+                    }
+
+                    @Override
+                    public double get(int x, int y) {
+                        int offset = (x + width * y) * 4;
+                        return accum[offset + 3];
+                    }
+                }, new View2D() {
+                    @Override
+                    public int getHeight() {
+                        return height;
+                    }
+
+                    @Override
+                    public int getWidth() {
+                        return width;
+                    }
+
+                    @Override
+                    public void set(int x, int y, double d) {
+                        int offset = (x + width * y);
+                        densityEstimate[offset] = d;
+                    }
+
+                    @Override
+                    public double get(int x, int y) {
+                        throw new UnsupportedOperationException("Method get not implemented in  .");
+                    }
+                }, estimatorFilter
+        );
+
+        System.out.println("Filtering");
+        List<BufferedImage> blurredImages = new ArrayList<BufferedImage>();
+        blurredImages.add(buffer.image);
+
+        float radiusStep = 1;
+        for (float radius = 2; radius <= genome.estimatorRadius; radius += radiusStep) {
+            BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            blurredImages.add(img);
+            new ConvolveOp(GaussianFilter.makeKernel(radius)).filter(buffer.image, img);
+        }
+
+
         BufferedImage dstImage = buffer.filteredImage;
-        int width = buffer.width;
-        int height = buffer.height;
-        double[] accum = buffer.accum;
 
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                int offset = (x + width * y) * 4;
-                double freq = accum[offset + 3];
+                double radius = calcFilterRadius(densityEstimate, x, y, width);
+                if (radius < 1) radius = 1;
 
-                double dFilterWidth = genome.estimatorRadius / pow((freq + 1), genome.estimatorCurve);
-                if (dFilterWidth < genome.estimatorMinimum) {
-                    dFilterWidth = genome.estimatorMinimum;
+                double f = Math.floor(radius);
+                double c = Math.ceil(radius);
+
+                if (f == c) {
+                    dstImage.setRGB(x, y, blurredImages.get((int) (f / radiusStep - 1)).getRGB(x, y));
+                    continue;
                 }
 
-                int filterWidth = (int) floor(dFilterWidth);
-                if (filterWidth % 2 == 0) ++filterWidth;
-                // filterWidth = 5;
+                BufferedImage fimg = blurredImages.get((int) (f / radiusStep - 1));
+                BufferedImage cimg = blurredImages.get((int) (c / radiusStep - 1));
 
-                if (filterWidth <= 1) {
-                    dstImage.setRGB(x, y, srcImage.getRGB(x, y));
-                } else {
-                    double[][] filter = buffer.getFilter(filterWidth);
-                    double sr = 0;
-                    double sg = 0;
-                    double sb = 0;
+                int frgb = fimg.getRGB(x, y);
+                double fr = (frgb & 0xFF0000) >> 16;
+                double fg = (frgb & 0xFF00) >> 8;
+                double fb = (frgb & 0xFF);
 
-                    for (int fx = 0; fx < filterWidth; fx++) {
-                        for (int fy = 0; fy < filterWidth; fy++) {
-                            int xx = x + fx - filterWidth / 2;
-                            int yy = y + fy - filterWidth / 2;
-                            
-                            if (xx < 0 || yy < 0 || xx >= width || yy >= height) {
-                                continue;
-                            }
+                int crgb = cimg.getRGB(x, y);
+                double cr = (crgb & 0xFF0000) >> 16;
+                double cg = (crgb & 0xFF00) >> 8;
+                double cb = (crgb & 0xFF);
 
-                            int srcRgb = srcImage.getRGB(xx, yy);
-                            double r = (srcRgb & 0xFF0000) >> 16;
-                            double g = (srcRgb & 0xFF00) >> 8;
-                            double b = (srcRgb & 0xFF);
-                            sr += r * filter[fx][fy];
-                            sg += g * filter[fx][fy];
-                            sb += b * filter[fx][fy];
-                        }
-                    }
+                double r = fr * (c - radius) + cr * (radius - f);
+                double g = fg * (c - radius) + cg * (radius - f);
+                double b = fb * (c - radius) + cb * (radius - f);
 
-                    int rgb = ((int) (sr) << 16) | ((int) (sg) << 8) | (int) (sb);
-                    dstImage.setRGB(x, y, rgb);
-                }
+                int rgb = ((int) (r) << 16) | ((int) (g) << 8) | (int) (b);
+                dstImage.setRGB(x, y, rgb);
             }
         }
+
+/*
+        Convolution.convolve(srcImage, dstImage, new Convolution.FilterProvider() {
+            @Override
+            public double[][] getFilter(int x, int y) {
+                double radius = calcFilterRadius(densityEstimate, x, y, width);
+                return GaussianFilter.getFilter(radius);
+            }
+        });
+*/
+//        renderFilterWidth(width, height, densityEstimate, dstImage);
+    }
+
+    private void renderFilterWidth(int width, int height, double[] densityEstimate, BufferedImage dstImage) {
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                int fw = (int) (calcFilterRadius(densityEstimate, x, y, width) / genome.estimatorRadius * 255.0);
+//                int fw = (int) densityEstimate[x + y * width];
+
+                int r = fw;
+                int g = fw;
+                int b = fw;
+
+                if (fw > 255) {
+                    g = 0;
+                    b = 0;
+                    r = 255;
+                }
+
+                int rgb = ((int) (r) << 16) | ((int) (g) << 8) | b;
+                dstImage.setRGB(x, y, rgb);
+            }
+        }
+    }
+
+    private double calcFilterRadius(double[] densityEstimate, int x, int y, int width) {
+        double freq = densityEstimate[x + width * y];
+        double radius = genome.estimatorRadius;
+
+        if (freq > 0) {
+            radius = genome.estimatorRadius / pow(freq, genome.estimatorCurve);
+            if (radius < genome.estimatorMinimum) {
+                radius = genome.estimatorMinimum;
+            } else if (radius > genome.estimatorRadius) {
+                radius = genome.estimatorRadius;
+            }
+        }
+
+        return radius;
     }
 
     private void setLine(BufferedImage image, int width, int[] line, int y) {

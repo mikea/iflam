@@ -306,13 +306,17 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           break;
         }
         case 15: // waves
-        dx = x + b * sin(y / (c * c + kEpsilon));
-        dy = y + e * sin(x / (f * f + kEpsilon));
-        break;
+        {
+          dx = x + b * sin(y / (c * c + kEpsilon));
+          dy = y + e * sin(x / (f * f + kEpsilon));
+          break;
+        }
         case 16: // fisheye
-        dx = y * 2 / (r + 1);
-        dy = x * 2 / (r + 1);
-        break;
+        {
+          dx = y * 2 / (r + 1);
+          dy = x * 2 / (r + 1);
+          break;
+        }
         case 21: // rings
         {
           Float theta = atan2(x, y);
@@ -460,6 +464,14 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         {
           dx = x;
           dy = 1 / (w * cos(w * r));
+          break;
+        }
+        case 48:  // cross
+        {
+          Float t = x*x - y*y;
+          Float t1 = sqrt(1/(t*t));
+          dx = t1 * x;
+          dy = t1 * y;
           break;
         }
         case 53:  // parabola

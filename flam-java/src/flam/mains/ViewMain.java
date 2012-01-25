@@ -1,5 +1,6 @@
 package flam.mains;
 
+import flam.Constants;
 import flam.DeepCopy;
 import flam.FlamComponent;
 import flam.Genome;
@@ -20,7 +21,7 @@ public class ViewMain {
     private static final JFrame frame = new JFrame();
 
     public static void main(String[] args) throws IOException, SAXException {
-        openGenome("../sheeps/510.flam3");
+        openGenome("../sheeps/32887.flam3");
 
         frame.setPreferredSize(new Dimension(500, 500));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,6 +39,8 @@ public class ViewMain {
             }
         });
         flamComponent.setFps(20);
+        flamComponent.setMinimumSamples(100000);
+        Constants.FILTER_IMAGE = true;
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
         JMenuBar menuBar = new JMenuBar();

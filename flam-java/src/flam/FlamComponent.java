@@ -118,7 +118,7 @@ public class FlamComponent extends JComponent {
         }
 //        System.out.println(i + " : " + (batchFinish - start) + " : " + (bltFinish - batchFinish));
 
-        graphics.drawImage(buffer.image, 0, 0, null);
+        graphics.drawImage(buffer.getImage(), 0, 0, null);
         repaint();
     }
 
