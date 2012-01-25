@@ -1,6 +1,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/mpl/for_each.hpp>
 #include <iostream>
 #include "tinyxml/tinyxml.h"
 
@@ -9,6 +10,9 @@
 using std::string;
 using std::vector;
 using boost::scoped_ptr;
+
+DEFINE_PROPERTY(Xform, Float, flower_petals);
+DEFINE_PROPERTY(Xform, Float, flower_holes);
 
 namespace {
   bool BadValue(Float x) {
@@ -121,6 +125,17 @@ namespace {
 
 struct apply_error : virtual error { };
 
+struct CopyProperty {
+  CopyProperty(Xform* to, const Xform& from) : to_(to), from_(from) { }
+
+  template<typename APropertyInfo> void operator()(APropertyInfo) {
+    *APropertyInfo::ptr(to_) = *APropertyInfo::ptr(from_);
+  }
+
+  Xform* to_;
+  const Xform& from_;
+};
+
 Xform::Xform()
  : color_speed_(0.5),
    opacity_(1.0),
@@ -154,6 +169,8 @@ Xform::Xform(const Xform& xform) {
   curl_c2_ = xform.curl_c2_;
   parabola_height_ = xform.parabola_height_;
   parabola_width_ = xform.parabola_width_;
+
+  boost::mpl::for_each<PropertyInfos>(CopyProperty(this, xform));
 
   Init();
 }
@@ -474,6 +491,14 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = t1 * y;
           break;
         }
+        case 51:  // flower
+        {
+          Float phi = atan2(y, x);
+          Float t = (rnd->rnd() - flower_holes_) * cos(flower_petals_ * phi) / r;
+          dx = t * x;
+          dy = t * y;
+          break;
+        }
         case 53:  // parabola
         {
           Float sr = sin(r);
@@ -738,6 +763,31 @@ void Genome::Read(string file_name) {
   }
 }
 
+
+struct ParseProperty {
+  ParseProperty(Xform* xform,
+                bool* found,
+                const std::string& attr_name,
+                const std::string& value)
+    : xform_(xform),
+      found_(found),
+      attr_name_(attr_name),
+      value_(value) { }
+
+  template<typename APropertyInfo> void operator()(APropertyInfo) {
+    if (!*found_ && attr_name_ == APropertyInfo::name) {
+      ParseScalar<typename APropertyInfo::type>(
+          value_, APropertyInfo::ptr(xform_));
+      *found_ = true;
+    }
+  }
+
+  Xform* xform_;
+  bool* found_;
+  const std::string& attr_name_;
+  const std::string& value_;
+};
+
 void Xform::Parse(const TiXmlElement* element) {
   for (const TiXmlAttribute* attr = element->FirstAttribute();
       attr != NULL;
@@ -804,6 +854,11 @@ void Xform::Parse(const TiXmlElement* element) {
           found = true;
           break;
         }
+      }
+
+      if (!found) {
+        boost::mpl::for_each<PropertyInfos>(
+            ParseProperty(this, &found, attr_name, attr->ValueStr()));
       }
 
       if (!found) {

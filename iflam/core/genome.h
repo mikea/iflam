@@ -6,11 +6,27 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/mpl/list.hpp>
 
 #include "common.h"
 
 class TiXmlElement;
 
+template<typename Type>
+struct PropertyInfo {
+  typedef Type type;
+};
+
+#define DECLARE_PROPERTY(_Container, _Type, _name) \
+  _Type _name##_; \
+  struct _name##_property_info : public PropertyInfo<_Type> { \
+    static const char* name; \
+    static _Type* ptr(_Container* container) { return &container->_name##_;} \
+    static const _Type* ptr(const _Container& container) { return &container._name##_;} \
+  };
+
+#define DEFINE_PROPERTY(_Container, _Type, _name) \
+  const char* _Container::_name##_property_info::name = #_name;
 
 class Xform {
   public:
@@ -56,6 +72,14 @@ class Xform {
     Float parabola_height_;
     Float parabola_width_;
     boost::scoped_ptr<array<Float, 6> > post_;
+
+    DECLARE_PROPERTY(Xform, Float, flower_petals);
+    DECLARE_PROPERTY(Xform, Float, flower_holes);
+
+    typedef boost::mpl::list<
+      flower_petals_property_info,
+      flower_holes_property_info
+      > PropertyInfos;
 };
 
 class Genome {
