@@ -18,15 +18,21 @@ struct PropertyInfo {
 };
 
 #define DECLARE_PROPERTY(_Container, _Type, _name) \
+  public: \
+  const _Type& get_##_name() const { return _name##_; } \
+  private: \
   _Type _name##_; \
-  struct _name##_property_info : public PropertyInfo<_Type> { \
+  struct _name : public PropertyInfo<_Type> { \
     static const char* name; \
     static _Type* ptr(_Container* container) { return &container->_name##_;} \
     static const _Type* ptr(const _Container& container) { return &container._name##_;} \
   };
 
 #define DEFINE_PROPERTY(_Container, _Type, _name) \
-  const char* _Container::_name##_property_info::name = #_name;
+  const char* _Container::_name::name = #_name;
+
+#define PROPERTY_LIST(properties...) \
+    typedef boost::mpl::list<properties> PropertyList;
 
 class Xform {
   public:
@@ -38,9 +44,6 @@ class Xform {
 
     void Parse(const TiXmlElement* element);
 
-    Float weight() const { return weight_; }
-    Float opacity() const { return opacity_; }
-
     bool Apply(Float* in, Float* out, Random* rnd) const;
 
     array<Float, 6>* mutable_coefs() { return &coefs_; }
@@ -50,36 +53,57 @@ class Xform {
     array<Float, 6> coefs_;
     array<Float, kVariationsCount> variations_;
     std::vector<int> non_zero_variations_;
-    Float color_;
-    Float color_speed_;
-    Float opacity_;
-    Float weight_;
-    Float animate_;  // is it bool?
-    Float julian_dist_;
-    Float julian_power_;
-    Float perspective_angle_;
-    Float perspective_dist_;
-    Float radial_blur_angle_;
-    Float rings2_val_;
-    Float rectangles_x_;
-    Float rectangles_y_;
-    Float juliascope_power_;
-    Float juliascope_dist_;
-    Float fan2_x_;
-    Float fan2_y_;
-    Float curl_c1_;
-    Float curl_c2_;
-    Float parabola_height_;
-    Float parabola_width_;
     boost::scoped_ptr<array<Float, 6> > post_;
 
-    DECLARE_PROPERTY(Xform, Float, flower_petals);
+    DECLARE_PROPERTY(Xform, Float, animate); // is it bool?
+    DECLARE_PROPERTY(Xform, Float, color);
+    DECLARE_PROPERTY(Xform, Float, color_speed);
+    DECLARE_PROPERTY(Xform, Float, curl_c1);
+    DECLARE_PROPERTY(Xform, Float, curl_c2);
+    DECLARE_PROPERTY(Xform, Float, fan2_x);
+    DECLARE_PROPERTY(Xform, Float, fan2_y);
     DECLARE_PROPERTY(Xform, Float, flower_holes);
+    DECLARE_PROPERTY(Xform, Float, flower_petals);
+    DECLARE_PROPERTY(Xform, Float, julian_dist);
+    DECLARE_PROPERTY(Xform, Float, julian_power);
+    DECLARE_PROPERTY(Xform, Float, juliascope_dist);
+    DECLARE_PROPERTY(Xform, Float, juliascope_power);
+    DECLARE_PROPERTY(Xform, Float, opacity);
+    DECLARE_PROPERTY(Xform, Float, parabola_height);
+    DECLARE_PROPERTY(Xform, Float, parabola_width);
+    DECLARE_PROPERTY(Xform, Float, perspective_angle);
+    DECLARE_PROPERTY(Xform, Float, perspective_dist);
+    DECLARE_PROPERTY(Xform, Float, radial_blur_angle);
+    DECLARE_PROPERTY(Xform, Float, rectangles_x);
+    DECLARE_PROPERTY(Xform, Float, rectangles_y);
+    DECLARE_PROPERTY(Xform, Float, rings2_val);
+    DECLARE_PROPERTY(Xform, Float, weight);
 
-    typedef boost::mpl::list<
-      flower_petals_property_info,
-      flower_holes_property_info
-      > PropertyInfos;
+    PROPERTY_LIST(
+        animate,
+        color,
+        color_speed,
+        curl_c1,
+        curl_c2,
+        fan2_x,
+        fan2_y,
+        flower_holes,
+        flower_petals,
+        julian_dist,
+        julian_power,
+        juliascope_power,
+        juliascope_dist,
+        opacity,
+        parabola_height,
+        parabola_width,
+        perspective_angle,
+        perspective_dist,
+        radial_blur_angle,
+        rectangles_x,
+        rectangles_y,
+        rings2_val,
+        weight
+        );
 };
 
 class Genome {

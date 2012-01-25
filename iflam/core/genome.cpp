@@ -1,3 +1,5 @@
+#include "genome.h"
+
 #include <boost/algorithm/string.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/lexical_cast.hpp>
@@ -5,14 +7,34 @@
 #include <iostream>
 #include "tinyxml/tinyxml.h"
 
-#include "genome.h"
 
 using std::string;
 using std::vector;
 using boost::scoped_ptr;
 
-DEFINE_PROPERTY(Xform, Float, flower_petals);
+DEFINE_PROPERTY(Xform, Float, animate); // is it bool?
+DEFINE_PROPERTY(Xform, Float, color);
+DEFINE_PROPERTY(Xform, Float, color_speed);
+DEFINE_PROPERTY(Xform, Float, curl_c1);
+DEFINE_PROPERTY(Xform, Float, curl_c2);
+DEFINE_PROPERTY(Xform, Float, fan2_x);
+DEFINE_PROPERTY(Xform, Float, fan2_y);
 DEFINE_PROPERTY(Xform, Float, flower_holes);
+DEFINE_PROPERTY(Xform, Float, flower_petals);
+DEFINE_PROPERTY(Xform, Float, julian_dist);
+DEFINE_PROPERTY(Xform, Float, julian_power);
+DEFINE_PROPERTY(Xform, Float, juliascope_dist);
+DEFINE_PROPERTY(Xform, Float, juliascope_power);
+DEFINE_PROPERTY(Xform, Float, opacity);
+DEFINE_PROPERTY(Xform, Float, parabola_height);
+DEFINE_PROPERTY(Xform, Float, parabola_width);
+DEFINE_PROPERTY(Xform, Float, perspective_angle);
+DEFINE_PROPERTY(Xform, Float, perspective_dist);
+DEFINE_PROPERTY(Xform, Float, radial_blur_angle);
+DEFINE_PROPERTY(Xform, Float, rectangles_x);
+DEFINE_PROPERTY(Xform, Float, rectangles_y);
+DEFINE_PROPERTY(Xform, Float, rings2_val);
+DEFINE_PROPERTY(Xform, Float, weight);
 
 namespace {
   bool BadValue(Float x) {
@@ -144,33 +166,12 @@ Xform::Xform()
 Xform::Xform(const Xform& xform) {
   coefs_ = xform.coefs_;
   variations_ = xform.variations_;
-  color_ = xform.color_;
-  color_speed_ = xform.color_speed_;
-  opacity_ = xform.opacity_;
-  weight_ = xform.weight_;
-  animate_ = xform.animate_;
-  julian_dist_ = xform.julian_dist_;
-  julian_power_ = xform.julian_power_;
-  perspective_angle_ = xform.perspective_angle_;
-  perspective_dist_ = xform.perspective_dist_;
-  radial_blur_angle_ = xform.radial_blur_angle_;
-  rings2_val_ = xform.rings2_val_;
   if (xform.post_.get() != NULL) {
     post_.reset(new array<Float, 6>(*xform.post_));
   }
 
-  rectangles_x_ = xform.rectangles_x_;
-  rectangles_y_ = xform.rectangles_y_;
-  juliascope_power_ = xform.juliascope_power_;
-  juliascope_dist_ = xform.juliascope_dist_;
-  fan2_x_ = xform.fan2_x_;
-  fan2_y_ = xform.fan2_y_;
-  curl_c1_ = xform.curl_c1_;
-  curl_c2_ = xform.curl_c2_;
-  parabola_height_ = xform.parabola_height_;
-  parabola_width_ = xform.parabola_width_;
 
-  boost::mpl::for_each<PropertyInfos>(CopyProperty(this, xform));
+  boost::mpl::for_each<PropertyList>(CopyProperty(this, xform));
 
   Init();
 }
@@ -276,6 +277,13 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           Float theta = atan2(x, y);
           dx = theta * sin(kPI * r) / kPI;
           dy = theta * cos(kPI * r) / kPI;
+          break;
+        }
+        case 9: // spiral
+        {
+          Float theta = atan2(x, y);
+          dx = (cos(theta) + sin(r)) / r;
+          dy = (sin(theta) - cos(r)) / r;
           break;
         }
         case 10: // hyperbolic
@@ -702,7 +710,9 @@ void Genome::Read(string file_name) {
       nick_ = attr->ValueStr();
     } else if (attr_name == "notes") {
       notes_ = attr->ValueStr();
-    } else if (attr_name == "genebank" || attr_name == "brood") {
+    } else if (attr_name == "genebank" ||
+               attr_name == "brood" ||
+               attr_name == "parents") {
       // ignore
     } else {
       BOOST_THROW_EXCEPTION(unsupported_attribute_error()
@@ -796,53 +806,11 @@ void Xform::Parse(const TiXmlElement* element) {
 
     if (attr_name == "coefs") {
       ParseArray<Float, 6>(attr->ValueStr(), &coefs_);
-    } else if (attr_name == "color") {
-      ParseScalar(attr->ValueStr(), &color_);
     } else if (attr_name == "symmetry") {
       Float symmetry;
       ParseScalar(attr->ValueStr(), &symmetry);
       color_speed_ = (1 - symmetry) / 2;
       animate_ = symmetry > 0 ? 0 : 1;
-    } else if (attr_name == "weight") {
-      ParseScalar(attr->ValueStr(), &weight_);
-    } else if (attr_name == "animate") {
-      ParseScalar(attr->ValueStr(), &animate_);
-    } else if (attr_name == "color_speed") {
-      ParseScalar(attr->ValueStr(), &color_speed_);
-    } else if (attr_name == "opacity") {
-      ParseScalar(attr->ValueStr(), &opacity_);
-    } else if (attr_name == "julian_dist") {
-      ParseScalar(attr->ValueStr(), &julian_dist_);
-    } else if (attr_name == "julian_power") {
-      ParseScalar(attr->ValueStr(), &julian_power_);
-    } else if (attr_name == "perspective_dist") {
-      ParseScalar(attr->ValueStr(), &perspective_dist_);
-    } else if (attr_name == "perspective_angle") {
-      ParseScalar(attr->ValueStr(), &perspective_angle_);
-    } else if (attr_name == "radial_blur_angle") {
-      ParseScalar(attr->ValueStr(), &radial_blur_angle_);
-    } else if (attr_name == "rings2_val") {
-      ParseScalar(attr->ValueStr(), &rings2_val_);
-    } else if (attr_name == "rectangles_x") {
-      ParseScalar(attr->ValueStr(), &rectangles_x_);
-    } else if (attr_name == "rectangles_y") {
-      ParseScalar(attr->ValueStr(), &rectangles_y_);
-    } else if (attr_name == "juliascope_power") {
-      ParseScalar(attr->ValueStr(), &juliascope_power_);
-    } else if (attr_name == "juliascope_dist") {
-      ParseScalar(attr->ValueStr(), &juliascope_dist_);
-    } else if (attr_name == "fan2_x") {
-      ParseScalar(attr->ValueStr(), &fan2_x_);
-    } else if (attr_name == "fan2_y") {
-      ParseScalar(attr->ValueStr(), &fan2_y_);
-    } else if (attr_name == "curl_c1") {
-      ParseScalar(attr->ValueStr(), &curl_c1_);
-    } else if (attr_name == "curl_c2") {
-      ParseScalar(attr->ValueStr(), &curl_c2_);
-    } else if (attr_name == "parabola_height") {
-      ParseScalar(attr->ValueStr(), &parabola_height_);
-    } else if (attr_name == "parabola_width") {
-      ParseScalar(attr->ValueStr(), &parabola_width_);
     } else if (attr_name == "post") {
       post_.reset(new array<Float, 6>);
       ParseArray<Float, 6>(attr->ValueStr(), post_.get());
@@ -857,7 +825,7 @@ void Xform::Parse(const TiXmlElement* element) {
       }
 
       if (!found) {
-        boost::mpl::for_each<PropertyInfos>(
+        boost::mpl::for_each<PropertyList>(
             ParseProperty(this, &found, attr_name, attr->ValueStr()));
       }
 
