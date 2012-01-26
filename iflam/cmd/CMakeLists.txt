@@ -9,12 +9,12 @@ ADD_PNG()
 
 #############################################
 
-add_executable(iflam
+add_executable(iflam-render
   main.cpp
   )
 
-target_link_libraries(iflam core ${Boost_LIBRARIES} ${PNG_LIBRARIES})
-target_link_libraries(iflam ${PNG_LIBRARIES})
+target_link_libraries(iflam-render core ${Boost_LIBRARIES} ${PNG_LIBRARIES})
+target_link_libraries(iflam-render ${PNG_LIBRARIES})
 
 ###############################################
 # HDF export

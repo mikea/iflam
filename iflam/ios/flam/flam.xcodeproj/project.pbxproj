@@ -1,0 +1,288 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		324E1BED14CFE032007C7E61 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 324E1BEC14CFE032007C7E61 /* UIKit.framework */; };
+		324E1BEF14CFE032007C7E61 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 324E1BEE14CFE032007C7E61 /* Foundation.framework */; };
+		324E1BF114CFE032007C7E61 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 324E1BF014CFE032007C7E61 /* CoreGraphics.framework */; };
+		324E1BF714CFE032007C7E61 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 324E1BF514CFE032007C7E61 /* InfoPlist.strings */; };
+		324E1BFA14CFE032007C7E61 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 324E1BF914CFE032007C7E61 /* main.m */; };
+		324E1BFD14CFE032007C7E61 /* flamAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 324E1BFC14CFE032007C7E61 /* flamAppDelegate.m */; };
+		324E1C0014CFE032007C7E61 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 324E1BFE14CFE032007C7E61 /* MainWindow.xib */; };
+		324E1C0314CFE032007C7E61 /* flamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 324E1C0214CFE032007C7E61 /* flamViewController.m */; };
+		324E1C0614CFE032007C7E61 /* flamViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 324E1C0414CFE032007C7E61 /* flamViewController.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		324E1BE814CFE032007C7E61 /* flam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		324E1BEC14CFE032007C7E61 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		324E1BEE14CFE032007C7E61 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		324E1BF014CFE032007C7E61 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		324E1BF414CFE032007C7E61 /* flam-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "flam-Info.plist"; sourceTree = "<group>"; };
+		324E1BF614CFE032007C7E61 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		324E1BF814CFE032007C7E61 /* flam-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "flam-Prefix.pch"; sourceTree = "<group>"; };
+		324E1BF914CFE032007C7E61 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		324E1BFB14CFE032007C7E61 /* flamAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = flamAppDelegate.h; sourceTree = "<group>"; };
+		324E1BFC14CFE032007C7E61 /* flamAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = flamAppDelegate.m; sourceTree = "<group>"; };
+		324E1BFF14CFE032007C7E61 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		324E1C0114CFE032007C7E61 /* flamViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = flamViewController.h; sourceTree = "<group>"; };
+		324E1C0214CFE032007C7E61 /* flamViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = flamViewController.m; sourceTree = "<group>"; };
+		324E1C0514CFE032007C7E61 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/flamViewController.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		324E1BE514CFE032007C7E61 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				324E1BED14CFE032007C7E61 /* UIKit.framework in Frameworks */,
+				324E1BEF14CFE032007C7E61 /* Foundation.framework in Frameworks */,
+				324E1BF114CFE032007C7E61 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		324E1BDD14CFE032007C7E61 = {
+			isa = PBXGroup;
+			children = (
+				324E1BF214CFE032007C7E61 /* flam */,
+				324E1BEB14CFE032007C7E61 /* Frameworks */,
+				324E1BE914CFE032007C7E61 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		324E1BE914CFE032007C7E61 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				324E1BE814CFE032007C7E61 /* flam.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		324E1BEB14CFE032007C7E61 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				324E1BEC14CFE032007C7E61 /* UIKit.framework */,
+				324E1BEE14CFE032007C7E61 /* Foundation.framework */,
+				324E1BF014CFE032007C7E61 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		324E1BF214CFE032007C7E61 /* flam */ = {
+			isa = PBXGroup;
+			children = (
+				324E1BFB14CFE032007C7E61 /* flamAppDelegate.h */,
+				324E1BFC14CFE032007C7E61 /* flamAppDelegate.m */,
+				324E1BFE14CFE032007C7E61 /* MainWindow.xib */,
+				324E1C0114CFE032007C7E61 /* flamViewController.h */,
+				324E1C0214CFE032007C7E61 /* flamViewController.m */,
+				324E1C0414CFE032007C7E61 /* flamViewController.xib */,
+				324E1BF314CFE032007C7E61 /* Supporting Files */,
+			);
+			path = flam;
+			sourceTree = "<group>";
+		};
+		324E1BF314CFE032007C7E61 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				324E1BF414CFE032007C7E61 /* flam-Info.plist */,
+				324E1BF514CFE032007C7E61 /* InfoPlist.strings */,
+				324E1BF814CFE032007C7E61 /* flam-Prefix.pch */,
+				324E1BF914CFE032007C7E61 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		324E1BE714CFE032007C7E61 /* flam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 324E1C0914CFE032007C7E61 /* Build configuration list for PBXNativeTarget "flam" */;
+			buildPhases = (
+				324E1BE414CFE032007C7E61 /* Sources */,
+				324E1BE514CFE032007C7E61 /* Frameworks */,
+				324E1BE614CFE032007C7E61 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = flam;
+			productName = flam;
+			productReference = 324E1BE814CFE032007C7E61 /* flam.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		324E1BDF14CFE032007C7E61 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 324E1BE214CFE032007C7E61 /* Build configuration list for PBXProject "flam" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 324E1BDD14CFE032007C7E61;
+			productRefGroup = 324E1BE914CFE032007C7E61 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				324E1BE714CFE032007C7E61 /* flam */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		324E1BE614CFE032007C7E61 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				324E1BF714CFE032007C7E61 /* InfoPlist.strings in Resources */,
+				324E1C0014CFE032007C7E61 /* MainWindow.xib in Resources */,
+				324E1C0614CFE032007C7E61 /* flamViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		324E1BE414CFE032007C7E61 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				324E1BFA14CFE032007C7E61 /* main.m in Sources */,
+				324E1BFD14CFE032007C7E61 /* flamAppDelegate.m in Sources */,
+				324E1C0314CFE032007C7E61 /* flamViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		324E1BF514CFE032007C7E61 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				324E1BF614CFE032007C7E61 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		324E1BFE14CFE032007C7E61 /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				324E1BFF14CFE032007C7E61 /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		324E1C0414CFE032007C7E61 /* flamViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				324E1C0514CFE032007C7E61 /* en */,
+			);
+			name = flamViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		324E1C0714CFE032007C7E61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		324E1C0814CFE032007C7E61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		324E1C0A14CFE032007C7E61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "flam/flam-Prefix.pch";
+				GCC_VERSION = 4.2;
+				INFOPLIST_FILE = "flam/flam-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		324E1C0B14CFE032007C7E61 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "flam/flam-Prefix.pch";
+				GCC_VERSION = 4.2;
+				INFOPLIST_FILE = "flam/flam-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		324E1BE214CFE032007C7E61 /* Build configuration list for PBXProject "flam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				324E1C0714CFE032007C7E61 /* Debug */,
+				324E1C0814CFE032007C7E61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		324E1C0914CFE032007C7E61 /* Build configuration list for PBXNativeTarget "flam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				324E1C0A14CFE032007C7E61 /* Debug */,
+				324E1C0B14CFE032007C7E61 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 324E1BDF14CFE032007C7E61 /* Project object */;
+}
