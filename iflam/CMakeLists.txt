@@ -9,14 +9,19 @@ if (APPLE)
   #  set(CMAKE_C_COMPILER clang)
 endif()
 
-set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing")
-enable_testing()
-
 add_subdirectory(core)
-add_subdirectory(cmd)
 
 ########################################################
+if (IPHONE)
+  add_subdirectory(ios)
+else (IPHONE)
+  set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing")
+  enable_testing()
 
-if (APPLE)
-  add_subdirectory(osx)
-endif()
+  add_subdirectory(cmd)
+
+  if (APPLE)
+    add_subdirectory(osx)
+  endif()
+endif (IPHONE)
+
