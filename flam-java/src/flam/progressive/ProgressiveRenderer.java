@@ -37,11 +37,14 @@ public class ProgressiveRenderer implements Renderer {
         double[] c1 = new double[3];
         double[] c2 = new double[3];
         int[] v2 = new int[2];
+        
+        double[] d1 = new double[3];
+        double[] d2 = new double[3];
 
         buffer.startCopy();
         for (int y = 0; y < buffer.getHeight(); ++y) {
             for (int x = 0; x < buffer.getWidth(); ++x) {
-                double d = buffer.get(x, y);
+                buffer.get(x, y, d1);
 
                 v1[0] = x;
                 v1[1] = y;
@@ -52,7 +55,13 @@ public class ProgressiveRenderer implements Renderer {
                     Xform xform = xforms.get(i);
                     xform.applyTo(c1, c2);
                     if (view.coordsToView(c2, v2)) {
-                        buffer.add(v2[0], v2[1], d * xform.weight * xform.getOpacity() * 100);
+                        double[] color = genome.getColor((int) (xform.color * 255));
+                        double f = 1.0 * 20;
+
+                        d2[0] = f * color[0] * d1[0] * xform.weight * xform.getOpacity();
+                        d2[1] = f * color[1] * d1[1] * xform.weight * xform.getOpacity();
+                        d2[2] = f * color[2] * d1[2] * xform.weight * xform.getOpacity();
+                        buffer.add(v2[0], v2[1], d2);
                     }
                 }
             }

@@ -17,7 +17,7 @@ public class Xform implements Serializable {
     double[] variations = new double[Genome.variationNames.length];
     int[] nonZeroVariations;
 
-    double color;
+    public double color;
     public double weight;
     private double animate;
     double colorSpeed = 0.5;

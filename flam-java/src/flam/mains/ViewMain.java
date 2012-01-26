@@ -22,7 +22,7 @@ public class ViewMain {
 
     public static void main(String[] args) throws IOException, SAXException {
 //        openGenome("../sheeps/32887.flam3");
-        openGenome("flams/e_3.flam3");
+        openGenome("flams/e_2.flam3");
 
         frame.setPreferredSize(new Dimension(500, 500));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
