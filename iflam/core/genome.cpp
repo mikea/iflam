@@ -344,6 +344,19 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = x * 2 / (r + 1);
           break;
         }
+        case 17: // popcorn
+        {
+          dx = x + c * sin(tan(3 * y));
+          dy = y + f * sin(tan(3 * x));
+          break;
+        }
+        case 18: // exponential
+        {
+          Float t = exp(x - 1);
+          dx = t * cos(kPI * y);
+          dy = t * sin(kPI * y);
+          break;
+        }
         case 21: // rings
         {
           Float theta = atan2(x, y);
