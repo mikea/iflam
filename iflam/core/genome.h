@@ -7,6 +7,9 @@
 #include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/mpl/list.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/tuple/elem.hpp>
+#include <boost/preprocessor.hpp>
 
 #include "common.h"
 
@@ -17,6 +20,7 @@ struct PropertyInfo {
   typedef Type type;
 };
 
+/*
 #define DECLARE_PROPERTY(_Container, _Type, _name) \
   public: \
   const _Type& get_##_name() const { return _name##_; } \
@@ -33,6 +37,49 @@ struct PropertyInfo {
 
 #define PROPERTY_LIST(properties...) \
     typedef boost::mpl::list<properties> PropertyList;
+*/
+
+#define __DECLARE_PROPERTY_MEMBERS(_Container, _Type, _name) \
+  public: \
+  const _Type& BOOST_PP_CAT(get_, _name)() const { return BOOST_PP_CAT(_name, _); } \
+  private: \
+  _Type BOOST_PP_CAT(_name, _); \
+  struct _name : public PropertyInfo<_Type> { \
+    static const char* name; \
+    static _Type* ptr(_Container* container) { \
+      return &container->BOOST_PP_CAT(_name, _); \
+    } \
+    static const _Type* ptr(const _Container& container) { \
+      return &container.BOOST_PP_CAT(_name, _);\
+    } \
+  };
+
+#define _PROPERTY_NAME(_tuple) BOOST_PP_TUPLE_ELEM(2, 1, _tuple)
+
+#define _DECLARE_PROPERTY_MEMBERS(r, _Container, _tuple) \
+  __DECLARE_PROPERTY_MEMBERS( \
+      _Container, \
+      BOOST_PP_TUPLE_ELEM(2, 0, _tuple), \
+      _PROPERTY_NAME(_tuple))
+
+#define _PROPERTY_LIST(_r, _data, _i, _tuple) \
+  BOOST_PP_COMMA_IF(_i) _PROPERTY_NAME(_tuple)
+
+#define _DEFINE_PROPERTY(r, _Container, _tuple) \
+  const char* _Container::_PROPERTY_NAME(_tuple)::name = BOOST_PP_STRINGIZE(_PROPERTY_NAME(_tuple));
+
+///////////////////////////////////////////////
+
+#define PROPERTY(_Type, _name) ((_Type, _name))
+
+#define DECLARE_PROPERTIES(_Container, _properties...) \
+  BOOST_PP_SEQ_FOR_EACH(_DECLARE_PROPERTY_MEMBERS, _Container, _properties) \
+  typedef boost::mpl::list< \
+    BOOST_PP_SEQ_FOR_EACH_I(_PROPERTY_LIST, _, _properties) \
+    > PropertyList;
+
+#define DEFINE_PROPERTIES(_Container, _properties...) \
+  BOOST_PP_SEQ_FOR_EACH(_DEFINE_PROPERTY, _Container, _properties)
 
 class Xform {
   public:
@@ -55,54 +102,30 @@ class Xform {
     std::vector<int> non_zero_variations_;
     boost::scoped_ptr<array<Float, 6> > post_;
 
-    DECLARE_PROPERTY(Xform, Float, animate); // is it bool?
-    DECLARE_PROPERTY(Xform, Float, color);
-    DECLARE_PROPERTY(Xform, Float, color_speed);
-    DECLARE_PROPERTY(Xform, Float, curl_c1);
-    DECLARE_PROPERTY(Xform, Float, curl_c2);
-    DECLARE_PROPERTY(Xform, Float, fan2_x);
-    DECLARE_PROPERTY(Xform, Float, fan2_y);
-    DECLARE_PROPERTY(Xform, Float, flower_holes);
-    DECLARE_PROPERTY(Xform, Float, flower_petals);
-    DECLARE_PROPERTY(Xform, Float, julian_dist);
-    DECLARE_PROPERTY(Xform, Float, julian_power);
-    DECLARE_PROPERTY(Xform, Float, juliascope_dist);
-    DECLARE_PROPERTY(Xform, Float, juliascope_power);
-    DECLARE_PROPERTY(Xform, Float, opacity);
-    DECLARE_PROPERTY(Xform, Float, parabola_height);
-    DECLARE_PROPERTY(Xform, Float, parabola_width);
-    DECLARE_PROPERTY(Xform, Float, perspective_angle);
-    DECLARE_PROPERTY(Xform, Float, perspective_dist);
-    DECLARE_PROPERTY(Xform, Float, radial_blur_angle);
-    DECLARE_PROPERTY(Xform, Float, rectangles_x);
-    DECLARE_PROPERTY(Xform, Float, rectangles_y);
-    DECLARE_PROPERTY(Xform, Float, rings2_val);
-    DECLARE_PROPERTY(Xform, Float, weight);
-
-    PROPERTY_LIST(
-        animate,
-        color,
-        color_speed,
-        curl_c1,
-        curl_c2,
-        fan2_x,
-        fan2_y,
-        flower_holes,
-        flower_petals,
-        julian_dist,
-        julian_power,
-        juliascope_power,
-        juliascope_dist,
-        opacity,
-        parabola_height,
-        parabola_width,
-        perspective_angle,
-        perspective_dist,
-        radial_blur_angle,
-        rectangles_x,
-        rectangles_y,
-        rings2_val,
-        weight
+    DECLARE_PROPERTIES(Xform,
+        PROPERTY(Float, animate) // is it bool?
+        PROPERTY(Float, color)
+        PROPERTY(Float, color_speed)
+        PROPERTY(Float, curl_c1)
+        PROPERTY(Float, curl_c2)
+        PROPERTY(Float, fan2_x)
+        PROPERTY(Float, fan2_y)
+        PROPERTY(Float, flower_holes)
+        PROPERTY(Float, flower_petals)
+        PROPERTY(Float, julian_dist)
+        PROPERTY(Float, julian_power)
+        PROPERTY(Float, juliascope_dist)
+        PROPERTY(Float, juliascope_power)
+        PROPERTY(Float, opacity)
+        PROPERTY(Float, parabola_height)
+        PROPERTY(Float, parabola_width)
+        PROPERTY(Float, perspective_angle)
+        PROPERTY(Float, perspective_dist)
+        PROPERTY(Float, radial_blur_angle)
+        PROPERTY(Float, rectangles_x)
+        PROPERTY(Float, rectangles_y)
+        PROPERTY(Float, rings2_val)
+        PROPERTY(Float, weight)
         );
 };
 

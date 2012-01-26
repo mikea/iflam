@@ -12,29 +12,31 @@ using std::string;
 using std::vector;
 using boost::scoped_ptr;
 
-DEFINE_PROPERTY(Xform, Float, animate); // is it bool?
-DEFINE_PROPERTY(Xform, Float, color);
-DEFINE_PROPERTY(Xform, Float, color_speed);
-DEFINE_PROPERTY(Xform, Float, curl_c1);
-DEFINE_PROPERTY(Xform, Float, curl_c2);
-DEFINE_PROPERTY(Xform, Float, fan2_x);
-DEFINE_PROPERTY(Xform, Float, fan2_y);
-DEFINE_PROPERTY(Xform, Float, flower_holes);
-DEFINE_PROPERTY(Xform, Float, flower_petals);
-DEFINE_PROPERTY(Xform, Float, julian_dist);
-DEFINE_PROPERTY(Xform, Float, julian_power);
-DEFINE_PROPERTY(Xform, Float, juliascope_dist);
-DEFINE_PROPERTY(Xform, Float, juliascope_power);
-DEFINE_PROPERTY(Xform, Float, opacity);
-DEFINE_PROPERTY(Xform, Float, parabola_height);
-DEFINE_PROPERTY(Xform, Float, parabola_width);
-DEFINE_PROPERTY(Xform, Float, perspective_angle);
-DEFINE_PROPERTY(Xform, Float, perspective_dist);
-DEFINE_PROPERTY(Xform, Float, radial_blur_angle);
-DEFINE_PROPERTY(Xform, Float, rectangles_x);
-DEFINE_PROPERTY(Xform, Float, rectangles_y);
-DEFINE_PROPERTY(Xform, Float, rings2_val);
-DEFINE_PROPERTY(Xform, Float, weight);
+DEFINE_PROPERTIES(Xform,
+    PROPERTY(Float, animate) // is it bool?
+    PROPERTY(Float, color)
+    PROPERTY(Float, color_speed)
+    PROPERTY(Float, curl_c1)
+    PROPERTY(Float, curl_c2)
+    PROPERTY(Float, fan2_x)
+    PROPERTY(Float, fan2_y)
+    PROPERTY(Float, flower_holes)
+    PROPERTY(Float, flower_petals)
+    PROPERTY(Float, julian_dist)
+    PROPERTY(Float, julian_power)
+    PROPERTY(Float, juliascope_dist)
+    PROPERTY(Float, juliascope_power)
+    PROPERTY(Float, opacity)
+    PROPERTY(Float, parabola_height)
+    PROPERTY(Float, parabola_width)
+    PROPERTY(Float, perspective_angle)
+    PROPERTY(Float, perspective_dist)
+    PROPERTY(Float, radial_blur_angle)
+    PROPERTY(Float, rectangles_x)
+    PROPERTY(Float, rectangles_y)
+    PROPERTY(Float, rings2_val)
+    PROPERTY(Float, weight)
+    );
 
 namespace {
   bool BadValue(Float x) {
