@@ -45,9 +45,9 @@ public class AnimationProvider implements GenomeProvider {
 
     @Override
     public void reset() {
-        xFormIndex = FlamComponent.random.nextInt(genome.xforms.size());
+        xFormIndex = Rnd.random.nextInt(genome.xforms.size());
 
-        switch (FlamComponent.random.nextInt(3)) {
+        switch (Rnd.random.nextInt(3)) {
             default:
                 throw new UnsupportedOperationException();
             case 0:
@@ -73,7 +73,7 @@ public class AnimationProvider implements GenomeProvider {
         private int coef;
 
         CoordinateAnimator() {
-            coef = FlamComponent.random.nextInt(6);
+            coef = Rnd.random.nextInt(6);
         }
 
         @Override
@@ -86,7 +86,7 @@ public class AnimationProvider implements GenomeProvider {
         private int idx;
 
         PointRotator() {
-            idx = FlamComponent.random.nextInt(3);
+            idx = Rnd.random.nextInt(3);
         }
 
         @Override

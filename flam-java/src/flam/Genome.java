@@ -16,7 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static flam.MyMath.*;
+import static flam.MyMath.abs;
+import static flam.MyMath.min;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -132,15 +133,15 @@ public class Genome implements Serializable {
         Collections.addAll(variationNameSet, variationNames);
     }
 
-    double[] background = new double[3];
-    double brightness = 1.0;
+    public double[] background = new double[3];
+    public double brightness = 1.0;
     public double[] center = new double[2];
-    double estimatorCurve = 0.4;
-    double estimatorMinimum = 0;
-    double estimatorRadius = 9;
+    public double estimatorCurve = 0.4;
+    public double estimatorMinimum = 0;
+    public double estimatorRadius = 9;
     private double filter = 0;
     private String filterShape;
-    double gamma = 4.0;
+    public double gamma = 4.0;
     private double gammaThreshold;
     private String interpolationType;
     private String name;
@@ -150,30 +151,30 @@ public class Genome implements Serializable {
     int passes = 1;
     double quality = 1;  // aka sample_density
     double rotate;
-    int[] size = new int[]{1024, 1024};
+    public int[] size = new int[]{1024, 1024};
     int oversample = 1;
     private String temporalFilterType;
     private double temporalFilterWidth;
     private double temporalSamples;
     private double time;
     private String url;
-    double vibrancy = 1.0;
+    public double vibrancy = 1.0;
     public List<Xform> xforms = new ArrayList<Xform>();
     public Xform finalxform;
     double[][] colors = new double[256][];
-    double pixelsPerUnit = 50;
+    public double pixelsPerUnit = 50;
     private String version;
-    double highlightPower = 1;
+    public double highlightPower = 1;
     public double zoom = 0;
-    double contrast = 1.0;
+    public double contrast = 1.0;
     double gammaLinearThreshold = 0.01;
     public int nbatches = 1;
     private String brood;
     private String genebank;
-    static final int CHOOSE_XFORM_GRAIN = 16384;
+    public static final int CHOOSE_XFORM_GRAIN = 16384;
     private double[][] chaos;
-    boolean chaosEnabled;
-    int[][] xformDistrib;
+    public boolean chaosEnabled;
+    public int[][] xformDistrib;
     private String parents;
 
     public Genome() {
@@ -201,15 +202,15 @@ public class Genome implements Serializable {
             double[] hsv1 = new double[3];
             double[] hsv2 = new double[3];
             double[] hsv = new double[3];
-            flam3.rgb2hsv(g1.colors[i], hsv1);
-            flam3.rgb2hsv(g2.colors[i], hsv2);
+            Colors.rgb2hsv(g1.colors[i], hsv1);
+            Colors.rgb2hsv(g2.colors[i], hsv2);
 
             for (int j = 0; j < 3; ++j) {
                 hsv[j] = interpolate(t, hsv1[j], hsv2[j]);
             }
 
             colors[i] = new double[3];
-            flam3.hsv2rgb(hsv, colors[i]);
+            Colors.hsv2rgb(hsv, colors[i]);
         }
 
         finalxform = new Xform(g1.finalxform == null ? Xform.IDENTITY : g1.finalxform, g2.finalxform == null ? Xform.IDENTITY : g2.finalxform, t);
@@ -513,5 +514,13 @@ public class Genome implements Serializable {
         } catch (CloneNotSupportedException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public double[] getColor(int idx) {
+        return colors[idx];
+    }
+
+    public double getRotate() {
+        return rotate;
     }
 }

@@ -3,6 +3,7 @@ package flam.mains;
 import flam.FlamComponent;
 import flam.Genome;
 import flam.GenomeProvider;
+import flam.Rnd;
 import flam.Xform;
 import org.xml.sax.SAXException;
 
@@ -54,7 +55,6 @@ public class SlideshowMain {
              }
          });
         flamComponent.setFps(10);
-        flamComponent.setMinimumSamples(200000);
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
         frame.pack();
@@ -66,7 +66,7 @@ public class SlideshowMain {
         File[] sheeps = new File("sheeps").listFiles();
         
         while (true) {
-            File f = sheeps[FlamComponent.random.nextInt(sheeps.length)];
+            File f = sheeps[Rnd.random.nextInt(sheeps.length)];
             if (!f.getName().endsWith(".flam3")) {
                 continue;
             }
@@ -98,6 +98,6 @@ public class SlideshowMain {
     }
 
     private static void checkXform(Xform xform) {
-        xform.applyTo(new double[]{FlamComponent.crnd(), FlamComponent.crnd(), FlamComponent.crnd()}, new double[3]);
+        xform.applyTo(new double[]{Rnd.crnd(), Rnd.crnd(), Rnd.crnd()}, new double[3]);
     }
 }

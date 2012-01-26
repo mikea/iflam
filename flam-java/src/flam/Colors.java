@@ -1,18 +1,13 @@
 package flam;
 
-
-import static flam.MyMath.*;
+import static flam.MyMath.floor;
 
 /**
- * @author mike
  */
-public class flam3 {
-    public static final int PREFILTER_WHITE = 255;
-
-
+public class Colors {
     /* rgb 0 - 1,
-       h 0 - 6, s 0 - 1, v 0 - 1 */
-    static void rgb2hsv(double[] rgb, double[] hsv) {
+h 0 - 6, s 0 - 1, v 0 - 1 */
+    public static void rgb2hsv(double[] rgb, double[] hsv) {
         double rd, gd, bd, h, s, v, max, min, del, rc, gc, bc;
 
         rd = rgb[0];
@@ -60,10 +55,9 @@ public class flam3 {
         hsv[2] = v;
     }
 
-
     /* h 0 - 6, s 0 - 1, v 0 - 1
-       rgb 0 - 1 */
-    static void hsv2rgb(double[] hsv, double[] rgb) {
+rgb 0 - 1 */
+    public static void hsv2rgb(double[] hsv, double[] rgb) {
         double h = hsv[0], s = hsv[1], v = hsv[2];
         int j;
         double rd, gd, bd;
@@ -119,16 +113,4 @@ public class flam3 {
         rgb[1] = gd;
         rgb[2] = bd;
     }
-
-
-    static double adjust_percentage(double in) {
-
-        if (in == 0.0)
-            return (0.0);
-        else
-            return (pow(10.0, -log(1.0 / in) / log(2)));
-
-    }
-
-
 }

@@ -1,10 +1,10 @@
 package flam.mains;
 
-import flam.Constants;
 import flam.DeepCopy;
 import flam.FlamComponent;
 import flam.Genome;
 import flam.GenomeProvider;
+import flam.ria.RIARenderer;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;
@@ -39,8 +39,10 @@ public class ViewMain {
             }
         });
         flamComponent.setFps(20);
-        flamComponent.setMinimumSamples(100000);
-        Constants.FILTER_IMAGE = true;
+        RIARenderer renderer = new RIARenderer();
+        renderer.setMimimumSamples(100000);
+        flamComponent.setRenderer(renderer);
+//        Constants.FILTER_IMAGE = true;
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 
         JMenuBar menuBar = new JMenuBar();

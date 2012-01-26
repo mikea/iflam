@@ -1,7 +1,7 @@
 package flam.mains;
 
-import flam.FlamComponent;
 import flam.Genome;
+import flam.Rnd;
 import flam.Xform;
 
 import java.io.File;
@@ -48,7 +48,7 @@ public class VerifyFlams {
     }
 
     private static void checkXform(Xform xform) {
-        xform.applyTo(new double[]{FlamComponent.crnd(), FlamComponent.crnd(), FlamComponent.crnd()}, new double[3]);
+        xform.applyTo(new double[]{Rnd.crnd(), Rnd.crnd(), Rnd.crnd()}, new double[3]);
     }
 
 }
