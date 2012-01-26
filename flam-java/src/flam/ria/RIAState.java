@@ -1,8 +1,10 @@
 package flam.ria;
 
 import flam.Genome;
+import flam.GenomeView;
+import flam.RenderBuffer;
 import flam.RenderState;
-import flam.Rnd;
+import flam.util.Rnd;
 import flam.Xform;
 
 /**
@@ -18,13 +20,11 @@ class RIAState implements RenderState {
     double viewBottom;
 */
     private int lastxf = 0;
+    GenomeView view;
 
-    public RIAState(Genome genome) {
+    public RIAState(Genome genome, RenderBuffer buffer) {
         this.genome = genome;
-
-/*
-
-*/
+        this.view = new GenomeView(genome, buffer.getWidth(), buffer.getHeight());
         reseed();
     }
 

@@ -1,12 +1,13 @@
 package flam.ria;
 
-import flam.Colors;
 import flam.Constants;
-import flam.Convolution;
-import flam.GaussianFilter;
 import flam.Genome;
+import flam.GenomeView;
 import flam.RenderBuffer;
-import flam.View2D;
+import flam.util.Colors;
+import flam.util.Convolution;
+import flam.util.GaussianFilter;
+import flam.util.View2D;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static flam.MyMath.*;
+import static flam.util.MyMath.*;
 
 /**
  */
@@ -114,7 +115,7 @@ class RIABuffer implements RenderBuffer {
 
 
                 t[3] = alpha;
-                line[x] = ((int) (t[0]) << 16) | ((int) (t[1]) << 8) | (int) (t[2]);
+                line[x] = Colors.packRgb(t[0], t[1], t[2]);
             }
 
             setLine(image, width, line, y);
@@ -328,33 +329,18 @@ class RIABuffer implements RenderBuffer {
         }
     }
     
-    void updateHistogram(Genome genome, double x, double y, double cc, double opacity) {
+    void updateHistogram(Genome genome, GenomeView view, double x, double y, double cc, double opacity) {
         // TODO: speed up
-        double genomeHeight = genome.size[1];
-        double genomeWidth = genomeHeight * (width * 1.0 / height);
-        double scale = pow(2.0, genome.zoom);
-        double ppux = genome.pixelsPerUnit * scale;
-        double ppuy = genome.pixelsPerUnit * scale;
-
-        double viewLeft = genome.center[0] - genomeWidth / ppux / 2.0;
-        double viewBottom = genome.center[1] - genomeHeight / ppuy / 2.0;
-
-        double viewHeight = genomeHeight / ppuy;
-        double viewWidth = genomeWidth / ppux;
-
-        double ws = width / viewWidth;
-        double hs = height / viewHeight;
-
-        int x1 = (int) ((x - viewLeft) * ws + 0.5);
-        int y1 = (int) ((y - viewBottom) * hs + 0.5);
 
 //        System.out.println("(" + x1 + "," + y1 + ")");
 
-        if (x1 < 0 || x1 >= width || y1 < 0 || y1 >= height) {
+        int[] v = new int[2];
+        double[] c = new double[] {x, y};
+        if (!view.coordsToView(c, v)) {
             return;
         }
-
-        int offset = (x1 + width * y1) * 4;
+        
+        int offset = (v[0] + width * v[1]) * 4;
 
 
         double[] color = genome.getColor(((int) min(max(cc * 255.0, 0), 255)));

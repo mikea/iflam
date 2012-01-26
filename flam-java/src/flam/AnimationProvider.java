@@ -1,7 +1,10 @@
 package flam;
 
-import static flam.MyMath.cos;
-import static flam.MyMath.sin;
+import flam.util.DeepCopy;
+import flam.util.Rnd;
+
+import static flam.util.MyMath.cos;
+import static flam.util.MyMath.sin;
 
 /**
  * @author mike

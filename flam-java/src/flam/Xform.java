@@ -1,12 +1,13 @@
 package flam;
 
+import flam.util.Rnd;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import java.io.Serializable;
 
 import static flam.Genome.interpolate;
-import static flam.MyMath.*;
+import static flam.util.MyMath.*;
 import static java.lang.Double.parseDouble;
 
 /**
@@ -17,7 +18,7 @@ public class Xform implements Serializable {
     int[] nonZeroVariations;
 
     double color;
-    double weight;
+    public double weight;
     private double animate;
     double colorSpeed = 0.5;
     double opacity = 1.0;

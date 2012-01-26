@@ -1,5 +1,8 @@
 package flam;
 
+import flam.util.DeepCopy;
+import flam.util.Rnd;
+
 /**
  * @author mike
  */

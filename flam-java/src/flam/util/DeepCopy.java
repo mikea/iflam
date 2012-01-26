@@ -1,4 +1,4 @@
-package flam;
+package flam.util;
 
 import java.io.*;
 

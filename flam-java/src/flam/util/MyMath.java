@@ -1,4 +1,4 @@
-package flam;
+package flam.util;
 
 import org.apache.commons.math.util.FastMath;
 

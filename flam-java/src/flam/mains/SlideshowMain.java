@@ -3,7 +3,7 @@ package flam.mains;
 import flam.FlamComponent;
 import flam.Genome;
 import flam.GenomeProvider;
-import flam.Rnd;
+import flam.util.Rnd;
 import flam.Xform;
 import org.xml.sax.SAXException;
 

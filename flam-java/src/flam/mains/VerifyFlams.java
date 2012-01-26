@@ -1,7 +1,7 @@
 package flam.mains;
 
 import flam.Genome;
-import flam.Rnd;
+import flam.util.Rnd;
 import flam.Xform;
 
 import java.io.File;

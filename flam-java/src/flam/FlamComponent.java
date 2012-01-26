@@ -82,7 +82,7 @@ public class FlamComponent extends JComponent {
         } else {
             buffer.reset();
         }
-        state = renderer.newState(newGenome);
+        state = renderer.newState(newGenome, buffer);
     }
 
 

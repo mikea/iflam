@@ -1,6 +1,6 @@
-package flam;
+package flam.util;
 
-import static flam.MyMath.floor;
+import static flam.util.MyMath.floor;
 
 /**
  */
@@ -112,5 +112,13 @@ rgb 0 - 1 */
         rgb[0] = rd;
         rgb[1] = gd;
         rgb[2] = bd;
+    }
+
+    public static int packRgb(double r, double g, double b) {
+        return ((int) (r) << 16) | ((int) (g) << 8) | (int) (b);
+    }
+
+    public static int packRgb(int r, int g, int b) {
+        return (r << 16) | (g << 8) | b;
     }
 }

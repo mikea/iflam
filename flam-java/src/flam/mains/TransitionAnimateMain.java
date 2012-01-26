@@ -3,7 +3,7 @@ package flam.mains;
 import flam.FlamComponent;
 import flam.Genome;
 import flam.GenomeProvider;
-import flam.MyMath;
+import flam.util.MyMath;
 import org.xml.sax.SAXException;
 
 import javax.swing.*;

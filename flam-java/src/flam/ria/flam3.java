@@ -1,7 +1,7 @@
 package flam.ria;
 
 
-import static flam.MyMath.*;
+import static flam.util.MyMath.*;
 
 /**
  * @author mike

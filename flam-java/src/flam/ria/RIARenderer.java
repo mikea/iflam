@@ -6,7 +6,7 @@ import flam.RenderState;
 import flam.Renderer;
 import flam.Xform;
 
-import static flam.MyMath.*;
+import static flam.util.MyMath.*;
 
 /**
  * Random iteration algorithm.
@@ -15,8 +15,8 @@ public class RIARenderer implements Renderer {
     private int minimumSamples = 100000;
 
     @Override
-    public RenderState newState(Genome genome) {
-        return new RIAState(genome);
+    public RenderState newState(Genome genome, RenderBuffer buffer) {
+        return new RIAState(genome, buffer);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class RIARenderer implements Renderer {
                     xyc[1] = y;
                 }
 
-                buffer.updateHistogram(genome, xyc[0], xyc[1], xyc[2], opacity);
+                buffer.updateHistogram(genome, state.view, xyc[0], xyc[1], xyc[2], opacity);
             }
 
             if (i % 1000 == 0 && i > minimumSamples) {
@@ -105,8 +105,6 @@ public class RIARenderer implements Renderer {
     public void render(RenderState state, RenderBuffer buffer) {
         ((RIABuffer) buffer).renderHistogram(state.getGenome());
     }
-
-
 
     public void setMimimumSamples(int samples) {
         this.minimumSamples = samples;

@@ -1,4 +1,6 @@
-package flam;
+package flam.util;
+
+import flam.util.MyMath;
 
 import java.awt.image.Kernel;
 import java.util.ArrayList;

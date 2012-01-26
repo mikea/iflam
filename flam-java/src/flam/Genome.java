@@ -1,6 +1,7 @@
 package flam;
 
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+import flam.util.Colors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -16,8 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static flam.MyMath.abs;
-import static flam.MyMath.min;
+import static flam.util.MyMath.abs;
+import static flam.util.MyMath.min;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
