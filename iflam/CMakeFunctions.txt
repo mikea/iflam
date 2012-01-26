@@ -16,6 +16,9 @@ macro(ADD_BOOST)
     message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
     include_directories(${Boost_INCLUDE_DIR})
     link_directories(${Boost_LIBRARY_DIRS})
+
+    add_definitions(-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS)
+    add_definitions(-DBOOST_MPL_LIMIT_LIST_SIZE=30)
   endif()
 endmacro(ADD_BOOST)
 

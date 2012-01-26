@@ -6,11 +6,80 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/mpl/list.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/tuple/elem.hpp>
+#include <boost/preprocessor.hpp>
 
 #include "common.h"
 
 class TiXmlElement;
 
+template<typename Type>
+struct PropertyInfo {
+  typedef Type type;
+};
+
+/*
+#define DECLARE_PROPERTY(_Container, _Type, _name) \
+  public: \
+  const _Type& get_##_name() const { return _name##_; } \
+  private: \
+  _Type _name##_; \
+  struct _name : public PropertyInfo<_Type> { \
+    static const char* name; \
+    static _Type* ptr(_Container* container) { return &container->_name##_;} \
+    static const _Type* ptr(const _Container& container) { return &container._name##_;} \
+  };
+
+#define DEFINE_PROPERTY(_Container, _Type, _name) \
+  const char* _Container::_name::name = #_name;
+
+#define PROPERTY_LIST(properties...) \
+    typedef boost::mpl::list<properties> PropertyList;
+*/
+
+#define __DECLARE_PROPERTY_MEMBERS(_Container, _Type, _name) \
+  public: \
+  const _Type& BOOST_PP_CAT(get_, _name)() const { return BOOST_PP_CAT(_name, _); } \
+  private: \
+  _Type BOOST_PP_CAT(_name, _); \
+  struct _name : public PropertyInfo<_Type> { \
+    static const char* name; \
+    static _Type* ptr(_Container* container) { \
+      return &container->BOOST_PP_CAT(_name, _); \
+    } \
+    static const _Type* ptr(const _Container& container) { \
+      return &container.BOOST_PP_CAT(_name, _);\
+    } \
+  };
+
+#define _PROPERTY_NAME(_tuple) BOOST_PP_TUPLE_ELEM(2, 1, _tuple)
+
+#define _DECLARE_PROPERTY_MEMBERS(r, _Container, _tuple) \
+  __DECLARE_PROPERTY_MEMBERS( \
+      _Container, \
+      BOOST_PP_TUPLE_ELEM(2, 0, _tuple), \
+      _PROPERTY_NAME(_tuple))
+
+#define _PROPERTY_LIST(_r, _data, _i, _tuple) \
+  BOOST_PP_COMMA_IF(_i) _PROPERTY_NAME(_tuple)
+
+#define _DEFINE_PROPERTY(r, _Container, _tuple) \
+  const char* _Container::_PROPERTY_NAME(_tuple)::name = BOOST_PP_STRINGIZE(_PROPERTY_NAME(_tuple));
+
+///////////////////////////////////////////////
+
+#define PROPERTY(_Type, _name) ((_Type, _name))
+
+#define DECLARE_PROPERTIES(_Container, _properties...) \
+  BOOST_PP_SEQ_FOR_EACH(_DECLARE_PROPERTY_MEMBERS, _Container, _properties) \
+  typedef boost::mpl::list< \
+    BOOST_PP_SEQ_FOR_EACH_I(_PROPERTY_LIST, _, _properties) \
+    > PropertyList;
+
+#define DEFINE_PROPERTIES(_Container, _properties...) \
+  BOOST_PP_SEQ_FOR_EACH(_DEFINE_PROPERTY, _Container, _properties)
 
 class Xform {
   public:
@@ -22,9 +91,6 @@ class Xform {
 
     void Parse(const TiXmlElement* element);
 
-    Float weight() const { return weight_; }
-    Float opacity() const { return opacity_; }
-
     bool Apply(Float* in, Float* out, Random* rnd) const;
 
     array<Float, 6>* mutable_coefs() { return &coefs_; }
@@ -34,28 +100,33 @@ class Xform {
     array<Float, 6> coefs_;
     array<Float, kVariationsCount> variations_;
     std::vector<int> non_zero_variations_;
-    Float color_;
-    Float color_speed_;
-    Float opacity_;
-    Float weight_;
-    Float animate_;  // is it bool?
-    Float julian_dist_;
-    Float julian_power_;
-    Float perspective_angle_;
-    Float perspective_dist_;
-    Float radial_blur_angle_;
-    Float rings2_val_;
-    Float rectangles_x_;
-    Float rectangles_y_;
-    Float juliascope_power_;
-    Float juliascope_dist_;
-    Float fan2_x_;
-    Float fan2_y_;
-    Float curl_c1_;
-    Float curl_c2_;
-    Float parabola_height_;
-    Float parabola_width_;
     boost::scoped_ptr<array<Float, 6> > post_;
+
+    DECLARE_PROPERTIES(Xform,
+        PROPERTY(Float, animate) // is it bool?
+        PROPERTY(Float, color)
+        PROPERTY(Float, color_speed)
+        PROPERTY(Float, curl_c1)
+        PROPERTY(Float, curl_c2)
+        PROPERTY(Float, fan2_x)
+        PROPERTY(Float, fan2_y)
+        PROPERTY(Float, flower_holes)
+        PROPERTY(Float, flower_petals)
+        PROPERTY(Float, julian_dist)
+        PROPERTY(Float, julian_power)
+        PROPERTY(Float, juliascope_dist)
+        PROPERTY(Float, juliascope_power)
+        PROPERTY(Float, opacity)
+        PROPERTY(Float, parabola_height)
+        PROPERTY(Float, parabola_width)
+        PROPERTY(Float, perspective_angle)
+        PROPERTY(Float, perspective_dist)
+        PROPERTY(Float, radial_blur_angle)
+        PROPERTY(Float, rectangles_x)
+        PROPERTY(Float, rectangles_y)
+        PROPERTY(Float, rings2_val)
+        PROPERTY(Float, weight)
+        );
 };
 
 class Genome {

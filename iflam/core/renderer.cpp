@@ -154,7 +154,7 @@ void RenderState::CreateXformDist(int xi, int k) {
 
   Float weight_sum = 0;
   for (size_t i = 0; i < xforms_size; ++i) {
-    Float d =  genome_.xforms()[i].weight();
+    Float d =  genome_.xforms()[i].get_weight();
     if (xi > 0) {
       // d *= genome_.chaos(xi, i);
     }
@@ -169,7 +169,7 @@ void RenderState::CreateXformDist(int xi, int k) {
   }
 
   Float step = weight_sum / kChooseXformGrain;
-  Float t = genome_.xforms()[0].weight();
+  Float t = genome_.xforms()[0].get_weight();
   if (xi > 0) {
     // d *= genome_.chaos(xi, 0);
   }
@@ -181,9 +181,9 @@ void RenderState::CreateXformDist(int xi, int k) {
       j++;
 
       if (xi >= 0) {
-        t += genome_.xforms()[j].weight() /* * genome_.chaos(xi, j) */;
+        t += genome_.xforms()[j].get_weight() /* * genome_.chaos(xi, j) */;
       } else {
-        t += genome_.xforms()[j].weight();
+        t += genome_.xforms()[j].get_weight();
       }
     }
 
@@ -237,7 +237,7 @@ void RenderState::Iterate(int iterations) {
       continue;
     }
 
-    Float opacity = xform.opacity();
+    Float opacity = xform.get_opacity();
 
     if (opacity != 1.0) {
       opacity = AdjustPercentage(opacity);
