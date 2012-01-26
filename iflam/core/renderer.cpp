@@ -223,11 +223,13 @@ void RenderState::Iterate(int iterations) {
       xyc_[0] = rnd.crnd();
       xyc_[1] = rnd.crnd();
       xyc_[2] = rnd.crnd();
-      std::cout << "Apply resulted in error\n";
       ++consequent_errors_;
-      if (consequent_errors_ < 5) {
+      if (consequent_errors_ < 200) {
         i -= 4;
         continue;
+      } else {
+        BOOST_THROW_EXCEPTION(error()
+            << error_message("Too many consequent errors"));
       }
     }
 

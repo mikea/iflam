@@ -357,6 +357,14 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = t * sin(kPI * y);
           break;
         }
+        case 19: // power
+        {
+          Float theta = atan2(x, y);
+          Float t = pow(r, sin(theta));
+          dx = t * cos(theta);
+          dy = t * sin(theta);
+          break;
+        }
         case 21: // rings
         {
           Float theta = atan2(x, y);
