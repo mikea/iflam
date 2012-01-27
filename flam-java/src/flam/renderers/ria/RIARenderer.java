@@ -1,4 +1,4 @@
-package flam.ria;
+package flam.renderers.ria;
 
 import flam.Genome;
 import flam.RenderBuffer;
@@ -50,7 +50,7 @@ public class RIARenderer implements Renderer {
         int i = -4 * fuse;
 
         for (; ; ++i) {
-            Xform xform = state.pickRandomXform();
+            Xform xform = genome.pickRandomXform();
             if (!state.applyXform(xform)) {
                 consequentErrors++;
                 System.out.println("consequentErrors = " + consequentErrors);

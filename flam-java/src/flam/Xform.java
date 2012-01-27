@@ -14,7 +14,7 @@ import static java.lang.Double.parseDouble;
 */
 public class Xform implements Serializable {
     public double[] coefs = new double[6];
-    double[] variations = new double[Genome.variationNames.length];
+    double[] variations = new double[Constants.variationNames.length];
     int[] nonZeroVariations;
 
     public double color;
@@ -46,14 +46,14 @@ public class Xform implements Serializable {
 
     private void init() {
         int variationCount = 0;
-        for (int j = 0; j < Genome.variationNames.length; ++j) {
+        for (int j = 0; j < Constants.variationNames.length; ++j) {
             if (variations[j] != 0.0) {
                 variationCount++;
             }
         }
         nonZeroVariations = new int[variationCount];
         variationCount = 0;
-        for (int j = 0; j < Genome.variationNames.length; ++j) {
+        for (int j = 0; j < Constants.variationNames.length; ++j) {
             if (variations[j] != 0.0) {
                 nonZeroVariations[variationCount] = j;
                 variationCount++;
@@ -90,7 +90,7 @@ public class Xform implements Serializable {
         for (int i = 0; i < 6; ++i) {
             coefs[i] = interpolate(t, f1.coefs[i], f2.coefs[i]);
         }
-        for (int i = 0; i < Genome.variationNames.length; ++i) {
+        for (int i = 0; i < Constants.variationNames.length; ++i) {
             variations[i] = interpolate(t, f1.variations[i], f2.variations[i]);
         }
         color = interpolate(t, f1.color, f2.color);
@@ -180,9 +180,9 @@ public class Xform implements Serializable {
                 Genome.parseIntoDoubleVector(node, post);
 //                } else if (attrName.equals("chaos")) {
 //                    chaos = parseDouble(node.getNodeValue());
-            } else if (Genome.variationNameSet.contains(attrName)) {
-                for (int j = 0; j < Genome.variationNames.length; j++) {
-                    if (Genome.variationNames[j].equals(attrName)) {
+            } else if (Constants.variationNameSet.contains(attrName)) {
+                for (int j = 0; j < Constants.variationNames.length; j++) {
+                    if (Constants.variationNames[j].equals(attrName)) {
                         variations[j] = parseDouble(node.getNodeValue());
                         continue nextAttr;
                     }
@@ -231,7 +231,7 @@ public class Xform implements Serializable {
                 final double w = variations[var];
                 switch (var) {
                     default:
-                        throw new IllegalArgumentException("Unimplemented variation: " + var + " : " + Genome.variationNames[var]);
+                        throw new IllegalArgumentException("Unimplemented variation: " + var + " : " + Constants.variationNames[var]);
                     case 0: // linear
                         dx = x;
                         dy = y;
@@ -314,7 +314,7 @@ public class Xform implements Serializable {
                     case 13: // julia
                     {
                         double theta = atan2(x, y);
-                        double omega = Rnd.random.nextBoolean() ? 0 : PI;
+                        double omega = Rnd.brnd() ? 0 : PI;
                         dx = sqrt(r) * cos(theta / 2 + omega);
                         dy = sqrt(r) * sin(theta / 2 + omega);
                         break;
@@ -333,8 +333,8 @@ public class Xform implements Serializable {
                         break;
                     }
                     case 15: // waves
-                        dx = x + b * sin(y / (c * c + Genome.EPS));
-                        dy = y + e * sin(x / (f * f + Genome.EPS));
+                        dx = x + b * sin(y / (c * c + Constants.EPS));
+                        dy = y + e * sin(x / (f * f + Constants.EPS));
                         break;
                     case 16: // fisheye
                         dx = y * 2 / (r + 1);
@@ -396,7 +396,7 @@ public class Xform implements Serializable {
                         double phi = atan2(y, x);
                         double p1 = julian_power;
                         double p2 = julian_dist;
-                        double p3 = floor(abs(p1) * Rnd.random.nextDouble());
+                        double p3 = floor(abs(p1) * Rnd.rnd());
                         double t = (phi + 2 * PI * p3) / p1;
                         double z = pow(r, p2 / p1);
                         dx = z * cos(t);
@@ -408,7 +408,7 @@ public class Xform implements Serializable {
                       double phi = atan2(y, x);
                         double p1 = juliascopePower;
                         double p2 = juliascopeDist;
-                        double p3 = floor(abs(p1) * Rnd.random.nextDouble());
+                        double p3 = floor(abs(p1) * Rnd.rnd());
                         double t = (Rnd.crnd() * phi + 2 * PI * p3) / p1;
                         double z = pow(r, p2 / p1);
                       dx = z * cos(t);
@@ -417,16 +417,16 @@ public class Xform implements Serializable {
                     }
                     case 34: // blur
                     {
-                        double xi1 = Rnd.random.nextDouble();
-                        double xi2 = Rnd.random.nextDouble();
+                        double xi1 = Rnd.rnd();
+                        double xi2 = Rnd.rnd();
                         dx = xi1 * cos(2 * PI * xi2);
                         dy = xi1 * sin(2 * PI * xi2);
                         break;
                     }
                     case 35:  // gaussian_blur
                     {
-                        double t1 = w * (Rnd.random.nextDouble() + Rnd.random.nextDouble() + Rnd.random.nextDouble() + Rnd.random.nextDouble() - 2);
-                        double t2 = Rnd.random.nextDouble();
+                        double t1 = w * (Rnd.rnd() + Rnd.rnd() + Rnd.rnd() + Rnd.rnd() - 2);
+                        double t2 = Rnd.rnd();
                         dx = t1 * cos(2 * PI * t2);
                         dy = t1 * sin(2 * PI * t2);
                         break;
@@ -435,7 +435,7 @@ public class Xform implements Serializable {
                     {
                         double phi = atan2(y, x);
                         double p1 = radial_blur_angle * PI / 2;
-                        double t1 = w * (Rnd.random.nextDouble() + Rnd.random.nextDouble() + Rnd.random.nextDouble() + Rnd.random.nextDouble() - 2);
+                        double t1 = w * (Rnd.rnd() + Rnd.rnd() + Rnd.rnd() + Rnd.rnd() - 2);
                         double t2 = phi + t1 * sin(p1);
                         double t3 = t1 * cos(p1) - 1;
                         dx = (r * cos(t2) + t3 * x) / w;
@@ -444,7 +444,7 @@ public class Xform implements Serializable {
                     }
                     case 45:  // blade
                     {
-                        double xi = Rnd.random.nextDouble();
+                        double xi = Rnd.rnd();
                         dx = x * (cos(xi * r * w) + sin(xi * r * w));
                         dy = x * (cos(xi * r * w) - sin(xi * r * w));
                         break;

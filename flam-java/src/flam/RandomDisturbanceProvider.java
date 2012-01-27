@@ -17,9 +17,9 @@ public class RandomDisturbanceProvider implements GenomeProvider {
     public Genome getGenome() {
         Genome result = (Genome) DeepCopy.copy(genome);
 
-        Xform xform = result.xforms.get(Rnd.random.nextInt(result.xforms.size()));
-        int i = Rnd.random.nextInt(6);
-        xform.coefs[i] += Rnd.random.nextGaussian() * xform.coefs[i] / 5;
+        Xform xform = result.xforms.get(Rnd.irnd(result.xforms.size()));
+        int i = Rnd.irnd(6);
+        xform.coefs[i] += Rnd.grnd() * xform.coefs[i] / 5;
 
         return result;
     }

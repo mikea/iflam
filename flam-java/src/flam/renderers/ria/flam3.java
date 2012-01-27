@@ -1,4 +1,4 @@
-package flam.ria;
+package flam.renderers.ria;
 
 
 import static flam.util.MyMath.*;

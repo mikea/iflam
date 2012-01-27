@@ -12,6 +12,8 @@ public class GenomeView {
     private final double ws;
     private final double viewBottom;
     private final double hs;
+    private final double viewTop;
+    private final double viewRight;
 
     public GenomeView(Genome genome, int width, int height) {
         this.genome = genome;
@@ -29,6 +31,8 @@ public class GenomeView {
 
         double viewHeight = genomeHeight / ppuy;
         double viewWidth = genomeWidth / ppux;
+        viewRight = viewLeft + viewWidth;
+        viewTop = viewBottom + viewHeight;
 
         ws = width / viewWidth;
         hs = height / viewHeight;
@@ -51,5 +55,9 @@ public class GenomeView {
         
         return true;
         
+    }
+
+    public boolean isInView(double[] c) {
+        return c[0] >= viewLeft && c[0] <= viewRight && c[1] >= viewBottom && c[1] <= viewTop;
     }
 }

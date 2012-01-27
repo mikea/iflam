@@ -3,7 +3,7 @@ package flam.mains;
 import flam.FlamComponent;
 import flam.Genome;
 import flam.GenomeProvider;
-import flam.progressive.ProgressiveRenderer;
+import flam.renderers.ria.RIARenderer;
 import flam.util.DeepCopy;
 import org.xml.sax.SAXException;
 
@@ -22,9 +22,9 @@ public class ViewMain {
 
     public static void main(String[] args) throws IOException, SAXException {
 //        openGenome("../sheeps/32887.flam3");
-        openGenome("flams/e_2.flam3");
+        openGenome("flams/e_1.flam3");
 
-        frame.setPreferredSize(new Dimension(500, 500));
+        frame.setPreferredSize(new Dimension(512, 512));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.getContentPane().setLayout(new BorderLayout());
@@ -40,9 +40,9 @@ public class ViewMain {
             }
         });
         flamComponent.setFps(20);
-//        RIARenderer renderer = new RIARenderer();
-//        renderer.setMimimumSamples(100000);
-        flamComponent.setRenderer(new ProgressiveRenderer());
+        flamComponent.setRenderer(new RIARenderer());
+//        flamComponent.setRenderer(new ProgressiveRenderer());
+//        flamComponent.setRenderer(new EscapeRenderer());
 //        Constants.FILTER_IMAGE = true;
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
 

@@ -2,6 +2,7 @@ package flam;
 
 import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import flam.util.Colors;
+import flam.util.Rnd;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -12,10 +13,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static flam.util.MyMath.abs;
 import static flam.util.MyMath.min;
@@ -25,115 +23,9 @@ import static java.lang.Integer.parseInt;
 /**
  */
 public class Genome implements Serializable {
-    static final String[] variationNames = {
-            "linear",
-            "sinusoidal",
-            "spherical",
-            "swirl",
-            "horseshoe",
-            "polar",
-            "handkerchief",
-            "heart",
-            "disc",
-            "spiral",
-            "hyperbolic",
-            "diamond",
-            "ex",
-            "julia",
-            "bent",
-            "waves",
-            "fisheye",
-            "popcorn",
-            "exponential",
-            "power",
-            "cosine",
-            "rings",
-            "fan",
-            "blob",
-            "pdj",
-            "fan2",
-            "rings2",
-            "eyefish",
-            "bubble",
-            "cylinder",
-            "perspective",
-            "noise",
-            "julian",
-            "juliascope",
-            "blur",
-            "gaussian_blur",
-            "radial_blur",
-            "pie",
-            "ngon",
-            "curl",
-            "rectangles",
-            "arch",
-            "tangent",
-            "square",
-            "rays",
-            "blade",
-            "secant2",
-            "twintrian",
-            "cross",
-            "disc2",
-            "super_shape",
-            "flower",
-            "conic",
-            "parabola",
-            "bent2",
-            "bipolar",
-            "boarders",
-            "butterfly",
-            "cell",
-            "cpow",
-            "curve",
-            "edisc",
-            "elliptic",
-            "escher",
-            "foci",
-            "lazysusan",
-            "loonie",
-            "pre_blur",
-            "modulus",
-            "oscilloscope",
-            "polar2",
-            "popcorn2",
-            "scry",
-            "separation",
-            "split",
-            "splits",
-            "stripes",
-            "wedge",
-            "wedge_julia",
-            "wedge_sph",
-            "whorl",
-            "waves2",
-            "exp",
-            "log",
-            "sin",
-            "cos",
-            "tan",
-            "sec",
-            "csc",
-            "cot",
-            "sinh",
-            "cosh",
-            "tanh",
-            "sech",
-            "csch",
-            "coth",
-            "auger",
-            "flux",
-            "mobius",
-    };
 
-    static final Set<String> variationNameSet = new HashSet<String>();
-    public static final double EPS = 1e-10;
 
-    static {
-        Collections.addAll(variationNameSet, variationNames);
-    }
-
+    private int lastxf = 0;
     public double[] background = new double[3];
     public double brightness = 1.0;
     public double[] center = new double[2];
@@ -172,7 +64,6 @@ public class Genome implements Serializable {
     public int nbatches = 1;
     private String brood;
     private String genebank;
-    public static final int CHOOSE_XFORM_GRAIN = 16384;
     private double[][] chaos;
     public boolean chaosEnabled;
     public int[][] xformDistrib;
@@ -442,7 +333,7 @@ public class Genome implements Serializable {
 
         xformDistrib = new int[xforms.size()][];
         for (int i = 0; i < xformDistrib.length; ++i) {
-            xformDistrib[i] = new int[CHOOSE_XFORM_GRAIN];
+            xformDistrib[i] = new int[Constants.CHOOSE_XFORM_GRAIN];
         }
 
         createChaosDist(-1, xformDistrib[0]);
@@ -457,7 +348,7 @@ public class Genome implements Serializable {
     private boolean isChaosEnabled() {
         for (int i = 0; i < xforms.size(); i++) {
             for (int j = 0; j < xforms.size(); j++) {
-                if (abs(chaos[i][j] - 1.0) > EPS)
+                if (abs(chaos[i][j] - 1.0) > Constants.EPS)
                     return true;
             }
         }
@@ -485,14 +376,14 @@ public class Genome implements Serializable {
             throw new IllegalStateException("cannot iterate empty flame");
         }
 
-        double step = weightSum / CHOOSE_XFORM_GRAIN;
+        double step = weightSum / Constants.CHOOSE_XFORM_GRAIN;
 
         int j = 0;
         double t = xforms.get(0).weight;
         if (xi >= 0)
             t *= chaos[xi][0];
         double r = 0.0;
-        for (int i = 0; i < CHOOSE_XFORM_GRAIN; i++) {
+        for (int i = 0; i < Constants.CHOOSE_XFORM_GRAIN; i++) {
             while (r >= t) {
                 j++;
 
@@ -523,5 +414,16 @@ public class Genome implements Serializable {
 
     public double getRotate() {
         return rotate;
+    }
+
+    public Xform pickRandomXform() {
+        int k;
+        if (chaosEnabled) {
+            k = xformDistrib[lastxf][Rnd.irnd(Constants.CHOOSE_XFORM_GRAIN)];
+            lastxf = k + 1;
+        } else {
+            k = xformDistrib[0][Rnd.irnd(Constants.CHOOSE_XFORM_GRAIN)];
+        }
+        return xforms.get(k);
     }
 }

@@ -1,6 +1,6 @@
 package flam;
 
-import flam.ria.RIARenderer;
+import flam.renderers.ria.RIARenderer;
 
 import javax.swing.*;
 import java.awt.*;

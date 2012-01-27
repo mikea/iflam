@@ -1,4 +1,4 @@
-package flam.ria;
+package flam.renderers.ria;
 
 import flam.Genome;
 import flam.GenomeView;
@@ -19,7 +19,6 @@ class RIAState implements RenderState {
     double viewLeft;
     double viewBottom;
 */
-    private int lastxf = 0;
     GenomeView view;
 
     public RIAState(Genome genome, RenderBuffer buffer) {
@@ -33,17 +32,6 @@ class RIAState implements RenderState {
         xyc[0] = Rnd.crnd();
         xyc[1] = Rnd.crnd();
         xyc[2] = Rnd.rnd();
-    }
-
-    Xform pickRandomXform() {
-        int k;
-        if (genome.chaosEnabled) {
-            k = genome.xformDistrib[lastxf][Rnd.random.nextInt(Genome.CHOOSE_XFORM_GRAIN)];
-            lastxf = k + 1;
-        } else {
-            k = genome.xformDistrib[0][Rnd.random.nextInt(Genome.CHOOSE_XFORM_GRAIN)];
-        }
-        return genome.xforms.get(k);
     }
 
 

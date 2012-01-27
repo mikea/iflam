@@ -1,4 +1,4 @@
-package flam.progressive;
+package flam.renderers.progressive;
 
 import flam.Genome;
 import flam.GenomeView;

@@ -66,7 +66,7 @@ public class SlideshowMain {
         File[] sheeps = new File("sheeps").listFiles();
         
         while (true) {
-            File f = sheeps[Rnd.random.nextInt(sheeps.length)];
+            File f = sheeps[Rnd.irnd(sheeps.length)];
             if (!f.getName().endsWith(".flam3")) {
                 continue;
             }
