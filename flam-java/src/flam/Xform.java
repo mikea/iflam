@@ -202,10 +202,10 @@ public class Xform implements Serializable {
         double cc = in[2];
 
         final double a = coefs[0];
-        final double b = coefs[2];
-        final double c = coefs[4];
         final double d = coefs[1];
+        final double b = coefs[2];
         final double e = coefs[3];
+        final double c = coefs[4];
         final double f = coefs[5];
 
         {   // Affine transform
@@ -461,6 +461,12 @@ public class Xform implements Serializable {
                         double t1 = sqrt(1/(t*t));
                         dx = t1 * x;
                         dy = t1 * y;
+                        break;
+                    }
+                    case 99:  // mandelbrot
+                    {
+                        dx = x * x - y * y + 1;
+                        dy = 2 * x * y;
                         break;
                     }
                 }

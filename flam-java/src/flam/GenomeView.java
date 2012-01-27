@@ -43,6 +43,11 @@ public class GenomeView {
         c[1] = v[1] / hs + viewBottom;
     }
 
+    public void viewToCoords(double[] v, double[] c) {
+        c[0] = v[0] / ws + viewLeft;
+        c[1] = v[1] / hs + viewBottom;
+    }
+
     public boolean coordsToView(double[] c, int[] v) {
         int x = (int) ((c[0] - viewLeft) * ws + 0.5);
         int y = (int) ((c[1] - viewBottom) * hs + 0.5);

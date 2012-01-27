@@ -108,6 +108,7 @@ public class Constants {
             "auger",
             "flux",
             "mobius",
+            "mandelbrot"
     };
     static final Set<String> variationNameSet = new HashSet<String>();
     public static final double EPS = 1e-10;

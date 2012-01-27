@@ -5,9 +5,6 @@ import flam.GenomeView;
 import flam.RenderBuffer;
 import flam.RenderState;
 import flam.Renderer;
-import flam.Xform;
-
-import static flam.util.MyMath.abs;
 
 /**
  */
@@ -39,18 +36,20 @@ public class EscapeRenderer implements Renderer {
                 view.viewToCoords(v, c);
 
                 int i;
+
                 for (i = 0; i < 255; ++i) {
-                    if (abs(c[0]) > 10 || abs(c[1]) > 10) {
+                    if ((c[0] * c[0] + c[1] * c[1]) > 4) {
                         break;
                     }
 
-                    Xform xform = state.getGenome().pickRandomXform();
-                    xform.applyTo(c, c);
+                    state.getGenome().pickRandomXform().applyTo(c, c);
                 }
 
                 buffer.set(x, y, i);
             }
         }
+
+        System.out.println("done");
     }
 
     @Override

@@ -307,7 +307,8 @@ public class Genome implements Serializable {
     }
 
     static void parseIntoDoubleVector(Node node, double[] vector) {
-        String[] splits = node.getNodeValue().split(" ");
+        String s = node.getNodeValue().trim();
+        String[] splits = s.split(" +");
         for (int j = 0; j < splits.length; ++j) {
             vector[j] = parseDouble(splits[j]);
         }

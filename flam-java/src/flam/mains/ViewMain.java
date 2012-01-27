@@ -22,7 +22,7 @@ public class ViewMain {
 
     public static void main(String[] args) throws IOException, SAXException {
 //        openGenome("../sheeps/32887.flam3");
-        openGenome("flams/e_1.flam3");
+        openGenome("flams/mandelbrot.flam3");
 
         frame.setPreferredSize(new Dimension(512, 512));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,7 +80,7 @@ public class ViewMain {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Genome newGenome = (Genome) DeepCopy.copy(genome);
-                newGenome.zoom -= .1;
+                newGenome.zoom -= 1;
                 genome = newGenome;
             }
         });

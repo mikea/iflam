@@ -24,11 +24,11 @@ public class ProgressiveRenderer implements Renderer {
 
     @Override
     public void iterate(RenderState aState, RenderBuffer aBuffer, double allottedTimeMs) {
-        aBuffer.reset();
+//        aBuffer.reset();
         iterateImpl((ProgressiveState) aState, (ProgressiveBuffer) aBuffer);
-        iterateImpl((ProgressiveState) aState, (ProgressiveBuffer) aBuffer);
-        iterateImpl((ProgressiveState) aState, (ProgressiveBuffer) aBuffer);
-        iterateImpl((ProgressiveState) aState, (ProgressiveBuffer) aBuffer);
+//        iterateImpl((ProgressiveState) aState, (ProgressiveBuffer) aBuffer);
+//        iterateImpl((ProgressiveState) aState, (ProgressiveBuffer) aBuffer);
+//        iterateImpl((ProgressiveState) aState, (ProgressiveBuffer) aBuffer);
     }
 
     private void iterateImpl(ProgressiveState state, ProgressiveBuffer buffer) {
@@ -39,7 +39,7 @@ public class ProgressiveRenderer implements Renderer {
 
         GenomeView view = state.getView();
 
-        int[] v1 = new int[2];
+        double[] v1 = new double[2];
         double[] c1 = new double[3];
         double[] c2 = new double[3];
         int[] v2 = new int[2];
@@ -62,10 +62,11 @@ public class ProgressiveRenderer implements Renderer {
                     double r = MyMath.sqrt(dx * dx + dy * dy);
                     double c = 1 - r;
                     if (c < 0) c = 0;
+                    if (c > 1) c = 1;
 
                     d1[0] = 0.5 * c;
-                    d1[1] = 0 * c;
-                    d1[2] = 0 * c;
+                    d1[1] = 0.1 * c;
+                    d1[2] = 0.5 * c;
 
                     buffer.add(x, y, d1);
                 }
@@ -76,9 +77,18 @@ public class ProgressiveRenderer implements Renderer {
         for (int y = 0; y < buffer.getHeight(); ++y) {
             for (int x = 0; x < buffer.getWidth(); ++x) {
                 buffer.get(x, y, d1);
+                
+                if (d1[0] == 0 && d1[1] == 0 && d1[2] == 0) {
+                    continue;
+                }
 
                 v1[0] = x;
                 v1[1] = y;
+
+/*
+                v1[0] += Rnd.rnd() - 0.5;
+                v1[1] += Rnd.rnd() - 0.5;
+*/
                 view.viewToCoords(v1, c1);
 
                 for (int i = 0; i < size; ++i) {
@@ -86,16 +96,17 @@ public class ProgressiveRenderer implements Renderer {
                     xform.applyTo(c1, c2);
 
                     if (view.coordsToView(c2, v2)) {
-                        double[] color = genome.getColor((int) (xform.color * 255));
+                        double[] color = genome.getColor(i);
                         double f = 1.0/size;
 
+/*
                         d2[0] = f * color[0] * d1[0] * xform.weight * xform.getOpacity();
                         d2[1] = f * color[1] * d1[1] * xform.weight * xform.getOpacity();
                         d2[2] = f * color[2] * d1[2] * xform.weight * xform.getOpacity();
-
+*/
                         d2[0] = f * d1[0];
-                        d2[1] = f * d1[0];
-                        d2[2] = f * d1[0];
+                        d2[1] = f * d1[1];
+                        d2[2] = f * d1[2];
                         buffer.add(v2[0], v2[1], d2);
                     }
                 }
