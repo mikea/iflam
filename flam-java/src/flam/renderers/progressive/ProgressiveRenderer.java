@@ -1,11 +1,7 @@
 package flam.renderers.progressive;
 
-import flam.Genome;
-import flam.GenomeView;
-import flam.RenderBuffer;
-import flam.RenderState;
-import flam.Renderer;
-import flam.Xform;
+import flam.*;
+import flam.util.Rnd;
 
 import java.util.List;
 
@@ -74,6 +70,7 @@ public class ProgressiveRenderer implements Renderer {
 */
         }
 
+        int supersamples = 10;
         for (int y = 0; y < buffer.getHeight(); ++y) {
             for (int x = 0; x < buffer.getWidth(); ++x) {
                 buffer.get(x, y, d1);
@@ -82,32 +79,32 @@ public class ProgressiveRenderer implements Renderer {
                     continue;
                 }
 
-                v1[0] = x;
-                v1[1] = y;
+                for (int sample = 0; sample < supersamples; ++sample) {
+                    v1[0] = x;
+                    v1[1] = y;
 
-/*
                 v1[0] += Rnd.rnd() - 0.5;
                 v1[1] += Rnd.rnd() - 0.5;
-*/
-                view.viewToCoords(v1, c1);
+                    view.viewToCoords(v1, c1);
 
-                for (int i = 0; i < size; ++i) {
-                    Xform xform = xforms.get(i);
-                    xform.applyTo(c1, c2);
+                    for (int i = 0; i < size; ++i) {
+                        Xform xform = xforms.get(i);
+                        xform.applyTo(c1, c2);
 
-                    if (view.coordsToView(c2, v2)) {
-                        double[] color = genome.getColor(i);
-                        double f = 1.0/size;
+                        if (view.coordsToView(c2, v2)) {
+                            double[] color = genome.getColor(i);
+                            double f = 1.0/size / supersamples;
 
-/*
-                        d2[0] = f * color[0] * d1[0] * xform.weight * xform.getOpacity();
-                        d2[1] = f * color[1] * d1[1] * xform.weight * xform.getOpacity();
-                        d2[2] = f * color[2] * d1[2] * xform.weight * xform.getOpacity();
-*/
-                        d2[0] = f * d1[0];
-                        d2[1] = f * d1[1];
-                        d2[2] = f * d1[2];
-                        buffer.add(v2[0], v2[1], d2);
+    /*
+                            d2[0] = f * color[0] * d1[0] * xform.weight * xform.getOpacity();
+                            d2[1] = f * color[1] * d1[1] * xform.weight * xform.getOpacity();
+                            d2[2] = f * color[2] * d1[2] * xform.weight * xform.getOpacity();
+    */
+                            d2[0] = f * d1[0];
+                            d2[1] = f * d1[1];
+                            d2[2] = f * d1[2];
+                            buffer.add(v2[0], v2[1], d2);
+                        }
                     }
                 }
             }
