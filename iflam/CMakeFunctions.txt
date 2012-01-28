@@ -8,7 +8,9 @@ macro(ADD_BOOST)
   set(BOOST_ROOT "$ENV{HOME}/Packages/boost_1_48_0")
   set(BOOST_INCLUDEDIR "${BOOST_ROOT}")
   set(BOOST_LIBRARYDIR "${BOOST_ROOT}/stage/lib")
-  find_package(Boost 1.48 REQUIRED exception program_options unit_test_framework)
+  find_package(Boost 1.48 REQUIRED 
+    # exception program_options unit_test_framework
+    )
 
   if (Boost_FOUND)
     message(STATUS "Boost include dir: ${Boost_INCLUDE_DIR}")

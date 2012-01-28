@@ -4,14 +4,13 @@ project(iflam_osx)
 SET(CMAKE_OSX_ARCHITECTURES "i386")
 SET(CMAKE_OSX_SYSROOT /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/${TARGETSDK})
 
-include("../CMakeFunctions.txt")
+#include("../CMakeFunctions.txt")
 # add_subdirectory("../core" "core")
 # include_directories("../core")
-ADD_BOOST()
+#ADD_BOOST()
 
 
-
-FILE(GLOB BOOST_src "${BOOST_ROOT}/libs/exception/src/*.cpp")
+#FILE(GLOB BOOST_src "${BOOST_ROOT}/libs/exception/src/*.cpp")
 
 add_executable(
   flam
@@ -21,7 +20,8 @@ add_executable(
   flamViewController.m flamViewController.h
   # FlamView.mm FlamView.h
   flam-Info.plist
-  ${BOOST_src})
+  #${BOOST_src}
+  )
 
 set_target_properties(flam PROPERTIES
   MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/flam-Info.plist"
@@ -32,8 +32,8 @@ target_link_libraries(flam "-framework UIKit -framework Foundation -framework Co
 set(CMAKE_EXE_LINKER_FLAGS "-Xlinker -objc_abi_version -Xlinker 2")
 # target_link_libraries(flam ${Boost_LIBRARIES})
 
-COMPILE_XIB(flam "MainWindow.xib")
-COMPILE_XIB(flam "flamViewController.xib")
+#COMPILE_XIB(flam "MainWindow.xib")
+#COMPILE_XIB(flam "flamViewController.xib")
 
 
 
