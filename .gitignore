@@ -1,4 +1,5 @@
 /build
+/build-ios
 workspace.xml
 .DS_Store
 .*.swp
