@@ -10,7 +10,7 @@
 
 @class flamViewController;
 
-@interface flamAppDelegate : NSObject <UIApplicationDelegate> {
+@interface AppDelegate : NSObject <UIApplicationDelegate> {
 
 }
 

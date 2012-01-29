@@ -1,5 +1,5 @@
 // vim: filetype=objc
-#import "FlamView.h"
+#import "flam_view.h"
 #import "genome.h"
 #import "renderer.h"
 

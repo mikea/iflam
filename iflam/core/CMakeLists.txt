@@ -15,6 +15,11 @@ add_library(tinyxml
   tinyxml/tinyxmlparser.cpp
   )
 
+FILE(GLOB core_boost_srcs "${BOOST_ROOT}/libs/exception/src/*.cpp")
+
+add_library(core_boost ${core_boost_srcs})
+
+
 add_library(core
   common.cpp common.h
   color.cpp color.h
@@ -22,11 +27,12 @@ add_library(core
   renderer.cpp renderer.h
   animator.cpp animator.h
   )
+target_link_libraries(core tinyxml core_boost)
 
-target_link_libraries(core tinyxml ${Boost_LIBRARIES})
+# target_link_libraries(core tinyxml ${Boost_LIBRARIES})
 
-add_executable(color_test color_test.cpp)
-target_link_libraries(color_test core)
-
-enable_testing()
-add_test(color_test color_test)
+# add_executable(color_test color_test.cpp)
+# target_link_libraries(color_test core)
+#
+# enable_testing()
+# add_test(color_test color_test)

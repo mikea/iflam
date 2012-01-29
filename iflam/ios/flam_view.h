@@ -1,11 +1,3 @@
-//
-//  FlamView.h
-//  iflam
-//
-//  Created by Mike Aizatskyi on 1/3/12.
-//  Copyright 2012 __MyCompanyName__. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 
 class Genome;
@@ -42,7 +34,7 @@ class RenderState;
 
 @end
 
-@protocol FlamViewDelegate 
+@protocol FlamViewDelegate
 @optional
 - (void)onMouseDown:(UIEvent*) anEvent;
 @end

@@ -8,7 +8,7 @@ macro(ADD_BOOST)
   set(BOOST_ROOT "$ENV{HOME}/Packages/boost_1_48_0")
   set(BOOST_INCLUDEDIR "${BOOST_ROOT}")
   set(BOOST_LIBRARYDIR "${BOOST_ROOT}/stage/lib")
-  find_package(Boost 1.48 REQUIRED 
+  find_package(Boost 1.48 REQUIRED
     exception program_options unit_test_framework
     )
 
@@ -65,3 +65,13 @@ macro(COMPILE_XIB _target _xib)
 
 endmacro(COMPILE_XIB)
 
+macro(PBXCP _target _from _to)
+  set(_resources_dir ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${_target}.app/Contents/Resources/${_to})
+
+  add_custom_command(
+    TARGET ${_target}
+    POST_BUILD
+    COMMAND mkdir -p ${_resources_dir} && /Developer/Library/PrivateFrameworks/DevToolsCore.framework/Resources/pbxcp -exclude .DS_Store -exclude CVS -exclude .svn -resolve-src-symlinks ${CMAKE_CURRENT_SOURCE_DIR}/${_from} ${_resources_dir}
+    COMMENT "Copying ${_from} to ${_resources_dir}"
+    )
+endmacro(PBXCP)
