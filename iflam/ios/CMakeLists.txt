@@ -9,14 +9,12 @@ add_subdirectory("../core" "core")
 include_directories("../core")
 ADD_BOOST()
 
-
-
 add_executable(
   flam
   MACOSX_BUNDLE
   main.m
   app_delegate.mm app_delegate.h
-  flamViewController.m flamViewController.h
+  flam_view_controller.mm flam_view_controller.h
   flam_view.mm flam_view.h
   flam-Info.plist
   #  MainWindow.xib

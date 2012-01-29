@@ -1,12 +1,7 @@
-//
-//  flamAppDelegate.m
-//  flam
 // vim: filetype=objc
 #import "app_delegate.h"
-#import "flam_view.h"
-#import "flamViewController.h"
+#import "flam_view_controller.h"
 
-#include "genome.h"
 
 @implementation AppDelegate
 
@@ -22,8 +17,9 @@
   //    self.window.rootViewController = self.viewController;
   [self.window makeKeyAndVisible];
 
-  FlamView* flamView = [[FlamView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-  [self.window addSubview: flamView];
+
+  FlamViewController* flamController = [[FlamViewController alloc] init];
+  [self.window addSubview:flamController.view];
 
   NSString* sheepPath = [NSString pathWithComponents:
     [NSArray arrayWithObjects:
@@ -33,10 +29,7 @@
         nil]];
 
   NSLog(@"path: %@", sheepPath);
-
-  Genome* genome = new Genome();
-  genome->Read([sheepPath UTF8String]);
-  [flamView setGenome: genome];
+  [flamController loadGenome: sheepPath];
 
   return YES;
 }
