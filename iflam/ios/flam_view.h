@@ -1,4 +1,7 @@
 #import <UIKit/UIKit.h>
+#import "flam_view_model.h"
+
+
 
 class Genome;
 class RenderBuffer;
@@ -42,16 +45,18 @@ class RenderState;
 @interface FlamView : UIView {
 @private
     NSLock* lock;
-    Genome* _genome;
+    FlamViewModel* _model;
 
     ViewState* _viewState;
     id delegate;
 }
 
 @property (retain) ViewState* viewState;
-@property (assign) IBOutlet id delegate;
+@property (retain) IBOutlet id delegate;
+@property (retain) FlamViewModel* model;
 
--(void)setGenome:(Genome*) genome;
+- (id)initWithFrame:(CGRect)frame model:(FlamViewModel*) model;
+-(void)modelChanged;
 -(void)resetDefaults;
 
 @end

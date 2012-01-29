@@ -31,13 +31,15 @@ private:
 
 @synthesize delegate;
 @synthesize viewState=_viewState;
+@synthesize model=_model;
 
-- (id)initWithFrame:(CGRect)frame {
+- (id)initWithFrame:(CGRect)frame model:(FlamViewModel*) model {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code here.
         NSLog(@"initWithFrame");
         delegate = nil;
+        self.model = model;
         [self resetDefaults];
     }
 
@@ -50,19 +52,16 @@ private:
 
 -(void)resetDefaults {
   lock = [[NSLock alloc] init];
-  _genome = new Genome();
-  _viewState = [[ViewState alloc] initWithGenome: _genome
+  _viewState = [[ViewState alloc] initWithGenome: self.model.genome
                                            width: self.bounds.size.width
                                           height: self.bounds.size.height];
 }
 
--(void)setGenome:(Genome*) aGenome {
+-(void)modelChanged {
   // NSLog(@"setGenome");
   [lock lock];
-  delete _genome;
-  _genome = aGenome;
   ViewState* newState = [[[ViewState alloc]
-    initWithGenome: _genome
+    initWithGenome: self.model.genome
              width: self.viewState.width
             height: self.viewState.height] autorelease];
 

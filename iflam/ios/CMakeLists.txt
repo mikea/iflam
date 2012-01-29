@@ -16,6 +16,7 @@ add_executable(
   app_delegate.mm app_delegate.h
   flam_view_controller.mm flam_view_controller.h
   flam_view.mm flam_view.h
+  flam_view_model.mm flam_view_model.h
   flam-Info.plist
   #  MainWindow.xib
   # flamViewController.xib
