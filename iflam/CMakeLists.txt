@@ -19,6 +19,7 @@ else (IPHONE)
   enable_testing()
 
   add_subdirectory(cmd)
+  add_subdirectory(gl)
 
   if (APPLE)
     add_subdirectory(osx)
