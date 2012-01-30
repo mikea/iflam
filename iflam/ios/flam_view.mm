@@ -60,12 +60,10 @@ private:
 -(void)modelChanged {
   // NSLog(@"setGenome");
   [lock lock];
-  ViewState* newState = [[[ViewState alloc]
+  self.viewState = [[[ViewState alloc]
     initWithGenome: self.model.genome
              width: self.viewState.width
             height: self.viewState.height] autorelease];
-
-  self.viewState = newState;
   [lock unlock];
   [self setNeedsDisplay];
 }
@@ -79,6 +77,14 @@ private:
  // NSLog(@"drawRect");
 
   CGRect bounds = self.bounds;
+
+  if (bounds.size.width != self.viewState.width ||
+      bounds.size.height != self.viewState.height) {
+    self.viewState = [[[ViewState alloc]
+      initWithGenome: self.model.genome
+               width: bounds.size.width
+              height: bounds.size.height] autorelease];
+  }
 
   self.viewState.renderState->Iterate(100000);
   BufferImage image(
