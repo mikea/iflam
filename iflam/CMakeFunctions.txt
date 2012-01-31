@@ -75,3 +75,10 @@ macro(PBXCP _target _from _to)
     COMMENT "Copying ${_from} to ${_resources_dir}"
     )
 endmacro(PBXCP)
+
+macro(BIN2C _from)
+  add_custom_command(
+    OUTPUT ${_from}.cpp
+    COMMAND bin2c -c -z ${CMAKE_CURRENT_SOURCE_DIR}/${_from} ${_from}.cpp
+    DEPENDS ${_from} bin2c)
+endmacro(BIN2C)

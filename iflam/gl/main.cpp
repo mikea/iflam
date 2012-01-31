@@ -103,15 +103,6 @@ void changeSize(int w, int h) {
   state = new State(w, h);
 }
 
-std::string LoadFile(const std::string& file_name) {
-  std::ifstream t(file_name.c_str());
-  BOOST_VERIFY(t.is_open());
-  std::string str(
-      (std::istreambuf_iterator<char>(t)),
-       std::istreambuf_iterator<char>());
-  return str;
-}
-
 void printShaderInfoLog(GLint shader) {
   int infoLogLen = 0;
   int charsWritten = 0;
@@ -128,9 +119,22 @@ void printShaderInfoLog(GLint shader) {
   }
 }
 
+extern const unsigned char blur_fragment[];
+extern const unsigned char blur_vertex[];
+
+void glCheckProgramLog() {
+  int logLen = 0;
+  glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &logLen);
+  if(logLen > 0) {
+    std::cout << logLen;
+    char* log = new char[logLen];
+    // Show any errors as appropriate
+    glGetProgramInfoLog(program_id, logLen, &logLen, log);
+    BOOST_ASSERT_MSG(0, log);
+  }
+}
 
 void init() {
-
   glClearColor (0.0, 0.0, 0.0, 0.0);
   glShadeModel(GL_FLAT);
   glEnable(GL_DEPTH_TEST);
@@ -143,11 +147,8 @@ void init() {
   // setup shaders
   {
     GLint compiled;
-    std::string vertex = LoadFile("../iflam/gl/blur.vertex");
-    std::cout << "Vertex Shader: " << vertex;
-
     vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-    const char* ptr = vertex.c_str();
+    const GLchar* ptr = (const GLchar*) blur_vertex;
     glShaderSource(vertex_shader_id, 1, &ptr, NULL);
     glCompileShader(vertex_shader_id);
     glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &compiled);
@@ -159,11 +160,8 @@ void init() {
   }
   {
     GLint compiled;
-    std::string fragment = LoadFile("../iflam/gl/blur.fragment");
-    std::cout << "Fragment Shader: " << fragment;
-
     fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-    const char* ptr = fragment.c_str();
+    const GLchar* ptr = (const GLchar*) blur_fragment;
     glShaderSource(fragment_shader_id, 1, &ptr, NULL);
     glCompileShader(fragment_shader_id);
 
@@ -177,25 +175,17 @@ void init() {
 
   program_id = glCreateProgram();
   CHECK_GL_ERROR();
-  glAttachShader(program_id, vertex_shader_id); 
+  glAttachShader(program_id, vertex_shader_id);
   CHECK_GL_ERROR();
-  glAttachShader(program_id, fragment_shader_id); 
+  glAttachShader(program_id, fragment_shader_id);
   CHECK_GL_ERROR();
   glLinkProgram(program_id);
   CHECK_GL_ERROR();
+
   // Validate program
   glValidateProgram(program_id);
+  CHECK_GL_ERROR();
 
-  // Check the status of the compile/link
-  int logLen;
-  glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &logLen);
-  if(logLen > 0) {
-    char* log = new char[logLen];
-    // Show any errors as appropriate
-    glGetProgramInfoLog(program_id, logLen, &logLen, log);
-    fprintf(stderr, "Prog Info Log: %s\n", log);
-    BOOST_ASSERT(0);
-  }
   glUseProgram(program_id);
   CHECK_GL_ERROR();
 }

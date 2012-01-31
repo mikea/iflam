@@ -3,7 +3,7 @@ uniform sampler2D tex;
 void main(void){
    vec2 c = vec2(gl_TexCoord[0]);
    vec4 sum = texture2D(tex, vec2(c.x, c.y));
-   // sum = sum + texture2D(tex, vec2(c.x + 0.01, c.y));
+   // sum = sum + texture2D(tex, vec2(c.x + 0.1, c.y));
    // sum = sum + texture2D(tex, vec2(c.x, c.y + 0.01));
    gl_FragColor = sum / 1.0;
 }

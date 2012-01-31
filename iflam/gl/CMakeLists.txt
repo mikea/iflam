@@ -6,10 +6,17 @@ include_directories("../core")
 
 ADD_BOOST()
 
+add_executable(bin2c bin2c.c)
+
+BIN2C(blur.vertex)
+BIN2C(blur.fragment)
+
+add_definitions(-DGL_GLEXT_PROTOTYPES)
+
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
-add_executable(iflamgl main.cpp)
+add_executable(iflamgl main.cpp blur.vertex.cpp blur.fragment.cpp)
 target_link_libraries(iflamgl core ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
 
 
