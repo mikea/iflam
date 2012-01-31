@@ -22,6 +22,8 @@ static GLuint fragment_shader_id;
 static GLuint vertex_shader_id;
 static GLuint program_id;
 
+typedef float TT;
+
 class State {
   public:
     State(size_t width, size_t height)
@@ -32,12 +34,12 @@ class State {
 
      render_buffer_ = new RenderBuffer(*genome_, width, height);
      state_ = new RenderState(*genome_, render_buffer_);
-     data_ = new uint8_t[width_ * height_ * 4];
+     data_ = new TT[width_ * height_ * 4];
     }
 
     void Iter() {
       state_->Iterate(50000);
-      RGBA8Image image(data_, width_ * 4, height_);
+      RGBAImage<TT> image(data_, width_ * 4, height_, 1.0, 1.0/255.0);
       render_buffer_->Render(&image);
 
       glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -52,7 +54,7 @@ class State {
           height_,  // height
           0, // border
           GL_RGBA,  // data format
-          GL_UNSIGNED_BYTE,
+          GL_FLOAT,
           data_);
     }
 
@@ -63,7 +65,7 @@ class State {
   Genome* genome_;
   RenderBuffer* render_buffer_;
   RenderState* state_;
-  uint8_t* data_;
+  TT* data_;
 };
 
 static State* state;

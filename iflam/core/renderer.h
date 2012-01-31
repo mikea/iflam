@@ -144,23 +144,28 @@ void RenderBuffer::Render(Image* image) {
   }
 }
 
-class RGBA8Image {
+template<typename T>
+class RGBAImage {
 public:
-    RGBA8Image(uint8_t* buffer, size_t bytes_per_row, size_t height) : buffer_(buffer), bytes_per_row_(bytes_per_row), height_(height) { }
+    RGBAImage(T* buffer, size_t bytes_per_row, size_t height, T alpha = (T)(0xff), T scale = (T)(1))
+      : buffer_(buffer), bytes_per_row_(bytes_per_row), height_(height), alpha_(alpha), scale_(scale) { }
 
     void Set(int x, int y, Float r, Float g, Float b, Float /*a*/) {
         size_t offset = x * 4 + (height_ - y - 1) * bytes_per_row_;
-        buffer_[offset + 0] = uint8_t(r);
-        buffer_[offset + 1] = uint8_t(g);
-        buffer_[offset + 2] = uint8_t(b);
-        buffer_[offset + 3] = uint8_t(0xFF);
+        buffer_[offset + 0] = (T)(r) * scale_;
+        buffer_[offset + 1] = (T)(g) * scale_;
+        buffer_[offset + 2] = (T)(b) * scale_;
+        buffer_[offset + 3] = alpha_;
     }
 
 private:
-    uint8_t* buffer_;
+    T* buffer_;
     size_t bytes_per_row_;
     size_t height_;
+    T alpha_;
+    T scale_;
 };
 
+typedef RGBAImage<uint8_t> RGBA8Image;
 
 #endif
