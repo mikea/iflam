@@ -76,7 +76,7 @@ void renderScene(void) {
 }
 
 void changeSize(int w, int h) {
-  if(h == 0) { h = 1; }
+  if (h == 0) { h = 1; }
   glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 
   glMatrixMode(GL_PROJECTION);
@@ -106,8 +106,9 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100,100);
   glutInitWindowSize(1024,768);
-  changeSize(1024, 768);
   glutCreateWindow("FLAM");
+
+  changeSize(1024, 768);
 
   init();
 
