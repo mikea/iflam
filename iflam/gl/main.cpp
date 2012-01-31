@@ -15,7 +15,7 @@ class State {
      : width_(width),
        height_(height) {
      genome_ = new Genome();
-     genome_->Read("/usr/local/google/home/aizatsky/projects/iflam/sheeps/2692.flam3");
+     genome_->Read("../sheeps/154.flam3");
 
      render_buffer_ = new RenderBuffer(*genome_, width, height);
      state_ = new RenderState(*genome_, render_buffer_);
@@ -105,8 +105,8 @@ int main(int argc, char *argv[]) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100,100);
-  glutInitWindowSize(320,320);
-  changeSize(320, 320);
+  glutInitWindowSize(1024,768);
+  changeSize(1024, 768);
   glutCreateWindow("FLAM");
 
   init();
