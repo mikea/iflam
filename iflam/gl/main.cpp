@@ -9,7 +9,55 @@
 
 static GLuint texture_id;
 
+class State {
+  public:
+    State(size_t width, size_t height)
+     : width_(width),
+       height_(height) {
+     genome_ = new Genome();
+     genome_->Read("/usr/local/google/home/aizatsky/projects/iflam/sheeps/2692.flam3");
+
+     render_buffer_ = new RenderBuffer(*genome_, width, height);
+     state_ = new RenderState(*genome_, render_buffer_);
+     data_ = new uint8_t[width_ * height_ * 4];
+    }
+
+    void Iter() {
+      state_->Iterate(50000);
+      RGBA8Image image(data_, width_ * 4, height_);
+      render_buffer_->Render(&image);
+
+      glBindTexture(GL_TEXTURE_2D, texture_id);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+      glTexImage2D(
+          GL_TEXTURE_2D,  // target
+          0,  // level
+          GL_RGBA, // internal format
+          width_,  // width
+          height_,  // height
+          0, // border
+          GL_RGBA,  // data format
+          GL_UNSIGNED_BYTE,
+          data_);
+    }
+
+  private:
+
+  size_t width_;
+  size_t height_;
+  Genome* genome_;
+  RenderBuffer* render_buffer_;
+  RenderState* state_;
+  uint8_t* data_;
+};
+
+static State* state;
+
 void renderScene(void) {
+  state->Iter();
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glEnable(GL_TEXTURE_2D);
@@ -25,7 +73,6 @@ void renderScene(void) {
   glDisable(GL_TEXTURE_2D);
 
   glutSwapBuffers();
-
 }
 
 void changeSize(int w, int h) {
@@ -37,45 +84,20 @@ void changeSize(int w, int h) {
   gluOrtho2D(0, 1, 0, 1);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+
+  state = new State(w, h);
 }
 
 void init() {
+
   glClearColor (0.0, 0.0, 0.0, 0.0);
   glShadeModel(GL_FLAT);
   glEnable(GL_DEPTH_TEST);
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-  size_t width = 1024;
-  size_t height = 768;
-  uint8_t* data = new uint8_t[width * height * 4];
-
-  {
-    Genome genome;
-    genome.Read("/usr/local/google/home/aizatsky/projects/iflam/sheeps/2692.flam3");
-    RenderBuffer render_buffer(genome, width, height);
-    RenderState state(genome, &render_buffer);
-    state.Iterate(1000000);
-    RGBA8Image image(data, width * 4, height);
-    render_buffer.Render(&image);
-  }
-
   // create texture
   glGenTextures(1, &texture_id);
-  glBindTexture(GL_TEXTURE_2D, texture_id);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-  glTexImage2D(
-      GL_TEXTURE_2D,  // target
-      0,  // level
-      GL_RGBA, // internal format
-      width,  // width
-      height,  // height
-      0, // border
-      GL_RGBA,  // data format
-      GL_UNSIGNED_BYTE,
-      data);
 }
 
 int main(int argc, char *argv[]) {
@@ -84,12 +106,14 @@ int main(int argc, char *argv[]) {
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100,100);
   glutInitWindowSize(320,320);
+  changeSize(320, 320);
   glutCreateWindow("FLAM");
 
   init();
 
   // register callbacks
   glutDisplayFunc(renderScene);
+  glutIdleFunc(renderScene);
   glutReshapeFunc(changeSize);
 
   // enter GLUT event processing cycle
