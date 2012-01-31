@@ -1,23 +1,11 @@
-uniform sampler2D RTScene;
-varying vec2 vTexCoord;
+uniform sampler2D tex;
 
-const float blurSize = 1.0/800.0;
-const float weightSum = 70.0 + 2.0 * (1.0 + 8.0 + 28.0 + 56.0);
-
-void main(void)
-{
-   vec4 sum = vec4(0.0);
-
-   sum += texture2D(RTScene, vec2(vTexCoord.x - 4.0*blurSize, vTexCoord.y)) * 1.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x - 3.0*blurSize, vTexCoord.y)) * 8.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x - 2.0*blurSize, vTexCoord.y)) * 28.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x - blurSize, vTexCoord.y)) * 56.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x, vTexCoord.y)) * 70.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x + blurSize, vTexCoord.y)) * 56.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x + 2.0*blurSize, vTexCoord.y)) * 28.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x + 3.0*blurSize, vTexCoord.y)) * 8.0 / weightSum;
-   sum += texture2D(RTScene, vec2(vTexCoord.x + 4.0*blurSize, vTexCoord.y)) * 1.0 / weightSum;
-
-   gl_FragColor = sum;
+void main(void){
+   vec2 c = vec2(gl_TexCoord[0]);
+   vec4 sum = texture2D(tex, vec2(c.x, c.y));
+   sum = sum + texture2D(tex, vec2(c.x + 0.01, c.y));
+   sum = sum + texture2D(tex, vec2(c.x, c.y + 0.01));
+   gl_FragColor = sum / 3.0;
 }
+
 
