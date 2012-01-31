@@ -243,8 +243,8 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         }
         case 2: // spherical
         {
-          dx = x / r2;
-          dy = y / r2;
+          dx = x / (r2 + kEpsilon);
+          dy = y / (r2 + kEpsilon);
           break;
         }
         case 3: // swirl
@@ -255,8 +255,8 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         }
         case 4: // horseshoe
         {
-          dx = (x - y) * (x + y) / r;
-          dy = 2 * x * y / r;
+          dx = (x - y) * (x + y) / (r + kEpsilon);
+          dy = 2 * x * y / (r + kEpsilon);
           break;
         }
         case 5: // polar
@@ -290,15 +290,15 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         case 9: // spiral
         {
           Float theta = atan2(x, y);
-          dx = (cos(theta) + sin(r)) / r;
-          dy = (sin(theta) - cos(r)) / r;
+          dx = (cos(theta) + sin(r)) / (r + kEpsilon);
+          dy = (sin(theta) - cos(r)) / (r + kEpsilon);
           break;
         }
         case 10: // hyperbolic
         {
           Float theta = atan2(x, y);
-          dx = sin(theta)/ r;
-          dy = r * cos(theta);
+          dx = sin(theta)/ (r + kEpsilon);
+          dy = (r + kEpsilon) * cos(theta);
           break;
         }
         case 11: // diamond
@@ -374,7 +374,7 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         case 21: // rings
         {
           Float theta = atan2(x, y);
-          Float c2 = c * c;
+          Float c2 = c * c + kEpsilon;
           Float k = fmod(r + c2, 2 * c2) - c2 + r * (1 - c2);
           dx = k * cos(theta);
           dy = k * sin(theta);
@@ -383,7 +383,7 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         case 22: // fan
         {
           Float theta = atan2(x, y);
-          Float t = kPI * c * c;
+          Float t = kPI * c * c + kEpsilon;
           if (fmod(theta + f, t) > t / 2) {
             dx = r * cos (theta - t/2);
             dy = r * sin (theta - t/2);
@@ -406,10 +406,10 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         }
         case 25: // fan2
         {
-          Float p1 = kPI * fan2_x_ * fan2_x_;
+          Float p1 = kPI * fan2_x_ * fan2_x_ + kEpsilon;
           Float p2 = fan2_y_;
           Float theta = atan2(x, y);
-          Float t = theta + p2 - p1 *floor(2 * theta * p2 / p1);
+          Float t = theta + p2 - p1 * floor(2 * theta * p2 / p1);
           if (t > p1/2) {
             dx = r * sin(theta - p1 / 2);
             dy = r * cos(theta - p1 / 2);
@@ -422,7 +422,7 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         case 26: // rings2
         {
           Float theta = atan2(x, y);
-          Float p = rings2_val_ * rings2_val_;
+          Float p = rings2_val_ * rings2_val_ + kEpsilon;
           Float t = r - 2*p*floor((r + p) / (2 * p)) + r* (1-p);
           dx = t * sin(theta);
           dy = t * cos(theta);
@@ -439,15 +439,25 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         dy = 4 * y / (r2 + 4);
         break;
         case 29: // cylinder
-        dx = sin(x);
-        dy = y;
-        break;
+        {
+          dx = sin(x);
+          dy = y;
+          break;
+        }
         case 30: // perspective
         {
           Float p1 = perspective_angle_;
           Float p2 = perspective_dist_;
           dx = p2 * x / (p2 - y * sin(p1));
           dy = p2 * y * cos(p1) / (p2 - y * sin(p1));
+          break;
+        }
+        case 31: // noise
+        {
+          Float t1 = rnd->rnd();
+          Float t2 = 2 * kPI * rnd->rnd();
+          dx = t1 * x * cos(t2);
+          dy = t1 * y * sin(t2);
           break;
         }
         case 32: // julian

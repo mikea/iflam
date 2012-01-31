@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(iflam)
+set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing")
 
 include("CMakeFunctions.txt")
 ADD_BOOST()
@@ -15,7 +16,6 @@ add_subdirectory(core)
 if (IPHONE)
   add_subdirectory(ios)
 else (IPHONE)
-  set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing")
   enable_testing()
 
   add_subdirectory(cmd)
