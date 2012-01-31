@@ -144,5 +144,23 @@ void RenderBuffer::Render(Image* image) {
   }
 }
 
+class RGBA8Image {
+public:
+    RGBA8Image(uint8_t* buffer, size_t bytes_per_row, size_t height) : buffer_(buffer), bytes_per_row_(bytes_per_row), height_(height) { }
+
+    void Set(int x, int y, Float r, Float g, Float b, Float /*a*/) {
+        size_t offset = x * 4 + (height_ - y - 1) * bytes_per_row_;
+        buffer_[offset + 0] = uint8_t(r);
+        buffer_[offset + 1] = uint8_t(g);
+        buffer_[offset + 2] = uint8_t(b);
+        buffer_[offset + 3] = uint8_t(0xFF);
+    }
+
+private:
+    uint8_t* buffer_;
+    size_t bytes_per_row_;
+    size_t height_;
+};
+
 
 #endif

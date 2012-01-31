@@ -14,6 +14,9 @@ using boost::scoped_ptr;
 
 DEFINE_PROPERTIES(Xform,
     PROPERTY(Float, animate) // is it bool?
+    PROPERTY(Float, blob_low)
+    PROPERTY(Float, blob_high)
+    PROPERTY(Float, blob_waves)
     PROPERTY(Float, color)
     PROPERTY(Float, color_speed)
     PROPERTY(Float, curl_c1)
@@ -37,6 +40,9 @@ DEFINE_PROPERTIES(Xform,
     PROPERTY(Float, rings2_val)
     PROPERTY(Float, weight)
     );
+
+DEFINE_PROPERTIES(Genome,
+    PROPERTY(Float, estimator_radius));
 
 namespace {
   bool BadValue(Float x) {
@@ -149,15 +155,16 @@ namespace {
 
 struct apply_error : virtual error { };
 
+template<typename T>
 struct CopyProperty {
-  CopyProperty(Xform* to, const Xform& from) : to_(to), from_(from) { }
+  CopyProperty(T* to, const T& from) : to_(to), from_(from) { }
 
   template<typename APropertyInfo> void operator()(APropertyInfo) {
     *APropertyInfo::ptr(to_) = *APropertyInfo::ptr(from_);
   }
 
-  Xform* to_;
-  const Xform& from_;
+  T* to_;
+  const T& from_;
 };
 
 Xform::Xform()
@@ -172,8 +179,7 @@ Xform::Xform(const Xform& xform) {
     post_.reset(new array<Float, 6>(*xform.post_));
   }
 
-
-  boost::mpl::for_each<PropertyList>(CopyProperty(this, xform));
+  boost::mpl::for_each<PropertyList>(CopyProperty<Xform>(this, xform));
 
   Init();
 }
@@ -387,6 +393,17 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           }
           break;
         }
+        case 23: // blob
+        {
+          Float theta = atan2(x, y);
+          Float p1 = blob_high_;
+          Float p2 = blob_low_;
+          Float p3 = blob_waves_;
+          Float t = r * (p2 + (p1 - p2) * (sin(p3 * theta) + 1) / 2);
+          dx = t * cos(theta);
+          dy = t * sin(theta);
+          break;
+        }
         case 25: // fan2
         {
           Float p1 = kPI * fan2_x_ * fan2_x_;
@@ -412,9 +429,11 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           break;
         }
         case 27: // eyefish
-        dx = 2 * x / (r + 1);
-        dy = 2 * y / (r + 1);
-        break;
+        {
+          dx = 2 * x / (r + 1);
+          dy = 2 * y / (r + 1);
+          break;
+        }
         case 28: // bubble
         dx = 4 * x / (r2 + 4);
         dy = 4 * y / (r2 + 4);
@@ -501,6 +520,19 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = (2 * floor(y / p2) + 1) * p2 - y;
           break;
         }
+        case 41:  // arch
+        {
+          Float t1 = rnd->rnd() * kPI * w;
+          dx = sin(t1);
+          dy = sin(t1)*sin(t1)/cos(t1);
+          break;
+        }
+        case 42:  // tangent
+        {
+          dx = sin(x) / cos(y);
+          dy = tan(y);
+          break;
+        }
         case 45:  // blade
         {
           Float xi = rnd->rnd();
@@ -580,7 +612,8 @@ Genome::Genome()
    pixels_per_unit_(50),
    quality_(1),
    vibrancy_(1),
-   zoom_(0) {
+   zoom_(0),
+   symmetry_(1) {
 }
 
 Genome::Genome(const Genome& genome) {
@@ -607,7 +640,6 @@ Genome::Genome(const Genome& genome) {
   temporal_filter_type_ = genome.temporal_filter_type_;
   temporal_filter_width_ = genome.temporal_filter_width_;
   temporal_samples_ = genome.temporal_samples_;
-  estimator_radius_ = genome.estimator_radius_;
   estimator_minimum_ = genome.estimator_minimum_;
   estimator_curve_ = genome.estimator_curve_;
   palette_mode_ = genome.palette_mode_;
@@ -615,6 +647,7 @@ Genome::Genome(const Genome& genome) {
   url_ = genome.url_;
   nick_ = genome.nick_;
   notes_ = genome.notes_;
+  symmetry_ = genome.symmetry_;
 
   for (size_t i = 0; i < genome.xforms_.size(); ++i) {
     xforms_.push_back(new Xform(genome.xforms_[i]));
@@ -622,9 +655,17 @@ Genome::Genome(const Genome& genome) {
   if (genome.final_xform_.get() != NULL) {
     final_xform_.reset(new Xform(*genome.final_xform_));
   }
+
+  boost::mpl::for_each<PropertyList>(CopyProperty<Genome>(this, genome));
+
+  Init();
 }
 
 Genome::~Genome() {
+}
+
+void Genome::Init() {
+  AddSymmetry(symmetry_);
 }
 
 // ----------------------------------------------------------------------------
@@ -661,6 +702,32 @@ namespace {
   }
 
 }
+
+template <typename T>
+struct ParseProperty {
+  ParseProperty(T* xform,
+                bool* found,
+                const std::string& attr_name,
+                const std::string& value)
+    : xform_(xform),
+      found_(found),
+      attr_name_(attr_name),
+      value_(value) { }
+
+  template<typename APropertyInfo> void operator()(APropertyInfo) {
+    if (!*found_ && attr_name_ == APropertyInfo::name) {
+      ParseScalar<typename APropertyInfo::type>(
+          value_, APropertyInfo::ptr(xform_));
+      *found_ = true;
+    }
+  }
+
+  T* xform_;
+  bool* found_;
+  const std::string& attr_name_;
+  const std::string& value_;
+};
+
 
 void Genome::Read(string file_name) {
   TiXmlDocument doc(file_name.c_str());
@@ -738,9 +805,15 @@ void Genome::Read(string file_name) {
                attr_name == "parents") {
       // ignore
     } else {
-      BOOST_THROW_EXCEPTION(unsupported_attribute_error()
-          << error_message("Unsupported attribute: " + attr_name + "=\"" +
-            attr->Value() + "\""));
+      bool found;
+      boost::mpl::for_each<PropertyList>(
+          ParseProperty<Genome>(this, &found, attr_name, attr->ValueStr()));
+
+      if (!found) {
+        BOOST_THROW_EXCEPTION(unsupported_attribute_error()
+            << error_message("Unsupported attribute: " + attr_name + "=\"" +
+              attr->Value() + "\""));
+      }
     }
   }
 
@@ -789,37 +862,98 @@ void Genome::Read(string file_name) {
       color[1] /= 255.0;
       color[2] /= 255.0;
       colors_[index] = color;
+    } else if (element_name == "symmetry") {
+      for (const TiXmlAttribute* attr = e->FirstAttribute();
+          attr != NULL;
+          attr = attr->Next()) {
+        const string attr_name(attr->Name());
+
+        if (attr_name == "kind") {
+          ParseScalar(attr->ValueStr(), &symmetry_);
+        } else {
+          BOOST_THROW_EXCEPTION(unsupported_attribute_error()
+              << error_message("Unsupported symmetry attribute: " + attr_name + "=\"" +
+                attr->Value() + "\""));
+        }
+      }
     } else {
       BOOST_THROW_EXCEPTION(unsupported_element_error()
           << error_message("Unsupported element: " + element_name));
     }
   }
+
+  Init();
 }
 
+/* sym=2 or more means rotational
+   sym=1 means identity, ie no symmetry
+   sym=0 means pick a random symmetry (maybe none)
+   sym=-1 means bilateral (reflection)
+   sym=-2 or less means rotational and reflective
+*/
+void Genome::AddSymmetry(int kind) {
+   if (kind == 0) {
+     /*
+      static int sym_distrib[] = {
+         -4, -3,
+         -2, -2, -2,
+         -1, -1, -1,
+         2, 2, 2,
+         3, 3,
+         4, 4,
+      };
+      if (random()&1) {
+         sym = random_distrib(sym_distrib);
+      } else if (random()&31) {
+         sym = (random()%13)-6;
+      } else {
+         sym = (random()%51)-25;
+      } */
+     BOOST_THROW_EXCEPTION(error()
+         << error_message("Random symmetry not supported"));
+   }
 
-struct ParseProperty {
-  ParseProperty(Xform* xform,
-                bool* found,
-                const std::string& attr_name,
-                const std::string& value)
-    : xform_(xform),
-      found_(found),
-      attr_name_(attr_name),
-      value_(value) { }
+   if (kind == 0 || kind == 1) {
+     return;
+   }
 
-  template<typename APropertyInfo> void operator()(APropertyInfo) {
-    if (!*found_ && attr_name_ == APropertyInfo::name) {
-      ParseScalar<typename APropertyInfo::type>(
-          value_, APropertyInfo::ptr(xform_));
-      *found_ = true;
-    }
-  }
+   if (kind < 0) {
+     Xform* xform = new Xform();
 
-  Xform* xform_;
-  bool* found_;
-  const std::string& attr_name_;
-  const std::string& value_;
-};
+     xform->weight_ = 1.0;
+     xform->color_speed_ = 0.0;
+     xform->animate_ = 0.0;
+     xform->variations_[0] = 1.0;
+     xform->color_ = 1.0;
+     xform->coefs_[0] = -1.0;
+     xform->coefs_[1] = 0.0;
+     xform->coefs_[2] = 0.0;
+     xform->coefs_[3] = 1.0;
+     xform->coefs_[4] = 0.0;
+     xform->coefs_[5] = 0.0;
+     xforms_.push_back(xform);
+
+     kind = -kind;
+   }
+
+   double a = 2 * kPI / kind;
+
+   for (int i = 1; i < kind; i++) {
+     Xform* xform = new Xform();
+
+     xform->weight_ = 1.0;
+     xform->color_speed_ = 0.0;
+     xform->animate_ = 0.0;
+     xform->variations_[0] = 1.0;
+     xform->color_ = (kind<3) ? 0.0 : ((i-1.0)/(kind-2.0));
+     xform->coefs_[0] = round6(cos(i*a));
+     xform->coefs_[1] = round6(sin(i*a));
+     xform->coefs_[2] = round6(-xform->coefs_[2]);
+     xform->coefs_[3] = xform->coefs_[0];
+     xform->coefs_[4] = 0.0;
+     xform->coefs_[5] = 0.0;
+   }
+}
 
 void Xform::Parse(const TiXmlElement* element) {
   for (const TiXmlAttribute* attr = element->FirstAttribute();
@@ -849,7 +983,7 @@ void Xform::Parse(const TiXmlElement* element) {
 
       if (!found) {
         boost::mpl::for_each<PropertyList>(
-            ParseProperty(this, &found, attr_name, attr->ValueStr()));
+            ParseProperty<Xform>(this, &found, attr_name, attr->ValueStr()));
       }
 
       if (!found) {

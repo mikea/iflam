@@ -82,5 +82,11 @@ class Stopwatch {
 
 #endif
 
+inline double round6(double x) {
+  x *= 1e6;
+  if (x < 0) x -= 1.0;
+  return 1e-6*(int)(x+0.5);
+}
+
 #endif
 

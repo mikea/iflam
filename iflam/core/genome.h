@@ -95,6 +95,8 @@ class Xform {
 
     array<Float, 6>* mutable_coefs() { return &coefs_; }
   private:
+    friend class Genome;
+
     void Init();
 
     array<Float, 6> coefs_;
@@ -104,6 +106,9 @@ class Xform {
 
     DECLARE_PROPERTIES(Xform,
         PROPERTY(Float, animate) // is it bool?
+        PROPERTY(Float, blob_low)
+        PROPERTY(Float, blob_high)
+        PROPERTY(Float, blob_waves)
         PROPERTY(Float, color)
         PROPERTY(Float, color_speed)
         PROPERTY(Float, curl_c1)
@@ -169,6 +174,9 @@ public:
     boost::ptr_vector<Xform>* mutable_xforms() { return &xforms_;}
 
 private:
+    void Init();
+    void AddSymmetry(int kind);
+
     Float brightness_;
     Float contrast_;
     Float gamma_;
@@ -193,7 +201,6 @@ private:
     std::string temporal_filter_type_;
     int temporal_filter_width_;
     int temporal_samples_;
-    Float estimator_radius_;
     Float estimator_minimum_;
     Float estimator_curve_;
     std::string palette_mode_;
@@ -201,9 +208,14 @@ private:
     std::string url_;
     std::string nick_;
     std::string notes_;
+    int symmetry_;
 
     boost::ptr_vector<Xform> xforms_;
     boost::scoped_ptr<Xform> final_xform_;
+
+    DECLARE_PROPERTIES(Genome,
+        PROPERTY(Float, estimator_radius));
+
 };
 
 
