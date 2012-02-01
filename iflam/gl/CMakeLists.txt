@@ -3,6 +3,7 @@ project(iflam_cmd)
 
 include("../CMakeFunctions.txt")
 include_directories("../core")
+include_directories("/usr/X11/include")
 
 ADD_BOOST()
 

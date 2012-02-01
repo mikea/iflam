@@ -52,30 +52,33 @@ vec3 hsv2rgb(vec3 hsv) {
   float s = hsv[1];
   float v = hsv[2];
 
-  while (h >= 6.0) h = h - 6.0;
-  while (h < 0.0) h = h + 6.0;
-  int j = (int) floor(h);
+  while (h >= 6.0) {
+    h = h - 6.0;
+  }
+  while (h < 0.0) {
+    h = h + 6.0;
+  }
+  int j = int(floor(h));
 
-  float f = h - j;
-  float p = v * (1 - s);
-  float q = v * (1 - (s * f));
-  float t = v * (1 - (s * (1 - f)));
+  float f = h - float(j);
+  float p = v * (1.0 - s);
+  float q = v * (1.0 - (s * f));
+  float t = v * (1.0 - (s * (1.0 - f)));
 
   float rd, gd, bd;
-  switch (j) {
-    case 0:
+  if (j == 0) {
       return vec3(v, t, p);
-    case 1:
+  } else if (j == 1) {
       return vec3(q, v, p);
-    case 2:
+  } else if (j == 2) {
       return vec3(p, v, t);
-    case 3:
+  } else if (j == 3) {
       return vec3(p, q, v);
-    case 4:
+  } else if (j == 4) {
       return vec3(t, p, v);
-    case 5:
+  } else if (j == 5) {
       return vec3(v, p, q);
-    default:
+  } else {
       return vec3(v, t, p);
   }
 }
