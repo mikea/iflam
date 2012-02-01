@@ -22,7 +22,13 @@ static GLuint fragment_shader_id;
 static GLuint vertex_shader_id;
 static GLuint program_id;
 
-typedef float TT;
+static GLuint var_scale;
+static GLuint var_k1;
+static GLuint var_k2;
+static GLuint var_vibrancy;
+static GLuint var_gamma;
+static GLuint var_highpow;
+static GLuint var_samples;
 
 class State {
   public:
@@ -30,17 +36,42 @@ class State {
      : width_(width),
        height_(height) {
      genome_ = new Genome();
-     genome_->Read("../sheeps/154.flam3");
+     genome_->Read("../sheeps/12452.flam3");
 
      render_buffer_ = new RenderBuffer(*genome_, width, height);
      state_ = new RenderState(*genome_, render_buffer_);
-     data_ = new TT[width_ * height_ * 4];
+     data_ = new float[width_ * height_ * 4];
     }
 
     void Iter() {
       state_->Iterate(50000);
-      RGBAImage<TT> image(data_, width_ * 4, height_, 1.0, 1.0/255.0);
-      render_buffer_->Render(&image);
+
+      double scale = render_buffer_->max_density();
+      //scale = 1e2;
+      double d[] = {0, 0, 0, 0};
+      for (size_t y = 0; y < height_; ++y) {
+        for (size_t x = 0; x < width_; ++x) {
+          render_buffer_->at(x, y, d);
+          size_t offset = (x + y * width_) * 4;
+          BOOST_ASSERT_RANGE(d[0] / scale, 0, 1);
+          BOOST_ASSERT_RANGE(d[1] / scale, 0, 1);
+          BOOST_ASSERT_RANGE(d[2] / scale, 0, 1);
+          BOOST_ASSERT_RANGE(d[3] / scale, 0, 1);
+          data_[offset] = d[0] / scale;
+          data_[offset + 1] = d[1] / scale;
+          data_[offset + 2] = d[2] / scale;
+          data_[offset + 3] = d[3] / scale;
+        }
+      }
+      glUniform1f(var_scale, scale);
+      glUniform1f(var_k1, render_buffer_->k1());
+      glUniform1f(var_k2, render_buffer_->k2());
+      glUniform1f(var_vibrancy, genome_->vibrancy());
+      glUniform1f(var_gamma, 1.0 / genome_->gamma());
+      glUniform1f(var_highpow, genome_->highlight_power());
+      glUniform1f(var_samples, render_buffer_->samples());
+      //RGBAImage<TT> image(data_, width_ * 4, height_, 1.0, 1.0/255.0);
+      //render_buffer_->Render(&image);
 
       glBindTexture(GL_TEXTURE_2D, texture_id);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -49,7 +80,7 @@ class State {
       glTexImage2D(
           GL_TEXTURE_2D,  // target
           0,  // level
-          GL_RGBA, // internal format
+          GL_RGBA32F, // internal format
           width_,  // width
           height_,  // height
           0, // border
@@ -65,7 +96,7 @@ class State {
   Genome* genome_;
   RenderBuffer* render_buffer_;
   RenderState* state_;
-  TT* data_;
+  float* data_;
 };
 
 static State* state;
@@ -187,6 +218,27 @@ void init() {
   CHECK_GL_ERROR();
 
   glUseProgram(program_id);
+  CHECK_GL_ERROR();
+
+  var_scale = glGetUniformLocation(program_id, "scale");
+  CHECK_GL_ERROR();
+
+  var_k1 = glGetUniformLocation(program_id, "k1");
+  CHECK_GL_ERROR();
+
+  var_k2 = glGetUniformLocation(program_id, "k2");
+  CHECK_GL_ERROR();
+
+  var_vibrancy = glGetUniformLocation(program_id, "vibrancy");
+  CHECK_GL_ERROR();
+
+  var_gamma = glGetUniformLocation(program_id, "gamma");
+  CHECK_GL_ERROR();
+
+  var_highpow = glGetUniformLocation(program_id, "highpow");
+  CHECK_GL_ERROR();
+
+  var_samples = glGetUniformLocation(program_id, "samples");
   CHECK_GL_ERROR();
 }
 

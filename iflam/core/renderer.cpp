@@ -89,6 +89,7 @@ RenderBuffer::RenderBuffer(const Genome& genome, size_t width, size_t height)
     ppux_(genome_.pixels_per_unit() * scale_),
     ppuy_(genome_.pixels_per_unit() * scale_),
     samples_(0),
+    max_density_(0),
     accum_(new Float[width * height * 4]) {
   memset(accum_.get(), 0, width * height * 4 * sizeof(Float));
 }
@@ -108,6 +109,19 @@ void RenderBuffer::Update(size_t x, size_t y,
   accum_[offset + 2] += color[2];
   accum_[offset + 3] += opacity;
   ++samples_;
+
+  double d = accum_[offset + 3];
+  if (d > max_density_) {
+    max_density_ = d;
+  }
+}
+
+void RenderBuffer::at(size_t x, size_t y, double* d) {
+  size_t offset = (x + width_ * y) * 4;
+  d[0] = accum_[offset];
+  d[1] = accum_[offset + 1];
+  d[2] = accum_[offset + 2];
+  d[3] = accum_[offset + 3];
 }
 
 RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)

@@ -1,11 +1,177 @@
+uniform float scale;
+uniform float k1;
+uniform float k2;
+uniform float vibrancy;
+uniform float gamma;
+uniform float highpow;
+uniform float samples;
+
 uniform sampler2D tex;
 
+vec3 rgb2hsv(vec3 rgb) {
+  float r = rgb[0];
+  float g = rgb[1];
+  float b = rgb[2];
+
+  float max = r;
+  if (g > max) max = g;
+  if (b > max) max = b;
+
+  if (max == 0.0) {
+    return vec3(0, 0, 0);
+  }
+
+  float min = r;
+  if (g < min) min = g;
+  if (b < min) min = b;
+  float c = max - min;
+  float h = 0.0;
+
+  if (c != 0.0) {
+    if (r == max) {
+      h = (g - b) / c;
+    }
+    else if (g == max) {
+      h = 2.0 + (b - r) / c;
+    }
+    else /* if (b == max) */ {
+      h = 4.0 + (r - g) / c;
+    }
+
+    if (h < 0.0) h += 6.0;
+  }
+
+  float s = c / max;
+  float v = max;
+
+  return vec3(h, s, v);
+}
+
+vec3 hsv2rgb(vec3 hsv) {
+  float h = hsv[0];
+  float s = hsv[1];
+  float v = hsv[2];
+
+  while (h >= 6.0) h = h - 6.0;
+  while (h < 0.0) h = h + 6.0;
+  int j = (int) floor(h);
+
+  float f = h - j;
+  float p = v * (1 - s);
+  float q = v * (1 - (s * f));
+  float t = v * (1 - (s * (1 - f)));
+
+  float rd, gd, bd;
+  switch (j) {
+    case 0:
+      return vec3(v, t, p);
+    case 1:
+      return vec3(q, v, p);
+    case 2:
+      return vec3(p, v, t);
+    case 3:
+      return vec3(p, q, v);
+    case 4:
+      return vec3(t, p, v);
+    case 5:
+      return vec3(v, p, q);
+    default:
+      return vec3(v, t, p);
+  }
+}
+
+vec3 calc_new_rgb(vec3 rgb, float ls) {
+  if (ls == 0.0 || (rgb[0] == 0.0 && rgb[1] == 0.0 && rgb[2] == 0.0)) {
+    return vec3(0.0, 0.0, 0.0);
+  }
+
+  float maxA = -1.0;
+  float maxC = 0.0;
+  float maxComponent = -1.0;
+
+  for (int i = 0; i < 3; i++) {
+    float c = rgb[i];
+    if (c > maxComponent) {
+      maxA = ls * (c / 255.0);
+      maxC = c / 255.0;
+      maxComponent = c;
+    }
+  }
+
+  vec3 newRgb = vec3(0.0, 0.0, 0.0);
+
+  if (maxA > 255.0 && highpow >= 0.0) {
+    // Calculate the max-value color (ranged 0 - 1)
+    for (int i = 0; i < 3; i++)
+      newRgb[i] = rgb[i] / maxComponent;
+
+    vec3 newHsv = rgb2hsv(newRgb);
+    newHsv[1] *= pow(255.0 / (ls * maxC), highpow);
+    newRgb = hsv2rgb(newHsv);
+
+    for (int i = 0; i < 3; i++) {
+      newRgb[i] *= 255.0;
+    }
+  } else {
+    float newLs = 255.0 / maxC;
+    float adjHlp = -highpow;
+    if (adjHlp > 1.0 || maxA <= 255.0) {
+      adjHlp = 1.0;
+    }
+
+    float k = ((1.0 - adjHlp) * newLs + adjHlp * ls);
+
+    /* Calculate the max-value color (ranged 0 - 1) interpolated with the old behaviour */
+    for (int i = 0; i < 3; i++) {
+      newRgb[i] =  k * (rgb[i] / 255.0);
+    }
+  }
+
+  return newRgb;
+}
+
+float calc_gamma(float x) {
+  x += (1.0 - vibrancy) * 256.0 * pow(x / 255.0, gamma);
+  if (x > 255.0) return 255.0;
+  if (x < 0.0) return 0.0;
+  return x;
+}
+
 void main(void){
-   vec2 c = vec2(gl_TexCoord[0]);
-   vec4 sum = texture2D(tex, vec2(c.x, c.y));
-   // sum = sum + texture2D(tex, vec2(c.x + 0.1, c.y));
-   // sum = sum + texture2D(tex, vec2(c.x, c.y + 0.01));
-   gl_FragColor = sum / 1.0;
+  vec2 c = vec2(gl_TexCoord[0]);
+  vec4 accum = texture2D(tex, vec2(c.x, c.y));
+
+  float r = scale * accum[0];
+  float g = scale * accum[1];
+  float b = scale * accum[2];
+  float freq = scale * accum[3];
+
+  if (freq == 0.0) {
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    return;
+  }
+
+  float ls = k1 * log(1.0 + freq * k2) / freq;
+  r *= ls;
+  g *= ls;
+  b *= ls;
+  freq *= ls;
+
+  float tmp = freq / 255.0;
+  float alpha = pow(tmp, gamma);
+
+  vec3 rgb = vec3(r, g, b);
+  rgb = calc_new_rgb(rgb, vibrancy * 256.0 * alpha / tmp);
+  r = rgb[0];
+  g = rgb[1];
+  b = rgb[2];
+
+  r = calc_gamma(r);
+  g = calc_gamma(g);
+  b = calc_gamma(b);
+
+  gl_FragColor = vec4(r/255.0, g/255.0, b/255.0, 1.0);
+  //gl_FragColor = vec4(freq / 255, freq / 255, freq/255, 1.0);
 }
 
 

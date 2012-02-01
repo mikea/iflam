@@ -19,8 +19,12 @@ DEFINE_PROPERTIES(Xform,
     PROPERTY(Float, blob_waves)
     PROPERTY(Float, color)
     PROPERTY(Float, color_speed)
+    PROPERTY(Float, conic_eccentricity)
+    PROPERTY(Float, conic_holes)
     PROPERTY(Float, curl_c1)
     PROPERTY(Float, curl_c2)
+    PROPERTY(Float, disc2_rot)
+    PROPERTY(Float, disc2_twist)
     PROPERTY(Float, fan2_x)
     PROPERTY(Float, fan2_y)
     PROPERTY(Float, flower_holes)
@@ -29,15 +33,32 @@ DEFINE_PROPERTIES(Xform,
     PROPERTY(Float, julian_power)
     PROPERTY(Float, juliascope_dist)
     PROPERTY(Float, juliascope_power)
+    PROPERTY(Float, ngon_circle)
+    PROPERTY(Float, ngon_corners)
+    PROPERTY(Float, ngon_power)
+    PROPERTY(Float, ngon_sides)
     PROPERTY(Float, opacity)
     PROPERTY(Float, parabola_height)
     PROPERTY(Float, parabola_width)
+    PROPERTY(Float, pdj_a)
+    PROPERTY(Float, pdj_b)
+    PROPERTY(Float, pdj_c)
+    PROPERTY(Float, pdj_d)
     PROPERTY(Float, perspective_angle)
     PROPERTY(Float, perspective_dist)
+    PROPERTY(Float, pie_rotation)
+    PROPERTY(int,   pie_slices)
+    PROPERTY(Float, pie_thickness)
     PROPERTY(Float, radial_blur_angle)
     PROPERTY(Float, rectangles_x)
     PROPERTY(Float, rectangles_y)
     PROPERTY(Float, rings2_val)
+    PROPERTY(Float, super_shape_holes)
+    PROPERTY(Float, super_shape_m)
+    PROPERTY(Float, super_shape_n1)
+    PROPERTY(Float, super_shape_n2)
+    PROPERTY(Float, super_shape_n3)
+    PROPERTY(Float, super_shape_rnd)
     PROPERTY(Float, weight)
     );
 
@@ -371,6 +392,12 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = t * sin(theta);
           break;
         }
+        case 20: // cosine
+        {
+          dx = cos(kPI * x) * cosh(y);
+          dy = -sin(kPI * x) * sinh(y);
+          break;
+        }
         case 21: // rings
         {
           Float theta = atan2(x, y);
@@ -404,6 +431,12 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = t * sin(theta);
           break;
         }
+        case 24: // pdj
+        {
+          dx = sin(pdj_a_ * y) - cos(pdj_b_ * x);
+          dy = sin(pdj_c_ * x) - cos(pdj_d_ * y);
+          break;
+        }
         case 25: // fan2
         {
           Float p1 = kPI * fan2_x_ * fan2_x_ + kEpsilon;
@@ -435,9 +468,11 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           break;
         }
         case 28: // bubble
-        dx = 4 * x / (r2 + 4);
-        dy = 4 * y / (r2 + 4);
-        break;
+        {
+          dx = 4 * x / (r2 + 4);
+          dy = 4 * y / (r2 + 4);
+          break;
+        }
         case 29: // cylinder
         {
           dx = sin(x);
@@ -511,6 +546,37 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = (r * sin(t2) + t3 * y) / w;
           break;
         }
+        case 37:  // pie
+        {
+          Float p1 = pie_slices_;
+          Float p2 = pie_rotation_;
+          Float p3 = pie_thickness_;
+          Float t1 = floor(rnd->rnd() * p1 + 0.5);
+          Float t2 = p2 + 2 * kPI * (t1 + rnd->rnd()*p3) / p1;
+          Float t3 = rnd->rnd();
+          dx = t3 * cos(t2);
+          dy = t3 * sin(t2);
+          break;
+        }
+        case 38:  // ngon
+        {
+          Float p1 = ngon_power_;
+          Float p2 = 2 * kPI / ngon_sides_;
+          Float p3 = ngon_corners_;
+          Float p4 = ngon_circle_;
+          Float phi = atan2(y, x);
+          Float t3 = phi - p2 * floor(phi / p2);
+          Float t4;
+          if (t3 > p2 / 2) {
+            t4 = t3;
+          } else {
+            t4 = t3 - p2;
+          }
+          Float k = (p3 * (1 / cos(t4) - 1) + p4) / (pow(r, p1) + kEpsilon);
+          dx = k * x;
+          dy = k * y;
+          break;
+        }
         case 39:  // curl
         {
           Float p1 = curl_c1_;
@@ -564,12 +630,53 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = t1 * y;
           break;
         }
+        case 49:  // disc2
+        {
+          Float sinadd = sin(disc2_twist_);
+          Float cosadd = cos(disc2_twist_);
+          cosadd -= 1;
+
+          if (disc2_twist_ > 2 * kPI) {
+            double k = (1 + disc2_twist_ - 2 * kPI);
+            cosadd *= k;
+            sinadd *= k;
+          } else if (disc2_twist_ < - 2 * kPI) {
+            double k = (1 + disc2_twist_ + 2*kPI);
+            cosadd *= k;
+            sinadd *= k;
+          }
+          Float t = disc2_rot_ * kPI * (x + y);
+          Float t1 = atan2(x, y) / kPI;
+          dx = (sin(t) + cosadd) * t1;
+          dy = (cos(t) + sinadd) * t1;
+          break;
+        }
+        case 50:  // supershape
+        {
+          Float t = super_shape_m_ / 4 * atan2(y, x) + kPI / 4;
+          Float t1 = pow(fabs(cos(t)), super_shape_n2_);
+          Float t2 = pow(fabs(sin(t)), super_shape_n3_);
+          Float t3 = (super_shape_rnd_ * rnd->rnd() + (1-super_shape_rnd_)*r - super_shape_holes_) 
+            * pow(t1 +t2, - 1.0/super_shape_n1_) / (r + kEpsilon);
+          dx = t3 * x;
+          dy = t3 * y;
+          break;
+        }
         case 51:  // flower
         {
           Float phi = atan2(y, x);
           Float t = (rnd->rnd() - flower_holes_) * cos(flower_petals_ * phi) / r;
           dx = t * x;
           dy = t * y;
+          break;
+        }
+        case 52:  // conic
+        {
+          Float t = x / (r + kEpsilon);
+          Float t1 = (rnd->rnd() - conic_holes_) * conic_eccentricity_ 
+            / (1 + conic_eccentricity_ * t) / (r + kEpsilon);
+          dx = t1 * x;
+          dy = t1 * y;
           break;
         }
         case 53:  // parabola

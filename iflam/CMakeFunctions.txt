@@ -20,7 +20,7 @@ macro(ADD_BOOST)
     link_directories(${Boost_LIBRARY_DIRS})
 
     add_definitions(-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS)
-    add_definitions(-DBOOST_MPL_LIMIT_LIST_SIZE=30)
+    add_definitions(-DBOOST_MPL_LIMIT_LIST_SIZE=50)
   endif()
 endmacro(ADD_BOOST)
 

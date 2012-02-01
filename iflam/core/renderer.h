@@ -30,6 +30,21 @@ class RenderBuffer {
     void Render(Image* image);
     const Float* accum() const { return accum_.get(); }
     size_t samples() const { return samples_; }
+
+    // d = [r, g, b, density]
+    void at(size_t x, size_t y, double* d);
+
+    Float k1() const {
+      return (genome_.contrast() *
+          genome_.brightness() * kPrefilterWhite * 268.0) / 256;
+    }
+    Float k2() const {
+      Float samples_per_unit = Float(samples_) / (ppux_ * ppuy_);
+      return 1.0 / (genome_.contrast() * samples_per_unit);
+    }
+
+    Float max_density() const { return max_density_; }
+
   private:
     const Genome& genome_;
     const size_t width_;
@@ -40,6 +55,8 @@ class RenderBuffer {
     const Float ppuy_;  // duplicated with render state
 
     size_t samples_;
+    Float max_density_;
+
     boost::scoped_array<Float> accum_;
 };
 
@@ -90,9 +107,8 @@ void RenderBuffer::Render(Image* image) {
   Float vibrancy = genome_.vibrancy();
   Float gamma = 1.0 / genome_.gamma();
   Float highpow = genome_.highlight_power();
-  Float k1 = (genome_.contrast() * genome_.brightness() * kPrefilterWhite * 268.0) / 256;
-  Float samples_per_unit = Float(samples_) / (ppux_ * ppuy_);
-  Float k2 = 1.0 / (genome_.contrast() * samples_per_unit);
+  Float k1 = this->k1();
+  Float k2 = this->k2();
 
   Float newrgb[4] = {0, 0, 0, 0};
 
