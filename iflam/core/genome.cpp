@@ -512,9 +512,14 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           Float phi = atan2(y, x);
           Float p1 = juliascope_power_;
           Float p2 = juliascope_dist_;
-          Float p3 = floor(fabs(p1) * rnd->rnd());
-          Float t = (rnd->crnd() * phi + 2 * kPI * p3) / p1;
-          Float z = pow(r, p2 / p1);
+          int p3 = floor(fabs(p1) * rnd->rnd());
+          Float t;
+          if ((p3 & 1) == 0) {
+            t = (phi + 2 * kPI * p3) / p1;
+          } else {
+            t = (-phi + 2 * kPI * p3) / p1;
+          }
+          Float z = pow(r2, p2 / p1 / 2.0);
           dx = z * cos(t);
           dy = z * sin(t);
           break;
@@ -592,8 +597,16 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         {
           Float p1 = rectangles_x_;
           Float p2 = rectangles_y_;
-          dx = (2 * floor(x / p1) + 1) * p1 - x;
-          dy = (2 * floor(y / p2) + 1) * p2 - y;
+          if (p1 == 0) {
+            dx = x;
+          } else {
+            dx = (2 * floor(x / p1) + 1) * p1 - x;
+          }
+          if (p2 == 0) {
+            dy = y;
+          } else {
+            dy = (2 * floor(y / p2) + 1) * p2 - y;
+          }
           break;
         }
         case 41:  // arch
