@@ -36,7 +36,7 @@ class State {
      : width_(width),
        height_(height) {
      genome_ = new Genome();
-     genome_->Read("../sheeps/12452.flam3");
+     genome_->Read("../sheeps/17594.flam3");
 
      render_buffer_ = new RenderBuffer(*genome_, width, height);
      state_ = new RenderState(*genome_, render_buffer_);
@@ -44,7 +44,11 @@ class State {
     }
 
     void Iter() {
-      state_->Iterate(50000);
+      double start = WallTime();
+
+      while (WallTime() - start < 1/25.0) {
+        state_->Iterate(10000);
+      }
 
       double scale = render_buffer_->max_density();
       //scale = 1e2;
