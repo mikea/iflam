@@ -139,7 +139,7 @@ class Xform {
         PROPERTY(Float, perspective_angle)
         PROPERTY(Float, perspective_dist)
         PROPERTY(Float, pie_rotation)
-        PROPERTY(int,   pie_slices)
+        PROPERTY(Float, pie_slices)
         PROPERTY(Float, pie_thickness)
         PROPERTY(Float, radial_blur_angle)
         PROPERTY(Float, rectangles_x)

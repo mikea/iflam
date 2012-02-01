@@ -36,7 +36,7 @@ class State {
      : width_(width),
        height_(height) {
      genome_ = new Genome();
-     genome_->Read("../sheeps/17594.flam3");
+     genome_->Read("../sheeps/12063.flam3");
 
      render_buffer_ = new RenderBuffer(*genome_, width, height);
      state_ = new RenderState(*genome_, render_buffer_);

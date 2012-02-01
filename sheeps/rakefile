@@ -10,7 +10,7 @@ FileList["*.flam3"].each do |flam3|
   file iflam_render => [flam3] do
     sh "../build/cmd/iflam-render --file #{flam3} --out #{iflam_render} --iterations 10000000" do |ok, res|
       if !ok
-        #raise "Error executing iflam"
+        raise "Error executing iflam"
       end
     end
   end

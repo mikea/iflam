@@ -47,7 +47,7 @@ DEFINE_PROPERTIES(Xform,
     PROPERTY(Float, perspective_angle)
     PROPERTY(Float, perspective_dist)
     PROPERTY(Float, pie_rotation)
-    PROPERTY(int,   pie_slices)
+    PROPERTY(Float, pie_slices)
     PROPERTY(Float, pie_thickness)
     PROPERTY(Float, radial_blur_angle)
     PROPERTY(Float, rectangles_x)
@@ -609,6 +609,13 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
           dy = tan(y);
           break;
         }
+        case 44:  // rays
+        {
+          Float t = w * tan(rnd->rnd() * kPI*w) / r2;
+          dx = t * cos(x);
+          dy = t * sin(y);
+          break;
+        }
         case 45:  // blade
         {
           Float xi = rnd->rnd();
@@ -815,7 +822,13 @@ namespace {
   template<typename T>
   void ParseScalar(const string& str, T* d) {
     // TODO: error checks
-    *d = boost::lexical_cast<T>(str);
+    try {
+      *d = boost::lexical_cast<T>(str);
+    }
+    catch(boost::bad_lexical_cast&) {
+      BOOST_THROW_EXCEPTION(parse_error()
+          << error_message("Can't parse " + str));
+    }
   }
 
 }
