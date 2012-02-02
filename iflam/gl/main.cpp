@@ -1,6 +1,7 @@
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #include <GL/glext.h>
+#define GL_RGBA32F  0x8814
 #else
 #include <GL/glut.h>
 #endif
@@ -37,7 +38,7 @@ class State {
      : width_(width),
        height_(height) {
      genome_ = new Genome();
-     genome_->Read("../sheeps/722.flam3");
+     genome_->Read("../sheeps/1938.flam3");
 
      render_buffer_ = new RenderBuffer(*genome_, width, height);
      state_ = new RenderState(*genome_, render_buffer_);
@@ -51,7 +52,7 @@ class State {
         state_->Iterate(10000);
       }
 
-      double scale = render_buffer_->max_density();
+      double scale = render_buffer_->max_density() + 1;
       //scale = 1e2;
       double d[] = {0, 0, 0, 0};
       for (size_t y = 0; y < height_; ++y) {
@@ -85,7 +86,7 @@ class State {
       glTexImage2D(
           GL_TEXTURE_2D,  // target
           0,  // level
-          0x8814, //GL_RGBA, // internal format
+          GL_RGBA32F, // internal format
           width_,  // width
           height_,  // height
           0, // border

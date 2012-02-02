@@ -11,7 +11,7 @@ import static flam.util.MyMath.*;
 import static java.lang.Double.parseDouble;
 
 /**
-*/
+ */
 public class Xform implements Serializable {
     public double[] coefs = new double[6];
     double[] variations = new double[Constants.variationNames.length];
@@ -33,6 +33,8 @@ public class Xform implements Serializable {
     private double rings2_val;
     private double juliascopeDist;
     private double juliascopePower;
+    private double rectanglesX;
+    private double rectanglesY;
 
     static {
         IDENTITY.coefs[0] = 1;
@@ -113,7 +115,8 @@ public class Xform implements Serializable {
             for (int i = 0; i < 6; ++i) {
                 post[i] = interpolate(t, f1.post[i], f2.post[i]);
             }
-        } if (f1.post != null) {
+        }
+        if (f1.post != null) {
             post[0] = interpolate(t, f1.post[0], 1);
             post[1] = interpolate(t, f1.post[1], 0);
             post[2] = interpolate(t, f1.post[2], 0);
@@ -175,6 +178,10 @@ public class Xform implements Serializable {
                 juliascopePower = parseDouble(node.getNodeValue());
             } else if (attrName.equals("rings2_val")) {
                 rings2_val = parseDouble(node.getNodeValue());
+            } else if (attrName.equals("rectangles_x")) {
+                rectanglesX = parseDouble(node.getNodeValue());
+            } else if (attrName.equals("rectangles_y")) {
+                rectanglesY = parseDouble(node.getNodeValue());
             } else if (attrName.equals("post")) {
                 post = new double[6];
                 Genome.parseIntoDoubleVector(node, post);
@@ -278,7 +285,7 @@ public class Xform implements Serializable {
                     {
                         double theta = atan2(x, y);
                         dx = r * sin(theta * r);
-                        dy = - r * cos(theta * r);
+                        dy = -r * cos(theta * r);
                         break;
                     }
                     case 8: // disc
@@ -291,7 +298,7 @@ public class Xform implements Serializable {
                     case 10: // hyperbolic
                     {
                         double theta = atan2(x, y);
-                        dx = sin(theta)/ r;
+                        dx = sin(theta) / r;
                         dy = r * cos(theta);
                         break;
                     }
@@ -307,8 +314,8 @@ public class Xform implements Serializable {
                         double theta = atan2(x, y);
                         double p0 = sin(theta + r);
                         double p1 = cos(theta - r);
-                        dx = r * (p0*p0*p0 + p1 * p1 * p1);
-                        dy = r * (p0*p0*p0 - p1 * p1 * p1);
+                        dx = r * (p0 * p0 * p0 + p1 * p1 * p1);
+                        dy = r * (p0 * p0 * p0 - p1 * p1 * p1);
                         break;
                     }
                     case 13: // julia
@@ -322,13 +329,17 @@ public class Xform implements Serializable {
                     case 14: // bent
                     {
                         if (x >= 0 && y >= 0) {
-                            dx = x; dy = y;
+                            dx = x;
+                            dy = y;
                         } else if (x < 0 && y >= 0) {
-                            dx = 2 * x; dy = y;
+                            dx = 2 * x;
+                            dy = y;
                         } else if (x >= 0 && y < 0) {
-                            dx = x; dy = y / 2;
+                            dx = x;
+                            dy = y / 2;
                         } else /* if (x < 0 && y < 0) */ {
-                            dx = 2 * x; dy = y / 2;
+                            dx = 2 * x;
+                            dy = y / 2;
                         }
                         break;
                     }
@@ -354,19 +365,19 @@ public class Xform implements Serializable {
                         double theta = atan2(x, y);
                         double t = PI * c * c;
                         if (fmod(theta + f, t) > t / 2) {
-                            dx = r * cos (theta - t/2);
-                            dy = r * sin (theta - t/2);
+                            dx = r * cos(theta - t / 2);
+                            dy = r * sin(theta - t / 2);
                         } else {
-                            dx = r * cos (theta + t/2);
-                            dy = r * sin (theta + t/2);
+                            dx = r * cos(theta + t / 2);
+                            dy = r * sin(theta + t / 2);
                         }
                         break;
                     }
                     case 26: // rings2
                     {
                         double theta = atan2(x, y);
-                        double p = rings2_val* rings2_val;
-                        double t = r - 2*p*floor((r + p) / (2 * p)) + r* (1-p);
+                        double p = rings2_val * rings2_val;
+                        double t = r - 2 * p * floor((r + p) / (2 * p)) + r * (1 - p);
                         dx = t * sin(theta);
                         dy = t * cos(theta);
                         break;
@@ -405,15 +416,15 @@ public class Xform implements Serializable {
                     }
                     case 33: // julia_scope
                     {
-                      double phi = atan2(y, x);
+                        double phi = atan2(y, x);
                         double p1 = juliascopePower;
                         double p2 = juliascopeDist;
                         double p3 = floor(abs(p1) * Rnd.rnd());
                         double t = (Rnd.crnd() * phi + 2 * PI * p3) / p1;
                         double z = pow(r, p2 / p1);
-                      dx = z * cos(t);
-                      dy = z * sin(t);
-                      break;
+                        dx = z * cos(t);
+                        dy = z * sin(t);
+                        break;
                     }
                     case 34: // blur
                     {
@@ -442,6 +453,22 @@ public class Xform implements Serializable {
                         dy = (r * sin(t2) + t3 * y) / w;
                         break;
                     }
+                    case 40:  // rectangles
+                    {
+                        double p1 = rectanglesX;
+                        double p2 = rectanglesY;
+                        if (p1 == 0) {
+                            dx = x;
+                        } else {
+                            dx = (2 * floor(x / p1) + 1) * p1 - x;
+                        }
+                        if (p2 == 0) {
+                            dy = y;
+                        } else {
+                            dy = (2 * floor(y / p2) + 1) * p2 - y;
+                        }
+                        break;
+                    }
                     case 45:  // blade
                     {
                         double xi = Rnd.rnd();
@@ -457,8 +484,8 @@ public class Xform implements Serializable {
                     }
                     case 48:  // cross
                     {
-                        double t = x*x - y*y;
-                        double t1 = sqrt(1/(t*t));
+                        double t = x * x - y * y;
+                        double t1 = sqrt(1 / (t * t));
                         dx = t1 * x;
                         dy = t1 * y;
                         break;

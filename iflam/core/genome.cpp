@@ -213,10 +213,10 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
   Float cc = in[2];
 
   const Float a = coefs_[0];
-  const Float b = coefs_[2];
-  const Float c = coefs_[4];
   const Float d = coefs_[1];
+  const Float b = coefs_[2];
   const Float e = coefs_[3];
+  const Float c = coefs_[4];
   const Float f = coefs_[5];
 
   { // Affine transform.
@@ -534,10 +534,10 @@ bool Xform::Apply(Float* in, Float* out, Random* rnd) const {
         }
         case 35:  // gaussian blur
         {
-          Float t1 = w * (rnd->rnd() + rnd->rnd() + rnd->rnd() + rnd->rnd() - 2);
-          Float t2 = rnd->rnd();
-          dx = t1 * cos(2 * kPI * t2);
-          dy = t1 * sin(2 * kPI * t2);
+          Float t1 = (rnd->rnd() + rnd->rnd() + rnd->rnd() + rnd->rnd() - 2);
+          Float t2 = rnd->rnd() * 2 * kPI;
+          dx = t1 * cos(t2);
+          dy = t1 * sin(t2);
           break;
         }
         case 36:  // radial_blur

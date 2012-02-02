@@ -29,6 +29,8 @@ public class RIARenderer implements Renderer {
         RIAState state = (RIAState) aState;
         RIABuffer buffer = (RIABuffer) aBuffer;
 
+        state.reseed();
+
         long start = System.currentTimeMillis();
         Genome genome = state.genome;
 

@@ -219,6 +219,16 @@ void RenderState::Iterate(int iterations) {
   if (genome_.xforms().empty()) {
     return;
   }
+  IterateImpl(iterations);
+
+/*  int batch_size = 500;
+  for (int i = 0; i < iterations / batch_size; ++i) {
+    IterateImpl(batch_size);
+  }*/
+}
+
+void RenderState::IterateImpl(int iterations) {
+  Reseed();
 
   int consequent_errors_ = 0;
   array<Float, 3> xyc2;

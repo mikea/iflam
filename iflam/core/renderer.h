@@ -71,6 +71,7 @@ class RenderState {
     Float view_width() const { return view_width_; }
   private:
     void Reseed();
+    void IterateImpl(int iterations);
 
     void CreateXformDist(int xi, int xf);
     const Xform& PickRandomXform();
