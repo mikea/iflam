@@ -18,6 +18,7 @@ const Float kPrefilterWhite = 255;
 
 class RenderBuffer {
   public:
+    // Shouldn't depend on genome.
     RenderBuffer(const Genome& genome, size_t width, size_t height);
     ~RenderBuffer();
 

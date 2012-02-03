@@ -41,7 +41,7 @@ class Random {
     Float rnd();
     Float crnd();
     bool brnd();
-
+  private:
     boost::random::mt19937 rng_;
 };
 

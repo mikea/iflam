@@ -308,11 +308,7 @@ void RenderState::IterateImpl(int iterations) {
 
 const Xform& RenderState::PickRandomXform() {
   size_t k;
-
-  boost::random::uniform_int_distribution<> randomGrain(
-      0, kChooseXformGrain - 1);
-
-  size_t r = randomGrain(rnd.rng_);
+  size_t r = rnd.irnd(kChooseXformGrain);
 
   if (chaos_enabled_) {
     k = xform_distrib_[last_xform_ * kChooseXformGrain + r];

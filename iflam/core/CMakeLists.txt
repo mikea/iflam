@@ -15,7 +15,10 @@ add_library(tinyxml
   tinyxml/tinyxmlparser.cpp
   )
 
-FILE(GLOB core_boost_srcs "${BOOST_ROOT}/libs/exception/src/*.cpp")
+FILE(GLOB core_boost_srcs
+  "${BOOST_ROOT}/libs/exception/src/*.cpp"
+  "${BOOST_ROOT}/libs/system/src/*.cpp"
+  )
 
 add_library(core_boost ${core_boost_srcs})
 

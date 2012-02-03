@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include <boost/filesystem.hpp>
 
 #include "genome.h"
 #include "renderer.h"
@@ -32,20 +33,100 @@ static GLuint var_gamma;
 static GLuint var_highpow;
 static GLuint var_samples;
 
+
+class Model {
+  public:
+    Model() : genome_(NULL) { }
+    Genome* genome() const { return genome_; }
+    void set_genome(Genome* genome) { genome_ = genome; }
+  private:
+    Genome* genome_;
+};
+
+class Controller {
+  public:
+    Controller() : model_(new Model()) { }
+    Controller(Model* model) : model_(model) { }
+    virtual ~Controller() { }
+    virtual void Tick() = 0;
+    virtual void Next() = 0;
+
+    Model* model() const { return model_; }
+  protected:
+    Model* model_;
+};
+
+class SlideshowController : public Controller {
+  public:
+    SlideshowController(const std::string& dir) : dir_(dir) {
+      LoadRandomSheep();
+    }
+    ~SlideshowController() { }
+
+    virtual void Tick() {
+      double duration = 60;
+
+      if (WallTime() - last_change_ > duration) {
+        LoadRandomSheep();
+      }
+    }
+
+    virtual void Next() {
+      LoadRandomSheep();
+    }
+
+  private:
+    void LoadRandomSheep() {
+      last_change_ = WallTime();
+      std::vector<boost::filesystem::path> paths;
+      std::copy(
+          boost::filesystem::directory_iterator(dir_),
+          boost::filesystem::directory_iterator(),
+          std::back_inserter(paths));
+      while (true) {
+        boost::filesystem::path p = paths[rnd_.irnd(paths.size())];
+        if (boost::filesystem::is_regular_file(p) &&
+            boost::filesystem::extension(p) == ".flam3") {
+          Genome* g = new Genome();
+          g->Read(p.native());
+          model_->set_genome(g);
+          return;
+        }
+      }
+    }
+
+    Random rnd_;
+    const boost::filesystem::path dir_;
+    double last_change_;
+};
+
 class State {
   public:
-    State(size_t width, size_t height)
-     : width_(width),
-       height_(height) {
-     genome_ = new Genome();
-     genome_->Read("../sheeps/1938.flam3");
+    State(Controller* controller, Model* model, size_t width, size_t height)
+      : controller_(controller),
+        model_(model),
+        width_(width),
+        height_(height),
+        genome_(NULL) {
+      data_ = new float[width_ * height_ * 4];
+    }
 
-     render_buffer_ = new RenderBuffer(*genome_, width, height);
-     state_ = new RenderState(*genome_, render_buffer_);
-     data_ = new float[width_ * height_ * 4];
+    void reset(Genome* genome) {
+      genome_ = genome;
+      render_buffer_ = new RenderBuffer(*genome_, width_, height_);
+      state_ = new RenderState(*genome_, render_buffer_);
     }
 
     void Iter() {
+      {
+        controller_->Tick();
+        Genome* newGenome = model_->genome();
+        if (genome_ != newGenome) {
+          reset(newGenome);
+        }
+      }
+
+
       double start = WallTime();
 
       while (WallTime() - start < 1/25.0) {
@@ -97,14 +178,19 @@ class State {
 
   private:
 
-  size_t width_;
-  size_t height_;
-  Genome* genome_;
-  RenderBuffer* render_buffer_;
-  RenderState* state_;
-  float* data_;
+    Controller* controller_;
+    Model* model_;
+
+    size_t width_;
+    size_t height_;
+    Genome* genome_;
+    RenderBuffer* render_buffer_;
+    RenderState* state_;
+    float* data_;
+    double tack_;
 };
 
+static Controller* controller;
 static State* state;
 
 void renderScene(void) {
@@ -137,7 +223,7 @@ void changeSize(int w, int h) {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  state = new State(w, h);
+  state = new State(controller, controller->model(), w, h);
 }
 
 void printShaderInfoLog(GLint shader) {
@@ -248,7 +334,19 @@ void init() {
   CHECK_GL_ERROR();
 }
 
+void processNormalKeys(unsigned char key, int x, int y) {
+  if (key == 27) {
+    exit(0);
+  }
+
+  if (key == ' ') {
+    controller->Next();
+  }
+}
+
 int main(int argc, char *argv[]) {
+  controller = new SlideshowController("../sheeps/");
+
   // init GLUT and create Window
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -264,6 +362,7 @@ int main(int argc, char *argv[]) {
   glutDisplayFunc(renderScene);
   glutIdleFunc(renderScene);
   glutReshapeFunc(changeSize);
+  glutKeyboardFunc(processNormalKeys);
 
   // enter GLUT event processing cycle
   glutMainLoop();
