@@ -8,10 +8,10 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
-#include <boost/filesystem.hpp>
 
 #include "genome.h"
 #include "renderer.h"
+#include "controller.h"
 
 #define CHECK_GL_ERROR() \
   do { \
@@ -34,98 +34,31 @@ static GLuint var_highpow;
 static GLuint var_samples;
 
 
-class Model {
-  public:
-    Model() : genome_(NULL) { }
-    Genome* genome() const { return genome_; }
-    void set_genome(Genome* genome) { genome_ = genome; }
-  private:
-    Genome* genome_;
-};
-
-class Controller {
-  public:
-    Controller() : model_(new Model()) { }
-    Controller(Model* model) : model_(model) { }
-    virtual ~Controller() { }
-    virtual void Tick() = 0;
-    virtual void Next() = 0;
-
-    Model* model() const { return model_; }
-  protected:
-    Model* model_;
-};
-
-class SlideshowController : public Controller {
-  public:
-    SlideshowController(const std::string& dir) : dir_(dir) {
-      LoadRandomSheep();
-    }
-    ~SlideshowController() { }
-
-    virtual void Tick() {
-      double duration = 60;
-
-      if (WallTime() - last_change_ > duration) {
-        LoadRandomSheep();
-      }
-    }
-
-    virtual void Next() {
-      LoadRandomSheep();
-    }
-
-  private:
-    void LoadRandomSheep() {
-      last_change_ = WallTime();
-      std::vector<boost::filesystem::path> paths;
-      std::copy(
-          boost::filesystem::directory_iterator(dir_),
-          boost::filesystem::directory_iterator(),
-          std::back_inserter(paths));
-      while (true) {
-        boost::filesystem::path p = paths[rnd_.irnd(paths.size())];
-        if (boost::filesystem::is_regular_file(p) &&
-            boost::filesystem::extension(p) == ".flam3") {
-          Genome* g = new Genome();
-          g->Read(p.native());
-          model_->set_genome(g);
-          return;
-        }
-      }
-    }
-
-    Random rnd_;
-    const boost::filesystem::path dir_;
-    double last_change_;
-};
-
 class State {
   public:
     State(Controller* controller, Model* model, size_t width, size_t height)
       : controller_(controller),
         model_(model),
         width_(width),
-        height_(height),
-        genome_(NULL) {
+        height_(height) {
       data_ = new float[width_ * height_ * 4];
     }
 
-    void reset(Genome* genome) {
+    void reset(boost::shared_ptr<Genome> genome) {
       genome_ = genome;
       render_buffer_ = new RenderBuffer(*genome_, width_, height_);
       state_ = new RenderState(*genome_, render_buffer_);
+      glutSetWindowTitle(controller_->GetWindowTitle().c_str());
     }
 
     void Iter() {
       {
         controller_->Tick();
-        Genome* newGenome = model_->genome();
+        boost::shared_ptr<Genome> newGenome(model_->genome());
         if (genome_ != newGenome) {
           reset(newGenome);
         }
       }
-
 
       double start = WallTime();
 
@@ -139,7 +72,7 @@ class State {
       for (size_t y = 0; y < height_; ++y) {
         for (size_t x = 0; x < width_; ++x) {
           render_buffer_->at(x, y, d);
-          size_t offset = (x + y * width_) * 4;
+          size_t offset = (x + (height_ - y - 1) * width_) * 4;
           BOOST_ASSERT_RANGE(d[0] / scale, 0, 1);
           BOOST_ASSERT_RANGE(d[1] / scale, 0, 1);
           BOOST_ASSERT_RANGE(d[2] / scale, 0, 1);
@@ -183,7 +116,7 @@ class State {
 
     size_t width_;
     size_t height_;
-    Genome* genome_;
+    boost::shared_ptr<Genome> genome_;
     RenderBuffer* render_buffer_;
     RenderState* state_;
     float* data_;
@@ -345,14 +278,14 @@ void processNormalKeys(unsigned char key, int x, int y) {
 }
 
 int main(int argc, char *argv[]) {
-  controller = new SlideshowController("../sheeps/");
-
   // init GLUT and create Window
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100,100);
   glutInitWindowSize(1024,768);
   glutCreateWindow("FLAM");
+
+  controller = new SlideshowController("../sheeps/");
 
   changeSize(1024, 768);
 

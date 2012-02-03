@@ -29,6 +29,7 @@ add_library(core
   genome.cpp genome.h
   renderer.cpp renderer.h
   animator.cpp animator.h
+  controller.cpp controller.h
   )
 target_link_libraries(core tinyxml core_boost)
 
