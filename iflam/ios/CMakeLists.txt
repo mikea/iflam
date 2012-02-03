@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(iflam_osx)
+project(iflam_ios)
 
 SET(CMAKE_OSX_ARCHITECTURES "i386")
 SET(CMAKE_OSX_SYSROOT /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/${TARGETSDK})

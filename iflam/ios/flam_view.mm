@@ -70,7 +70,7 @@ static size_t BytesPerRow(size_t width) {
   }
 
   self.viewState.renderState->Iterate(100000);
-  BufferImage image(
+  RGBA8Image image(
       self.viewState.imageData,
       BytesPerRow(self.viewState.width),
       self.viewState.height);

@@ -1,5 +1,5 @@
 //
-// Prefix header for all source files of the 'flam' target in the 'flam' project
+// Prefix header for all source files of the 'iflam' target in the 'iflam' project
 //
 
 #import <Availability.h>
