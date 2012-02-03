@@ -116,14 +116,6 @@ void RenderBuffer::Update(size_t x, size_t y,
   }
 }
 
-void RenderBuffer::at(size_t x, size_t y, double* d) {
-  size_t offset = (x + width_ * y) * 4;
-  d[0] = accum_[offset];
-  d[1] = accum_[offset + 1];
-  d[2] = accum_[offset + 2];
-  d[3] = accum_[offset + 3];
-}
-
 RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
   : genome_(genome),
     buffer_(buffer),

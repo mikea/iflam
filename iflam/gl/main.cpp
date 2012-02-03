@@ -60,29 +60,30 @@ class State {
         }
       }
 
+      IterateRenderer();
+      CopyBufferToTexture();
+    }
+
+  private:
+
+    void IterateRenderer() {
       double start = WallTime();
 
       while (WallTime() - start < 1/25.0) {
         state_->Iterate(10000);
       }
+    }
 
+    void CopyBufferToTexture() {
       double scale = render_buffer_->max_density() + 1;
-      //scale = 1e2;
-      double d[] = {0, 0, 0, 0};
-      for (size_t y = 0; y < height_; ++y) {
-        for (size_t x = 0; x < width_; ++x) {
-          render_buffer_->at(x, y, d);
-          size_t offset = (x + (height_ - y - 1) * width_) * 4;
-          BOOST_ASSERT_RANGE(d[0] / scale, 0, 1);
-          BOOST_ASSERT_RANGE(d[1] / scale, 0, 1);
-          BOOST_ASSERT_RANGE(d[2] / scale, 0, 1);
-          BOOST_ASSERT_RANGE(d[3] / scale, 0, 1);
-          data_[offset] = d[0] / scale;
-          data_[offset + 1] = d[1] / scale;
-          data_[offset + 2] = d[2] / scale;
-          data_[offset + 3] = d[3] / scale;
+
+      {
+        const Float* accum = render_buffer_->accum();
+        for (size_t i = 0; i < height_ * width_ * 4 ; ++i) {
+          data_[i] = accum[i] / scale;
         }
       }
+
       glUniform1f(var_scale, scale);
       glUniform1f(var_k1, render_buffer_->k1());
       glUniform1f(var_k2, render_buffer_->k2());
@@ -108,8 +109,6 @@ class State {
           GL_FLOAT,
           data_);
     }
-
-  private:
 
     Controller* controller_;
     Model* model_;
@@ -152,7 +151,7 @@ void changeSize(int w, int h) {
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, 1, 0, 1);
+  gluOrtho2D(0, 1, 1, 0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 

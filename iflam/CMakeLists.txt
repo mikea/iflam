@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(iflam)
-set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing")
+set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing -msse2 -ffast-math -fassociative-math")
 
 include("CMakeFunctions.txt")
 ADD_BOOST()
