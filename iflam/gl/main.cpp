@@ -41,13 +41,13 @@ class State {
         model_(model),
         width_(width),
         height_(height) {
-      data_ = new float[width_ * height_ * 4];
+      data_.reset(new float[width_ * height_ * 4]);
     }
 
     void reset(boost::shared_ptr<Genome> genome) {
       genome_ = genome;
-      render_buffer_ = new RenderBuffer(*genome_, width_, height_);
-      state_ = new RenderState(*genome_, render_buffer_);
+      render_buffer_.reset(new RenderBuffer(*genome_, width_, height_));
+      state_.reset(new RenderState(*genome_, render_buffer_.get()));
       glutSetWindowTitle(controller_->GetWindowTitle().c_str());
     }
 
@@ -107,7 +107,7 @@ class State {
           0, // border
           GL_RGBA,  // data format
           GL_FLOAT,
-          data_);
+          data_.get());
     }
 
     Controller* controller_;
@@ -116,10 +116,9 @@ class State {
     size_t width_;
     size_t height_;
     boost::shared_ptr<Genome> genome_;
-    RenderBuffer* render_buffer_;
-    RenderState* state_;
-    float* data_;
-    double tack_;
+    boost::scoped_ptr<RenderBuffer> render_buffer_;
+    boost::scoped_ptr<RenderState> state_;
+    boost::scoped_array<float> data_;
 };
 
 static Controller* controller;
