@@ -13,6 +13,7 @@ class Signal {
       : time_(time), max_vol_(max_vol) { }
 
     double max_vol() const { return max_vol_; }
+    double time() const { return time_; }
   private:
     friend class Animator;
     double time_;

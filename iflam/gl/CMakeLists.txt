@@ -13,7 +13,6 @@ BIN2C(blur.vertex)
 BIN2C(blur.fragment)
 
 FILE(GLOB gl_boost_srcs
-  "${BOOST_ROOT}/libs/filesystem/v3/src/*.cpp"
   )
 
 add_definitions(-DGL_GLEXT_PROTOTYPES)

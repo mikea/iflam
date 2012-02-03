@@ -14,6 +14,7 @@
 #include <CoreAudio/CoreAudio.h>
 #include <CoreFoundation/CFURL.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <boost/filesystem.hpp>
 #include <boost/assert.hpp>
 
 double clamp(double min,double x,double max) { return (x < min ? min : (x > max ? max : x)); }
@@ -236,6 +237,24 @@ public:
   CABufferList*               spectral_data_buffer_;
 };
 
+Genome* LoadRandomSheep() {
+  Random rnd_;
+
+  std::vector<boost::filesystem::path> paths;
+  std::copy(
+      boost::filesystem::directory_iterator("/Users/aizatsky/Projects/iflam/sheeps"),
+      boost::filesystem::directory_iterator(),
+      std::back_inserter(paths));
+  while (true) {
+    boost::filesystem::path p = paths[rnd_.irnd(paths.size())];
+    if (boost::filesystem::is_regular_file(p) &&
+        boost::filesystem::extension(p) == ".flam3") {
+      Genome* g = new Genome();
+      g->Read(p.native());
+      return g;
+    }
+  }
+}
 
 @implementation AppDelegate
 
@@ -246,6 +265,9 @@ public:
   NSLog(@"applicationDidFinishLaunching");
 
   animator_ = new Animator();
+  _genome = LoadRandomSheep();
+  animator_->Randomize(*_genome);
+  last_change_ = WallTime();
 
   collector_ = new FFTCollector(self);
   collector_->ConfigureAU();
@@ -259,9 +281,6 @@ public:
                           selector:@selector(onTimer:)
                           userInfo:nil
                            repeats:YES];*/
-  _genome = new Genome();
-  _genome->Read("/Users/aizatsky/Projects/iflam/sheeps/1250.flam3");
-  animator_->Randomize(*_genome);
   [flamView setGenome: new Genome(*_genome)];
 }
 
@@ -274,6 +293,12 @@ public:
 
 - (void)newFFtDataAvailable:(Float32*) fftData size:(size_t) size min:(Float32)aMin max:(Float32)aMax {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  if (WallTime() - last_change_ > 30) {
+    _genome = LoadRandomSheep();
+    animator_->Randomize(*_genome);
+    last_change_ = WallTime();
+  }
 
   Genome* genome = new Genome(*_genome);
   Signal signal(WallTime(), aMax / 32);

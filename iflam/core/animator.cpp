@@ -6,7 +6,7 @@ PrimitiveAnimator::~PrimitiveAnimator() { }
 
 class CoordinateAnimator : public PrimitiveAnimator {
   public:
-    CoordinateAnimator() : xform_(0), coef_(0) { }
+    CoordinateAnimator(int src) : src_(src), xform_(0), coef_(0) { }
 
     void Randomize(const Genome& genome, Random* random) {
       xform_ = random->irnd(genome.xforms().size());
@@ -15,8 +15,13 @@ class CoordinateAnimator : public PrimitiveAnimator {
     }
 
     virtual void Animate(const Signal& signal, Genome* genome) const {
-      genome->mutable_xforms()->at(xform_).mutable_coefs()->at(coef_) *=
-        (1 + signal.max_vol() * amp_);
+      double s = signal.max_vol();
+      if (src_ == 1) {
+        s = sin(signal.time() / 5);
+      }
+
+      genome->mutable_xforms()->at(xform_).mutable_coefs()->at(coef_) +=
+        s * amp_;
     }
 
     virtual std::ostream& Print(std::ostream &os) const {
@@ -29,6 +34,7 @@ class CoordinateAnimator : public PrimitiveAnimator {
     }
 
   private:
+    int src_;
     size_t xform_;
     size_t coef_;
     double amp_;
@@ -36,7 +42,7 @@ class CoordinateAnimator : public PrimitiveAnimator {
 
 class PointRotator : public PrimitiveAnimator {
   public:
-    PointRotator() : xform_(0) { }
+    PointRotator(int src) : src_(src), xform_(0) { }
 
     void Randomize(const Genome& genome, Random* random) {
       xform_ = random->irnd(genome.xforms().size());
@@ -45,6 +51,11 @@ class PointRotator : public PrimitiveAnimator {
     }
 
     virtual void Animate(const Signal& signal, Genome* genome) const {
+      double s = signal.max_vol();
+      if (src_ == 1) {
+        s = sin(signal.time() / 5);
+      }
+
       array<Float, 6>* coefs = genome->mutable_xforms()->at(xform_).mutable_coefs();
 
       double a = coefs->at(0);
@@ -65,8 +76,8 @@ class PointRotator : public PrimitiveAnimator {
           x = c; y = f; break;
       }
 
-      x *= (1 + signal.max_vol() * amp_);
-      y *= (1 + signal.max_vol() * amp_);
+      x += s * amp_;
+      y += s * amp_;
 
       switch (idx_) {
         default: BOOST_ASSERT(false); break;
@@ -96,6 +107,7 @@ class PointRotator : public PrimitiveAnimator {
     }
 
   private:
+    int src_;
     size_t xform_;
     size_t idx_;
     double amp_;
@@ -117,13 +129,15 @@ void Animator::Randomize(const Genome& genome) {
   animators_.clear();
   Random random;
   PrimitiveAnimator* animator;
-  switch (random.irnd(2)) {
-    case 0: animator = new CoordinateAnimator(); break;
-    case 1: animator = new PointRotator(); break;
-  }
+  for (int i = 0; i < 2; i++) {
+    switch (random.irnd(2)) {
+      case 0: animator = new CoordinateAnimator(i); break;
+      case 1: animator = new PointRotator(i); break;
+    }
 
-  animator->Randomize(genome, &random);
-  std::cout << "Animator: " << *animator;
-  animators_.push_back(animator);
+    animator->Randomize(genome, &random);
+    animators_.push_back(animator);
+    std::cout << "Animator: " << i << " " << *animator << "\n";
+  }
 }
 

@@ -13,6 +13,7 @@ class Animator;
   Genome* _genome;
   FFTCollector* collector_;
   Animator* animator_;
+  double last_change_;
 }
 
 @property (assign) IBOutlet NSWindow *window;

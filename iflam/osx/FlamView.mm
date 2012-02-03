@@ -81,7 +81,7 @@ private:
 
   NSRect bounds = self.bounds;
 
-  self.viewState.renderState->Iterate(100000);
+  self.viewState.renderState->Iterate(200000);
   BufferImage image(
       self.viewState.imageData,
       BytesPerRow(self.viewState.width),
