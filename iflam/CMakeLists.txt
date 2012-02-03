@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(iflam)
-set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O3 -fno-strict-aliasing -msse2 -ffast-math")
+set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O0 -fno-strict-aliasing -msse2 -ffast-math")
+
 
 include("CMakeFunctions.txt")
 ADD_BOOST()
@@ -8,6 +9,8 @@ ADD_BOOST()
 if (APPLE)
   #  set(CMAKE_CXX_COMPILER clang++)
   #  set(CMAKE_C_COMPILER clang)
+else(APPLE)
+  set(CMAKE_CXX_FLAGS "-fassociative-math ${CMAKE_CXX_FLAGS}")
 endif()
 
 add_subdirectory(core)

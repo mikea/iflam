@@ -12,6 +12,7 @@
 #include "genome.h"
 #include "renderer.h"
 #include "controller.h"
+#include "component.h"
 
 #define CHECK_GL_ERROR() \
   do { \
@@ -36,63 +37,50 @@ static GLuint var_samples;
 
 class State {
   public:
-    State(Controller* controller, Model* model, size_t width, size_t height)
-      : controller_(controller),
-        model_(model),
-        width_(width),
-        height_(height) {
+    State(boost::shared_ptr<Component> component, size_t width, size_t height)
+      : view_(component) {
+      SetSize(width, height);
+    }
+
+    void SetSize(size_t width, size_t height) {
+      width_ = width;
+      height_ = height;
+      view_->SetSize(width, height);
       data_.reset(new float[width_ * height_ * 4]);
     }
 
-    void reset(boost::shared_ptr<Genome> genome) {
-      genome_ = genome;
-      render_buffer_.reset(new RenderBuffer(*genome_, width_, height_));
-      state_.reset(new RenderState(*genome_, render_buffer_.get()));
-      glutSetWindowTitle(controller_->GetWindowTitle().c_str());
-    }
-
     void Iter() {
-      {
-        controller_->Tick();
-        boost::shared_ptr<Genome> newGenome(model_->genome());
-        if (genome_ != newGenome) {
-          reset(newGenome);
-        }
-      }
+      view_->Tick();
+      glutSetWindowTitle(view_->controller()->GetWindowTitle().c_str());
 
-      IterateRenderer();
       CopyBufferToTexture();
     }
 
+    boost::shared_ptr<Component> component() const { return view_; }
+
   private:
 
-    void IterateRenderer() {
-      double start = WallTime();
-
-      while (WallTime() - start < 1/25.0) {
-        state_->Iterate(10000);
-      }
-    }
-
     void CopyBufferToTexture() {
-      double scale = render_buffer_->max_density() + 1;
+      boost::shared_ptr<RenderBuffer> render_buffer(
+                view_->render_buffer());
+      double scale = render_buffer->max_density() + 1;
 
       {
-        const Float* accum = render_buffer_->accum();
+        const Float* accum = render_buffer->accum();
         for (size_t i = 0; i < height_ * width_ * 4 ; ++i) {
           data_[i] = accum[i] / scale;
         }
       }
 
       glUniform1f(var_scale, scale);
-      glUniform1f(var_k1, render_buffer_->k1());
-      glUniform1f(var_k2, render_buffer_->k2());
-      glUniform1f(var_vibrancy, genome_->vibrancy());
-      glUniform1f(var_gamma, 1.0 / genome_->gamma());
-      glUniform1f(var_highpow, genome_->highlight_power());
-      glUniform1f(var_samples, render_buffer_->samples());
+      glUniform1f(var_k1, render_buffer->k1());
+      glUniform1f(var_k2, render_buffer->k2());
+      glUniform1f(var_vibrancy, view_->genome()->vibrancy());
+      glUniform1f(var_gamma, 1.0 / view_->genome()->gamma());
+      glUniform1f(var_highpow, view_->genome()->highlight_power());
+      glUniform1f(var_samples, render_buffer->samples());
       //RGBAImage<TT> image(data_, width_ * 4, height_, 1.0, 1.0/255.0);
-      //render_buffer_->Render(&image);
+      //render_buffer->Render(&image);
 
       glBindTexture(GL_TEXTURE_2D, texture_id);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -110,18 +98,13 @@ class State {
           data_.get());
     }
 
-    Controller* controller_;
-    Model* model_;
+    boost::shared_ptr<Component> view_;
 
     size_t width_;
     size_t height_;
-    boost::shared_ptr<Genome> genome_;
-    boost::scoped_ptr<RenderBuffer> render_buffer_;
-    boost::scoped_ptr<RenderState> state_;
     boost::scoped_array<float> data_;
 };
 
-static Controller* controller;
 static State* state;
 
 void renderScene(void) {
@@ -153,8 +136,7 @@ void changeSize(int w, int h) {
   gluOrtho2D(0, 1, 1, 0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
-  state = new State(controller, controller->model(), w, h);
+  state->SetSize(w, h);
 }
 
 void printShaderInfoLog(GLint shader) {
@@ -265,25 +247,30 @@ void init() {
   CHECK_GL_ERROR();
 }
 
-void processNormalKeys(unsigned char key, int x, int y) {
+void processNormalKeys(unsigned char key, int /*x*/, int /*y*/) {
   if (key == 27) {
     exit(0);
   }
 
   if (key == ' ') {
-    controller->Next();
+    state->component()->controller()->Next();
   }
 }
 
 int main(int argc, char *argv[]) {
+  {
+    boost::shared_ptr<Controller> controller(
+        new SlideshowController("../sheeps/"));
+    boost::shared_ptr<Component> c(new Component(controller));
+    state = new State(c, 0, 0);
+  }
+
   // init GLUT and create Window
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowPosition(100,100);
   glutInitWindowSize(1024,768);
   glutCreateWindow("FLAM");
-
-  controller = new SlideshowController("../sheeps/");
 
   changeSize(1024, 768);
 

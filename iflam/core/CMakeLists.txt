@@ -31,6 +31,7 @@ add_library(core
   renderer.cpp renderer.h
   animator.cpp animator.h
   controller.cpp controller.h
+  component.cpp component.h
   )
 target_link_libraries(core tinyxml core_boost)
 

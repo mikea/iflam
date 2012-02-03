@@ -20,15 +20,16 @@ class Model {
 class Controller {
   public:
     Controller() : model_(new Model()) { }
-    Controller(Model* model) : model_(model) { }
+    Controller(boost::shared_ptr<Model> model) : model_(model) { }
     virtual ~Controller() { }
     virtual void Tick() = 0;
     virtual void Next() = 0;
     virtual std::string GetWindowTitle() = 0;
 
-    Model* model() const { return model_; }
+    boost::shared_ptr<Model> model() const { return model_; }
+
   protected:
-    Model* model_;
+    boost::shared_ptr<Model> model_;
 };
 
 class SlideshowController : public Controller {
