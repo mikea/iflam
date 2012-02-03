@@ -59,11 +59,11 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Rendering " << in_file << " to " << out_file << "\n";
 
-  Genome genome;
-  genome.Read(in_file);
+  boost::shared_ptr<Genome> genome;
+  genome->Read(in_file);
 
-  RenderBuffer render_buffer(genome, width, height);
-  RenderState state(genome, &render_buffer);
+  RenderBuffer render_buffer(width, height);
+  RenderState state(*genome, &render_buffer);
   {
     Stopwatch sw("Iterations took:", iterations);
     state.Iterate(iterations);
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
   {
     Stopwatch sw("Rendering took:", width * height, "px");
     Rgb8Image rgb8_image(&v);
-    render_buffer.Render(&rgb8_image);
+    render_buffer.Render(*genome, &rgb8_image);
   }
 
   boost::gil::png_write_view(out_file, v);

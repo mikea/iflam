@@ -30,13 +30,14 @@ void Component::Tick() {
 void Component::SetSize(size_t width, size_t height) {
   width_ = width;
   height_ = height;
+  buffer_.reset(new RenderBuffer(width_, height_));
   Reset(genome_);
 }
 
 void Component::Reset(boost::shared_ptr<Genome> genome) {
   genome_ = genome;
   if (genome_.get()) {
-    buffer_.reset(new RenderBuffer(*genome_, width_, height_));
+    buffer_->Reset();
     state_.reset(new RenderState(*genome_, buffer_.get()));
   }
 }

@@ -20,8 +20,9 @@ class CoordinateAnimator : public PrimitiveAnimator {
         s = sin(signal.time() / 5);
       }
 
-      genome->mutable_xforms()->at(xform_).mutable_coefs()->at(coef_) +=
-        s * amp_;
+      boost::array<Float, 6>* coefs = 
+        genome->mutable_xforms()->at(xform_).mutable_coefs();
+      coefs->at(coef_) += s * amp_;
     }
 
     virtual std::ostream& Print(std::ostream &os) const {

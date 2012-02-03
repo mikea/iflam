@@ -19,7 +19,7 @@ const Float kPrefilterWhite = 255;
 class RenderBuffer {
   public:
     // Shouldn't depend on genome.
-    RenderBuffer(const Genome& genome, size_t width, size_t height);
+    RenderBuffer(size_t width, size_t height);
     ~RenderBuffer();
 
     size_t height() const { return height_; }
@@ -28,7 +28,7 @@ class RenderBuffer {
     void Update(size_t x, size_t y, const Color& c, Float opacity);
 
     template<typename Image>
-    void Render(Image* image);
+    void Render(const Genome& genome, Image* image);
     const Float* accum() const { return accum_.get(); }
     size_t samples() const { return samples_; }
 
@@ -41,25 +41,33 @@ class RenderBuffer {
       d[3] = accum_[offset + 3];
     }
 
-    Float k1() const {
-      return (genome_.contrast() *
-          genome_.brightness() * kPrefilterWhite * 268.0) / 256;
+    Float k1(const Genome& genome) const {
+      return (genome.contrast() * genome.brightness() * kPrefilterWhite * 268.0)
+        / 256;
     }
-    Float k2() const {
-      Float samples_per_unit = Float(samples_) / (ppux_ * ppuy_);
-      return 1.0 / (genome_.contrast() * samples_per_unit);
+
+    float k2(const Genome& genome) const {
+      double s = scale(genome);
+      Float samples_per_unit = Float(samples_)
+        / (genome.pixels_per_unit() * genome.pixels_per_unit() * s * s);
+      return 1.0 / (genome.contrast() * samples_per_unit);
+    }
+
+    static double scale(const Genome& genome) {
+      return pow(2, genome.zoom());
     }
 
     Float max_density() const { return max_density_; }
 
+    void Reset() {
+      samples_ = 0;
+      max_density_ = 0;
+      memset(accum_.get(), 0, sizeof(Float) * width_ * height_ * 4);
+    }
+
   private:
-    const Genome& genome_;
     const size_t width_;
     const size_t height_;
-
-    const Float scale_;  // duplicated with render state
-    const Float ppux_;  // duplicated with render state
-    const Float ppuy_;  // duplicated with render state
 
     size_t samples_;
     Float max_density_;
@@ -111,12 +119,12 @@ public:
 };
 
 template<typename Image>
-void RenderBuffer::Render(Image* image) {
-  Float vibrancy = genome_.vibrancy();
-  Float gamma = 1.0 / genome_.gamma();
-  Float highpow = genome_.highlight_power();
-  Float k1 = this->k1();
-  Float k2 = this->k2();
+void RenderBuffer::Render(const Genome& genome, Image* image) {
+  Float vibrancy = genome.vibrancy();
+  Float gamma = 1.0 / genome.gamma();
+  Float highpow = genome.highlight_power();
+  Float k1 = this->k1(genome);
+  Float k2 = this->k2(genome);
 
   Float newrgb[4] = {0, 0, 0, 0};
 
@@ -130,9 +138,9 @@ void RenderBuffer::Render(Image* image) {
 
       if (freq == 0) {
         image->Set(x, y,
-            genome_.background()[0],
-            genome_.background()[1],
-            genome_.background()[2],
+            genome.background()[0],
+            genome.background()[1],
+            genome.background()[2],
             255);
         continue;
       }
@@ -155,7 +163,7 @@ void RenderBuffer::Render(Image* image) {
       for (int rgbi = 0; rgbi < 3; rgbi++) {
         Float a = newrgb[rgbi];
         a += (1.0 - vibrancy) * 256.0 * _pow(t[rgbi] / kPrefilterWhite, gamma);
-        a += ((1.0 - alpha) * genome_.background()[rgbi]);
+        a += ((1.0 - alpha) * genome.background()[rgbi]);
         if (a > 255) a = 255;
         if (a < 0) a = 0;
         t[rgbi] = a;

@@ -5,6 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/smart_ptr.hpp>
 #include "common.h"
+#include "animator.h"
 
 class Genome;
 
@@ -22,6 +23,7 @@ class Controller {
     Controller() : model_(new Model()) { }
     Controller(boost::shared_ptr<Model> model) : model_(model) { }
     virtual ~Controller() { }
+
     virtual void Tick() = 0;
     virtual void Next() = 0;
     virtual std::string GetWindowTitle() = 0;
@@ -53,6 +55,21 @@ class SlideshowController : public Controller {
     const boost::filesystem::path dir_;
     double last_change_;
     std::string current_path_;
+};
+
+
+class AnimatingController : public Controller {
+  public:
+    AnimatingController(boost::shared_ptr<Controller> delegate);
+
+    virtual void Tick();
+    virtual void Next();
+    virtual std::string GetWindowTitle();
+
+  private:
+    boost::shared_ptr<Controller> delegate_;
+    boost::shared_ptr<Genome> genome_;
+    boost::scoped_ptr<Animator> animator_;
 };
 
 

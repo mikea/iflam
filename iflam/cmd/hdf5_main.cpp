@@ -57,12 +57,12 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  Genome genome;
+  boost::shared_ptr<Genome> genome(new Genome());
   std::string filename = vm["file"].as<string>();
-  genome.Read(filename);
+  genome->Read(filename);
 
-  RenderBuffer render_buffer(genome, width, height);
-  RenderState state(genome, &render_buffer);
+  RenderBuffer render_buffer(width, height);
+  RenderState state(*genome, &render_buffer);
   {
     Stopwatch sw("Iterations took:", iterations);
     state.Iterate(iterations);

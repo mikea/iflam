@@ -41,6 +41,7 @@ class Random {
     Float rnd();
     Float crnd();
     bool brnd();
+    void seed(int s) { rng_.seed(s); }
   private:
     boost::random::mt19937 rng_;
 };

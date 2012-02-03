@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "genome.h"
+#include "animator.h"
 
 void SlideshowController::Tick() {
   double duration = 60;
@@ -31,4 +32,38 @@ void SlideshowController::LoadRandomSheep() {
     }
   }
 }
+
+AnimatingController::AnimatingController(
+    boost::shared_ptr<Controller> delegate)
+  : delegate_(delegate),
+    animator_(new Animator()) {
+}
+
+
+void AnimatingController::Tick() {
+  delegate_->Tick();
+  {
+    boost::shared_ptr<Genome> genome = delegate_->model()->genome();
+
+    if (genome_.get() != genome.get()) {
+      genome_ = genome;
+      model_->set_genome(genome_);
+      animator_->Randomize(*genome_);
+    }
+  }
+
+  boost::shared_ptr<Genome> genome(new Genome(*genome_));
+  Signal signal(WallTime(), 0);
+  animator_->Animate(signal, genome.get());
+  model_->set_genome(genome);
+}
+
+void AnimatingController::Next() {
+  delegate_->Next();
+}
+
+std::string AnimatingController::GetWindowTitle() {
+  return delegate_->GetWindowTitle();
+}
+
 

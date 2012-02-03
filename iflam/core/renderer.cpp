@@ -81,13 +81,9 @@ void CalcNewRgb(Float* rgb, Float* newRgb, Float ls, Float highpow) {
   }
 }
 
-RenderBuffer::RenderBuffer(const Genome& genome, size_t width, size_t height)
-  : genome_(genome),
-    width_(width),
+RenderBuffer::RenderBuffer(size_t width, size_t height)
+  : width_(width),
     height_(height),
-    scale_(pow(2, genome_.zoom())),
-    ppux_(genome_.pixels_per_unit() * scale_),
-    ppuy_(genome_.pixels_per_unit() * scale_),
     samples_(0),
     max_density_(0),
     accum_(new Float[width * height * 4]) {
@@ -134,6 +130,7 @@ RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
     view_width_(genome_width_ / ppux_),
     xform_distrib_(new int[genome_.xforms().size() * kChooseXformGrain]),
     last_xform_(0) {
+  rnd.seed(0);
   size_t xforms_size = genome_.xforms().size();
 //  for (size_t i = 0; i < xforms_size * kChooseXformGrain; ++i) {
 //    xform_distrib_[i] = 0;
@@ -212,7 +209,7 @@ void RenderState::Iterate(int iterations) {
     return;
   }
 
-  int batch_size = 500;
+  int batch_size = iterations;
   for (int i = 0; i < iterations / batch_size; ++i) {
     IterateImpl(batch_size);
   }

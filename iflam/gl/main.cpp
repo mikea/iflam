@@ -65,6 +65,7 @@ class State {
                 view_->render_buffer());
       double scale = render_buffer->max_density() + 1;
 
+      const Genome& genome = *view_->genome();
       {
         const Float* accum = render_buffer->accum();
         for (size_t i = 0; i < height_ * width_ * 4 ; ++i) {
@@ -73,11 +74,11 @@ class State {
       }
 
       glUniform1f(var_scale, scale);
-      glUniform1f(var_k1, render_buffer->k1());
-      glUniform1f(var_k2, render_buffer->k2());
-      glUniform1f(var_vibrancy, view_->genome()->vibrancy());
-      glUniform1f(var_gamma, 1.0 / view_->genome()->gamma());
-      glUniform1f(var_highpow, view_->genome()->highlight_power());
+      glUniform1f(var_k1, render_buffer->k1(genome));
+      glUniform1f(var_k2, render_buffer->k2(genome));
+      glUniform1f(var_vibrancy, genome.vibrancy());
+      glUniform1f(var_gamma, 1.0 / genome.gamma());
+      glUniform1f(var_highpow, genome.highlight_power());
       glUniform1f(var_samples, render_buffer->samples());
       //RGBAImage<TT> image(data_, width_ * 4, height_, 1.0, 1.0/255.0);
       //render_buffer->Render(&image);
@@ -259,9 +260,11 @@ void processNormalKeys(unsigned char key, int /*x*/, int /*y*/) {
 
 int main(int argc, char *argv[]) {
   {
-    boost::shared_ptr<Controller> controller(
+    boost::shared_ptr<Controller> slide_show(
         new SlideshowController("../sheeps/"));
-    boost::shared_ptr<Component> c(new Component(controller));
+    boost::shared_ptr<Controller> animation(
+        new AnimatingController(slide_show));
+    boost::shared_ptr<Component> c(new Component(animation));
     state = new State(c, 0, 0);
   }
 
