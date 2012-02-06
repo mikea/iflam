@@ -1,0 +1,276 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		322889FD14DF6EA400E67796 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322889FC14DF6EA400E67796 /* UIKit.framework */; };
+		322889FF14DF6EA400E67796 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322889FE14DF6EA400E67796 /* Foundation.framework */; };
+		32288A0114DF6EA400E67796 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32288A0014DF6EA400E67796 /* CoreGraphics.framework */; };
+		32288A0714DF6EA400E67796 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 32288A0514DF6EA400E67796 /* InfoPlist.strings */; };
+		32288A0A14DF6EA500E67796 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 32288A0914DF6EA500E67796 /* main.m */; };
+		32288A1D14DF718F00E67796 /* core in Resources */ = {isa = PBXBuildFile; fileRef = 32288A1C14DF718F00E67796 /* core */; };
+		32288A1F14DF724000E67796 /* sheeps in Resources */ = {isa = PBXBuildFile; fileRef = 32288A1E14DF724000E67796 /* sheeps */; };
+		32288A2214DF727500E67796 /* FlamiosAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */; };
+		32288A2314DF727500E67796 /* FlamiosViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2114DF727500E67796 /* FlamiosViewController.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		322889F814DF6EA400E67796 /* flamios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flamios.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		322889FC14DF6EA400E67796 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		322889FE14DF6EA400E67796 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		32288A0014DF6EA400E67796 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		32288A0414DF6EA400E67796 /* ios-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ios-Info.plist"; sourceTree = "<group>"; };
+		32288A0614DF6EA400E67796 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		32288A0814DF6EA500E67796 /* ios-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ios-Prefix.pch"; sourceTree = "<group>"; };
+		32288A0914DF6EA500E67796 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		32288A0B14DF6EA500E67796 /* FlamiosAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlamiosAppDelegate.h; sourceTree = "<group>"; };
+		32288A1114DF6EA600E67796 /* FlamiosViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlamiosViewController.h; sourceTree = "<group>"; };
+		32288A1C14DF718F00E67796 /* core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = core; path = ../core; sourceTree = "<group>"; };
+		32288A1E14DF724000E67796 /* sheeps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sheeps; path = ../../sheeps; sourceTree = "<group>"; };
+		32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamiosAppDelegate.mm; sourceTree = "<group>"; };
+		32288A2114DF727500E67796 /* FlamiosViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamiosViewController.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		322889F514DF6EA300E67796 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				322889FD14DF6EA400E67796 /* UIKit.framework in Frameworks */,
+				322889FF14DF6EA400E67796 /* Foundation.framework in Frameworks */,
+				32288A0114DF6EA400E67796 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		322889ED14DF6EA200E67796 = {
+			isa = PBXGroup;
+			children = (
+				32288A1E14DF724000E67796 /* sheeps */,
+				32288A1C14DF718F00E67796 /* core */,
+				32288A0214DF6EA400E67796 /* ios */,
+				322889FB14DF6EA400E67796 /* Frameworks */,
+				322889F914DF6EA400E67796 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		322889F914DF6EA400E67796 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				322889F814DF6EA400E67796 /* flamios.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		322889FB14DF6EA400E67796 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				322889FC14DF6EA400E67796 /* UIKit.framework */,
+				322889FE14DF6EA400E67796 /* Foundation.framework */,
+				32288A0014DF6EA400E67796 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32288A0214DF6EA400E67796 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				32288A0B14DF6EA500E67796 /* FlamiosAppDelegate.h */,
+				32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */,
+				32288A1114DF6EA600E67796 /* FlamiosViewController.h */,
+				32288A2114DF727500E67796 /* FlamiosViewController.mm */,
+				32288A0314DF6EA400E67796 /* Supporting Files */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		32288A0314DF6EA400E67796 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				32288A0414DF6EA400E67796 /* ios-Info.plist */,
+				32288A0514DF6EA400E67796 /* InfoPlist.strings */,
+				32288A0814DF6EA500E67796 /* ios-Prefix.pch */,
+				32288A0914DF6EA500E67796 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		322889F714DF6EA300E67796 /* ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 32288A1914DF6EA600E67796 /* Build configuration list for PBXNativeTarget "ios" */;
+			buildPhases = (
+				322889F414DF6EA300E67796 /* Sources */,
+				322889F514DF6EA300E67796 /* Frameworks */,
+				322889F614DF6EA300E67796 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ios;
+			productName = ios;
+			productReference = 322889F814DF6EA400E67796 /* flamios.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		322889EF14DF6EA200E67796 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 322889F214DF6EA200E67796 /* Build configuration list for PBXProject "ios" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 322889ED14DF6EA200E67796;
+			productRefGroup = 322889F914DF6EA400E67796 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				322889F714DF6EA300E67796 /* ios */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		322889F614DF6EA300E67796 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32288A0714DF6EA400E67796 /* InfoPlist.strings in Resources */,
+				32288A1D14DF718F00E67796 /* core in Resources */,
+				32288A1F14DF724000E67796 /* sheeps in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		322889F414DF6EA300E67796 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32288A0A14DF6EA500E67796 /* main.m in Sources */,
+				32288A2214DF727500E67796 /* FlamiosAppDelegate.mm in Sources */,
+				32288A2314DF727500E67796 /* FlamiosViewController.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		32288A0514DF6EA400E67796 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				32288A0614DF6EA400E67796 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		32288A1714DF6EA600E67796 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				PRODUCT_NAME = flamios;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		32288A1814DF6EA600E67796 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PRODUCT_NAME = flamios;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		32288A1A14DF6EA600E67796 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
+				GCC_VERSION = 4.2;
+				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
+				INFOPLIST_FILE = "ios/ios-Info.plist";
+				PRODUCT_NAME = flamios;
+				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		32288A1B14DF6EA600E67796 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
+				GCC_VERSION = 4.2;
+				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
+				INFOPLIST_FILE = "ios/ios-Info.plist";
+				PRODUCT_NAME = flamios;
+				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		322889F214DF6EA200E67796 /* Build configuration list for PBXProject "ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32288A1714DF6EA600E67796 /* Debug */,
+				32288A1814DF6EA600E67796 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		32288A1914DF6EA600E67796 /* Build configuration list for PBXNativeTarget "ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32288A1A14DF6EA600E67796 /* Debug */,
+				32288A1B14DF6EA600E67796 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 322889EF14DF6EA200E67796 /* Project object */;
+}
