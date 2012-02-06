@@ -12,10 +12,31 @@
 		32288A0114DF6EA400E67796 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32288A0014DF6EA400E67796 /* CoreGraphics.framework */; };
 		32288A0714DF6EA400E67796 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 32288A0514DF6EA400E67796 /* InfoPlist.strings */; };
 		32288A0A14DF6EA500E67796 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 32288A0914DF6EA500E67796 /* main.m */; };
-		32288A1D14DF718F00E67796 /* core in Resources */ = {isa = PBXBuildFile; fileRef = 32288A1C14DF718F00E67796 /* core */; };
-		32288A1F14DF724000E67796 /* sheeps in Resources */ = {isa = PBXBuildFile; fileRef = 32288A1E14DF724000E67796 /* sheeps */; };
 		32288A2214DF727500E67796 /* FlamiosAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */; };
 		32288A2314DF727500E67796 /* FlamiosViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2114DF727500E67796 /* FlamiosViewController.mm */; };
+		3284DCBE14DF778900D32338 /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBD14DF778900D32338 /* error_code.cpp */; };
+		3284DCC714DF779D00D32338 /* codecvt_error_category.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */; };
+		3284DCC814DF779D00D32338 /* operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC014DF779D00D32338 /* operations.cpp */; };
+		3284DCC914DF779D00D32338 /* path_traits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC114DF779D00D32338 /* path_traits.cpp */; };
+		3284DCCA14DF779D00D32338 /* path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC214DF779D00D32338 /* path.cpp */; };
+		3284DCCB14DF779D00D32338 /* portability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC314DF779D00D32338 /* portability.cpp */; };
+		3284DCCC14DF779D00D32338 /* unique_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC414DF779D00D32338 /* unique_path.cpp */; };
+		3284DCCD14DF779D00D32338 /* utf8_codecvt_facet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC514DF779D00D32338 /* utf8_codecvt_facet.cpp */; };
+		3284DCCE14DF779D00D32338 /* windows_file_codecvt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC614DF779D00D32338 /* windows_file_codecvt.cpp */; };
+		3284DCD014DF77A900D32338 /* clone_current_exception_non_intrusive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCCF14DF77A900D32338 /* clone_current_exception_non_intrusive.cpp */; };
+		3290F17814DF7A12005C77F5 /* FlamView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3290F17714DF7A12005C77F5 /* FlamView.mm */; };
+		3290F17B14DF7AB6005C77F5 /* sheeps in Resources */ = {isa = PBXBuildFile; fileRef = 3290F17A14DF7AB6005C77F5 /* sheeps */; };
+		32FF2B7C14DF78840048DF04 /* animator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6714DF78840048DF04 /* animator.cpp */; };
+		32FF2B7E14DF78840048DF04 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6A14DF78840048DF04 /* color.cpp */; };
+		32FF2B7F14DF78840048DF04 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6C14DF78840048DF04 /* common.cpp */; };
+		32FF2B8014DF78840048DF04 /* component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6E14DF78840048DF04 /* component.cpp */; };
+		32FF2B8114DF78840048DF04 /* controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7014DF78840048DF04 /* controller.cpp */; };
+		32FF2B8214DF78840048DF04 /* genome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7214DF78840048DF04 /* genome.cpp */; };
+		32FF2B8314DF78840048DF04 /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7414DF78840048DF04 /* renderer.cpp */; };
+		32FF2B8414DF78840048DF04 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7614DF78840048DF04 /* tinystr.cpp */; };
+		32FF2B8514DF78840048DF04 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7814DF78840048DF04 /* tinyxml.cpp */; };
+		32FF2B8614DF78840048DF04 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7A14DF78840048DF04 /* tinyxmlerror.cpp */; };
+		32FF2B8714DF78840048DF04 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7B14DF78840048DF04 /* tinyxmlparser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,10 +50,41 @@
 		32288A0914DF6EA500E67796 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32288A0B14DF6EA500E67796 /* FlamiosAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlamiosAppDelegate.h; sourceTree = "<group>"; };
 		32288A1114DF6EA600E67796 /* FlamiosViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlamiosViewController.h; sourceTree = "<group>"; };
-		32288A1C14DF718F00E67796 /* core */ = {isa = PBXFileReference; lastKnownFileType = folder; name = core; path = ../core; sourceTree = "<group>"; };
-		32288A1E14DF724000E67796 /* sheeps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sheeps; path = ../../sheeps; sourceTree = "<group>"; };
 		32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamiosAppDelegate.mm; sourceTree = "<group>"; };
 		32288A2114DF727500E67796 /* FlamiosViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamiosViewController.mm; sourceTree = "<group>"; };
+		3284DCBD14DF778900D32338 /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = error_code.cpp; path = ../../../../../Packages/boost_1_48_0/libs/system/src/error_code.cpp; sourceTree = "<group>"; };
+		3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = codecvt_error_category.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/codecvt_error_category.cpp; sourceTree = "<group>"; };
+		3284DCC014DF779D00D32338 /* operations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = operations.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/operations.cpp; sourceTree = "<group>"; };
+		3284DCC114DF779D00D32338 /* path_traits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = path_traits.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/path_traits.cpp; sourceTree = "<group>"; };
+		3284DCC214DF779D00D32338 /* path.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = path.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/path.cpp; sourceTree = "<group>"; };
+		3284DCC314DF779D00D32338 /* portability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = portability.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/portability.cpp; sourceTree = "<group>"; };
+		3284DCC414DF779D00D32338 /* unique_path.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unique_path.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/unique_path.cpp; sourceTree = "<group>"; };
+		3284DCC514DF779D00D32338 /* utf8_codecvt_facet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utf8_codecvt_facet.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/utf8_codecvt_facet.cpp; sourceTree = "<group>"; };
+		3284DCC614DF779D00D32338 /* windows_file_codecvt.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = windows_file_codecvt.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/windows_file_codecvt.cpp; sourceTree = "<group>"; };
+		3284DCCF14DF77A900D32338 /* clone_current_exception_non_intrusive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clone_current_exception_non_intrusive.cpp; path = ../../../../../Packages/boost_1_48_0/libs/exception/src/clone_current_exception_non_intrusive.cpp; sourceTree = "<group>"; };
+		3290F17614DF7A12005C77F5 /* FlamView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlamView.h; sourceTree = "<group>"; };
+		3290F17714DF7A12005C77F5 /* FlamView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamView.mm; sourceTree = "<group>"; };
+		3290F17A14DF7AB6005C77F5 /* sheeps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sheeps; path = ../../sheeps; sourceTree = "<group>"; };
+		32FF2B6714DF78840048DF04 /* animator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animator.cpp; path = ../core/animator.cpp; sourceTree = "<group>"; };
+		32FF2B6814DF78840048DF04 /* animator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animator.h; path = ../core/animator.h; sourceTree = "<group>"; };
+		32FF2B6A14DF78840048DF04 /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color.cpp; path = ../core/color.cpp; sourceTree = "<group>"; };
+		32FF2B6B14DF78840048DF04 /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = color.h; path = ../core/color.h; sourceTree = "<group>"; };
+		32FF2B6C14DF78840048DF04 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = common.cpp; path = ../core/common.cpp; sourceTree = "<group>"; };
+		32FF2B6D14DF78840048DF04 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../core/common.h; sourceTree = "<group>"; };
+		32FF2B6E14DF78840048DF04 /* component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = component.cpp; path = ../core/component.cpp; sourceTree = "<group>"; };
+		32FF2B6F14DF78840048DF04 /* component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = component.h; path = ../core/component.h; sourceTree = "<group>"; };
+		32FF2B7014DF78840048DF04 /* controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = controller.cpp; path = ../core/controller.cpp; sourceTree = "<group>"; };
+		32FF2B7114DF78840048DF04 /* controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = controller.h; path = ../core/controller.h; sourceTree = "<group>"; };
+		32FF2B7214DF78840048DF04 /* genome.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = genome.cpp; path = ../core/genome.cpp; sourceTree = "<group>"; };
+		32FF2B7314DF78840048DF04 /* genome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = genome.h; path = ../core/genome.h; sourceTree = "<group>"; };
+		32FF2B7414DF78840048DF04 /* renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = renderer.cpp; path = ../core/renderer.cpp; sourceTree = "<group>"; };
+		32FF2B7514DF78840048DF04 /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = renderer.h; path = ../core/renderer.h; sourceTree = "<group>"; };
+		32FF2B7614DF78840048DF04 /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../core/tinyxml/tinystr.cpp; sourceTree = "<group>"; };
+		32FF2B7714DF78840048DF04 /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../core/tinyxml/tinystr.h; sourceTree = "<group>"; };
+		32FF2B7814DF78840048DF04 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../core/tinyxml/tinyxml.cpp; sourceTree = "<group>"; };
+		32FF2B7914DF78840048DF04 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../core/tinyxml/tinyxml.h; sourceTree = "<group>"; };
+		32FF2B7A14DF78840048DF04 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../core/tinyxml/tinyxmlerror.cpp; sourceTree = "<group>"; };
+		32FF2B7B14DF78840048DF04 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../core/tinyxml/tinyxmlparser.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,11 +104,12 @@
 		322889ED14DF6EA200E67796 = {
 			isa = PBXGroup;
 			children = (
-				32288A1E14DF724000E67796 /* sheeps */,
-				32288A1C14DF718F00E67796 /* core */,
+				3284DCBC14DF777800D32338 /* boost */,
+				3284DCBB14DF776100D32338 /* core */,
 				32288A0214DF6EA400E67796 /* ios */,
 				322889FB14DF6EA400E67796 /* Frameworks */,
 				322889F914DF6EA400E67796 /* Products */,
+				3290F17914DF7A93005C77F5 /* Resources */,
 			);
 			sourceTree = "<group>";
 		};
@@ -86,6 +139,8 @@
 				32288A1114DF6EA600E67796 /* FlamiosViewController.h */,
 				32288A2114DF727500E67796 /* FlamiosViewController.mm */,
 				32288A0314DF6EA400E67796 /* Supporting Files */,
+				3290F17614DF7A12005C77F5 /* FlamView.h */,
+				3290F17714DF7A12005C77F5 /* FlamView.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -99,6 +154,58 @@
 				32288A0914DF6EA500E67796 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3284DCBB14DF776100D32338 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				32FF2B6714DF78840048DF04 /* animator.cpp */,
+				32FF2B6814DF78840048DF04 /* animator.h */,
+				32FF2B6A14DF78840048DF04 /* color.cpp */,
+				32FF2B6B14DF78840048DF04 /* color.h */,
+				32FF2B6C14DF78840048DF04 /* common.cpp */,
+				32FF2B6D14DF78840048DF04 /* common.h */,
+				32FF2B6E14DF78840048DF04 /* component.cpp */,
+				32FF2B6F14DF78840048DF04 /* component.h */,
+				32FF2B7014DF78840048DF04 /* controller.cpp */,
+				32FF2B7114DF78840048DF04 /* controller.h */,
+				32FF2B7214DF78840048DF04 /* genome.cpp */,
+				32FF2B7314DF78840048DF04 /* genome.h */,
+				32FF2B7414DF78840048DF04 /* renderer.cpp */,
+				32FF2B7514DF78840048DF04 /* renderer.h */,
+				32FF2B7614DF78840048DF04 /* tinystr.cpp */,
+				32FF2B7714DF78840048DF04 /* tinystr.h */,
+				32FF2B7814DF78840048DF04 /* tinyxml.cpp */,
+				32FF2B7914DF78840048DF04 /* tinyxml.h */,
+				32FF2B7A14DF78840048DF04 /* tinyxmlerror.cpp */,
+				32FF2B7B14DF78840048DF04 /* tinyxmlparser.cpp */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		3284DCBC14DF777800D32338 /* boost */ = {
+			isa = PBXGroup;
+			children = (
+				3284DCCF14DF77A900D32338 /* clone_current_exception_non_intrusive.cpp */,
+				3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */,
+				3284DCC014DF779D00D32338 /* operations.cpp */,
+				3284DCC114DF779D00D32338 /* path_traits.cpp */,
+				3284DCC214DF779D00D32338 /* path.cpp */,
+				3284DCC314DF779D00D32338 /* portability.cpp */,
+				3284DCC414DF779D00D32338 /* unique_path.cpp */,
+				3284DCC514DF779D00D32338 /* utf8_codecvt_facet.cpp */,
+				3284DCC614DF779D00D32338 /* windows_file_codecvt.cpp */,
+				3284DCBD14DF778900D32338 /* error_code.cpp */,
+			);
+			name = boost;
+			sourceTree = "<group>";
+		};
+		3290F17914DF7A93005C77F5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3290F17A14DF7AB6005C77F5 /* sheeps */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,8 +256,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32288A0714DF6EA400E67796 /* InfoPlist.strings in Resources */,
-				32288A1D14DF718F00E67796 /* core in Resources */,
-				32288A1F14DF724000E67796 /* sheeps in Resources */,
+				3290F17B14DF7AB6005C77F5 /* sheeps in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +270,28 @@
 				32288A0A14DF6EA500E67796 /* main.m in Sources */,
 				32288A2214DF727500E67796 /* FlamiosAppDelegate.mm in Sources */,
 				32288A2314DF727500E67796 /* FlamiosViewController.mm in Sources */,
+				3284DCBE14DF778900D32338 /* error_code.cpp in Sources */,
+				3284DCC714DF779D00D32338 /* codecvt_error_category.cpp in Sources */,
+				3284DCC814DF779D00D32338 /* operations.cpp in Sources */,
+				3284DCC914DF779D00D32338 /* path_traits.cpp in Sources */,
+				3284DCCA14DF779D00D32338 /* path.cpp in Sources */,
+				3284DCCB14DF779D00D32338 /* portability.cpp in Sources */,
+				3284DCCC14DF779D00D32338 /* unique_path.cpp in Sources */,
+				3284DCCD14DF779D00D32338 /* utf8_codecvt_facet.cpp in Sources */,
+				3284DCCE14DF779D00D32338 /* windows_file_codecvt.cpp in Sources */,
+				3284DCD014DF77A900D32338 /* clone_current_exception_non_intrusive.cpp in Sources */,
+				32FF2B7C14DF78840048DF04 /* animator.cpp in Sources */,
+				32FF2B7E14DF78840048DF04 /* color.cpp in Sources */,
+				32FF2B7F14DF78840048DF04 /* common.cpp in Sources */,
+				32FF2B8014DF78840048DF04 /* component.cpp in Sources */,
+				32FF2B8114DF78840048DF04 /* controller.cpp in Sources */,
+				32FF2B8214DF78840048DF04 /* genome.cpp in Sources */,
+				32FF2B8314DF78840048DF04 /* renderer.cpp in Sources */,
+				32FF2B8414DF78840048DF04 /* tinystr.cpp in Sources */,
+				32FF2B8514DF78840048DF04 /* tinyxml.cpp in Sources */,
+				32FF2B8614DF78840048DF04 /* tinyxmlerror.cpp in Sources */,
+				32FF2B8714DF78840048DF04 /* tinyxmlparser.cpp in Sources */,
+				3290F17814DF7A12005C77F5 /* FlamView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +354,12 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
+					"-DBOOST_MPL_LIMIT_LIST_SIZE=50",
+					"-DTIXML_USE_STL",
+				);
 				PRODUCT_NAME = flamios;
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				WRAPPER_EXTENSION = app;
@@ -243,6 +377,12 @@
 				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
+					"-DBOOST_MPL_LIMIT_LIST_SIZE=50",
+					"-DTIXML_USE_STL",
+				);
 				PRODUCT_NAME = flamios;
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				VALIDATE_PRODUCT = YES;
@@ -269,6 +409,7 @@
 				32288A1B14DF6EA600E67796 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -14,7 +14,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window makeKeyAndVisible];
 
-    FlamViewController* flamController = [[FlamViewController alloc] init];
+    FlamiosViewController* flamController = [[FlamiosViewController alloc] init];
     [self.window addSubview:flamController.view];
     
     return YES;

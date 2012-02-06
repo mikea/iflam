@@ -1,12 +1,5 @@
-//
-//  iosViewController.m
-//  ios
-//
-//  Created by Mike Aizatskyi on 2/5/12.
-//  Copyright 2012 __MyCompanyName__. All rights reserved.
-//
-
 #import "FlamiosViewController.h"
+#import "FlamView.h"
 
 #include "controller.h"
 #include "component.h"
@@ -17,7 +10,9 @@
     self = [super init];
     if (self) {
         {
-            boost::shared_ptr<Controller> slide_show(new SlideshowController("../sheeps/"));
+            NSString* path = [[NSBundle mainBundle] pathForResource: @"sheeps"
+                                                             ofType: nil];
+            boost::shared_ptr<Controller> slide_show(new SlideshowController([path UTF8String]));
             _component = new FlamComponent(slide_show);
         }
         
@@ -26,7 +21,12 @@
     return self;
 }
 
+- (void) loadView {
+    self.view = [[FlamView alloc]initWithFrame:[[UIScreen mainScreen] bounds] component:_component];
+}
+
 - (void)dealloc {
+    delete _component;
     [super dealloc];
 }
 
