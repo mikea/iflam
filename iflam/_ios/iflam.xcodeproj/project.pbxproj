@@ -1,0 +1,338 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		326F35D514DA6A3200781F8C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 326F35D414DA6A3200781F8C /* UIKit.framework */; };
+		326F35D714DA6A3200781F8C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 326F35D614DA6A3200781F8C /* Foundation.framework */; };
+		326F35D914DA6A3200781F8C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 326F35D814DA6A3200781F8C /* CoreGraphics.framework */; };
+		328FA26214DA6DE90089B805 /* animator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA25D14DA6DE90089B805 /* animator.cpp */; };
+		328FA26314DA6DE90089B805 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA25F14DA6DE90089B805 /* color.cpp */; };
+		328FA26414DA6DE90089B805 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA26114DA6DE90089B805 /* common.cpp */; };
+		328FA26C14DA6DF30089B805 /* genome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA26714DA6DF30089B805 /* genome.cpp */; };
+		328FA26D14DA6DF30089B805 /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA26914DA6DF30089B805 /* renderer.cpp */; };
+		328FA27514DA6EED0089B805 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA26F14DA6EED0089B805 /* tinystr.cpp */; };
+		328FA27614DA6EED0089B805 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA27114DA6EED0089B805 /* tinyxml.cpp */; };
+		328FA27714DA6EED0089B805 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA27314DA6EED0089B805 /* tinyxmlerror.cpp */; };
+		328FA27814DA6EED0089B805 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328FA27414DA6EED0089B805 /* tinyxmlparser.cpp */; };
+		328FA27B14DA72810089B805 /* sheeps in Resources */ = {isa = PBXBuildFile; fileRef = 328FA27A14DA72810089B805 /* sheeps */; };
+		32EF8BF514DA6A6E00EB6B53 /* app_delegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32EF8BEC14DA6A6E00EB6B53 /* app_delegate.mm */; };
+		32EF8BF614DA6A6E00EB6B53 /* flam_view_controller.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32EF8BEE14DA6A6E00EB6B53 /* flam_view_controller.mm */; };
+		32EF8BF714DA6A6E00EB6B53 /* flam_view_model.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32EF8BF014DA6A6E00EB6B53 /* flam_view_model.mm */; };
+		32EF8BF814DA6A6E00EB6B53 /* flam_view.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32EF8BF214DA6A6E00EB6B53 /* flam_view.mm */; };
+		32EF8BF914DA6A6E00EB6B53 /* flam-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 32EF8BF314DA6A6E00EB6B53 /* flam-Info.plist */; };
+		32EF8BFA14DA6A6E00EB6B53 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 32EF8BF414DA6A6E00EB6B53 /* InfoPlist.strings */; };
+		32EF8BFE14DA6B9A00EB6B53 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 32EF8BFD14DA6B9A00EB6B53 /* main.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		325EBD2314DA7391006CB596 /* iflam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = iflam.app; path = "/Users/aizatsky/Dropbox/Projects/iflam/iflam/ios/build/Release-iphoneos/iflam.app"; sourceTree = "<absolute>"; };
+		326F35D414DA6A3200781F8C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		326F35D614DA6A3200781F8C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		326F35D814DA6A3200781F8C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		328FA25D14DA6DE90089B805 /* animator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animator.cpp; path = ../core/animator.cpp; sourceTree = "<group>"; };
+		328FA25E14DA6DE90089B805 /* animator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animator.h; path = ../core/animator.h; sourceTree = "<group>"; };
+		328FA25F14DA6DE90089B805 /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color.cpp; path = ../core/color.cpp; sourceTree = "<group>"; };
+		328FA26014DA6DE90089B805 /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = color.h; path = ../core/color.h; sourceTree = "<group>"; };
+		328FA26114DA6DE90089B805 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = common.cpp; path = ../core/common.cpp; sourceTree = "<group>"; };
+		328FA26614DA6DF30089B805 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../core/common.h; sourceTree = "<group>"; };
+		328FA26714DA6DF30089B805 /* genome.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = genome.cpp; path = ../core/genome.cpp; sourceTree = "<group>"; };
+		328FA26814DA6DF30089B805 /* genome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = genome.h; path = ../core/genome.h; sourceTree = "<group>"; };
+		328FA26914DA6DF30089B805 /* renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = renderer.cpp; path = ../core/renderer.cpp; sourceTree = "<group>"; };
+		328FA26A14DA6DF30089B805 /* renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = renderer.h; path = ../core/renderer.h; sourceTree = "<group>"; };
+		328FA26F14DA6EED0089B805 /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../core/tinyxml/tinystr.cpp; sourceTree = "<group>"; };
+		328FA27014DA6EED0089B805 /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../core/tinyxml/tinystr.h; sourceTree = "<group>"; };
+		328FA27114DA6EED0089B805 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../core/tinyxml/tinyxml.cpp; sourceTree = "<group>"; };
+		328FA27214DA6EED0089B805 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../core/tinyxml/tinyxml.h; sourceTree = "<group>"; };
+		328FA27314DA6EED0089B805 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../core/tinyxml/tinyxmlerror.cpp; sourceTree = "<group>"; };
+		328FA27414DA6EED0089B805 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../core/tinyxml/tinyxmlparser.cpp; sourceTree = "<group>"; };
+		328FA27A14DA72810089B805 /* sheeps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sheeps; path = ../../sheeps; sourceTree = "<group>"; };
+		32EF8BEB14DA6A6E00EB6B53 /* app_delegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app_delegate.h; sourceTree = SOURCE_ROOT; };
+		32EF8BEC14DA6A6E00EB6B53 /* app_delegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = app_delegate.mm; sourceTree = SOURCE_ROOT; };
+		32EF8BED14DA6A6E00EB6B53 /* flam_view_controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flam_view_controller.h; sourceTree = SOURCE_ROOT; };
+		32EF8BEE14DA6A6E00EB6B53 /* flam_view_controller.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = flam_view_controller.mm; sourceTree = SOURCE_ROOT; };
+		32EF8BEF14DA6A6E00EB6B53 /* flam_view_model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flam_view_model.h; sourceTree = SOURCE_ROOT; };
+		32EF8BF014DA6A6E00EB6B53 /* flam_view_model.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = flam_view_model.mm; sourceTree = SOURCE_ROOT; };
+		32EF8BF114DA6A6E00EB6B53 /* flam_view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flam_view.h; sourceTree = SOURCE_ROOT; };
+		32EF8BF214DA6A6E00EB6B53 /* flam_view.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = flam_view.mm; sourceTree = SOURCE_ROOT; };
+		32EF8BF314DA6A6E00EB6B53 /* flam-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "flam-Info.plist"; sourceTree = SOURCE_ROOT; };
+		32EF8BF414DA6A6E00EB6B53 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = InfoPlist.strings; sourceTree = SOURCE_ROOT; };
+		32EF8BFB14DA6AD900EB6B53 /* iflam-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "iflam-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		32EF8BFD14DA6B9A00EB6B53 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		326F35CD14DA6A3200781F8C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				326F35D514DA6A3200781F8C /* UIKit.framework in Frameworks */,
+				326F35D714DA6A3200781F8C /* Foundation.framework in Frameworks */,
+				326F35D914DA6A3200781F8C /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		326F35C514DA6A3100781F8C = {
+			isa = PBXGroup;
+			children = (
+				328FA27914DA72080089B805 /* Resources */,
+				328FA26F14DA6EED0089B805 /* tinystr.cpp */,
+				328FA27014DA6EED0089B805 /* tinystr.h */,
+				328FA27114DA6EED0089B805 /* tinyxml.cpp */,
+				328FA27214DA6EED0089B805 /* tinyxml.h */,
+				328FA27314DA6EED0089B805 /* tinyxmlerror.cpp */,
+				328FA27414DA6EED0089B805 /* tinyxmlparser.cpp */,
+				328FA26614DA6DF30089B805 /* common.h */,
+				328FA26714DA6DF30089B805 /* genome.cpp */,
+				328FA26814DA6DF30089B805 /* genome.h */,
+				328FA26914DA6DF30089B805 /* renderer.cpp */,
+				328FA26A14DA6DF30089B805 /* renderer.h */,
+				328FA25D14DA6DE90089B805 /* animator.cpp */,
+				328FA25E14DA6DE90089B805 /* animator.h */,
+				328FA25F14DA6DE90089B805 /* color.cpp */,
+				328FA26014DA6DE90089B805 /* color.h */,
+				328FA26114DA6DE90089B805 /* common.cpp */,
+				326F35DA14DA6A3200781F8C /* iflam */,
+				326F35D314DA6A3200781F8C /* Frameworks */,
+				326F35D114DA6A3200781F8C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		326F35D114DA6A3200781F8C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		326F35D314DA6A3200781F8C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				326F35D414DA6A3200781F8C /* UIKit.framework */,
+				326F35D614DA6A3200781F8C /* Foundation.framework */,
+				326F35D814DA6A3200781F8C /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		326F35DA14DA6A3200781F8C /* iflam */ = {
+			isa = PBXGroup;
+			children = (
+				32EF8BFD14DA6B9A00EB6B53 /* main.m */,
+				32EF8BFB14DA6AD900EB6B53 /* iflam-Prefix.pch */,
+				32EF8BEB14DA6A6E00EB6B53 /* app_delegate.h */,
+				32EF8BEC14DA6A6E00EB6B53 /* app_delegate.mm */,
+				32EF8BED14DA6A6E00EB6B53 /* flam_view_controller.h */,
+				32EF8BEE14DA6A6E00EB6B53 /* flam_view_controller.mm */,
+				32EF8BEF14DA6A6E00EB6B53 /* flam_view_model.h */,
+				32EF8BF014DA6A6E00EB6B53 /* flam_view_model.mm */,
+				32EF8BF114DA6A6E00EB6B53 /* flam_view.h */,
+				32EF8BF214DA6A6E00EB6B53 /* flam_view.mm */,
+				326F35DB14DA6A3200781F8C /* Supporting Files */,
+			);
+			path = iflam;
+			sourceTree = "<group>";
+		};
+		326F35DB14DA6A3200781F8C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				32EF8BF314DA6A6E00EB6B53 /* flam-Info.plist */,
+				32EF8BF414DA6A6E00EB6B53 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		328FA27914DA72080089B805 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				328FA27A14DA72810089B805 /* sheeps */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		326F35CF14DA6A3200781F8C /* iflam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 326F35F114DA6A3200781F8C /* Build configuration list for PBXNativeTarget "iflam" */;
+			buildPhases = (
+				326F35CC14DA6A3200781F8C /* Sources */,
+				326F35CD14DA6A3200781F8C /* Frameworks */,
+				326F35CE14DA6A3200781F8C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iflam;
+			productName = iflam;
+			productReference = 325EBD2314DA7391006CB596 /* iflam.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		326F35C714DA6A3100781F8C /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 326F35CA14DA6A3100781F8C /* Build configuration list for PBXProject "iflam" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 326F35C514DA6A3100781F8C;
+			productRefGroup = 326F35D114DA6A3200781F8C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				326F35CF14DA6A3200781F8C /* iflam */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		326F35CE14DA6A3200781F8C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32EF8BF914DA6A6E00EB6B53 /* flam-Info.plist in Resources */,
+				32EF8BFA14DA6A6E00EB6B53 /* InfoPlist.strings in Resources */,
+				328FA27B14DA72810089B805 /* sheeps in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		326F35CC14DA6A3200781F8C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32EF8BF514DA6A6E00EB6B53 /* app_delegate.mm in Sources */,
+				32EF8BF614DA6A6E00EB6B53 /* flam_view_controller.mm in Sources */,
+				32EF8BF714DA6A6E00EB6B53 /* flam_view_model.mm in Sources */,
+				32EF8BF814DA6A6E00EB6B53 /* flam_view.mm in Sources */,
+				32EF8BFE14DA6B9A00EB6B53 /* main.m in Sources */,
+				328FA26214DA6DE90089B805 /* animator.cpp in Sources */,
+				328FA26314DA6DE90089B805 /* color.cpp in Sources */,
+				328FA26414DA6DE90089B805 /* common.cpp in Sources */,
+				328FA26C14DA6DF30089B805 /* genome.cpp in Sources */,
+				328FA26D14DA6DF30089B805 /* renderer.cpp in Sources */,
+				328FA27514DA6EED0089B805 /* tinystr.cpp in Sources */,
+				328FA27614DA6EED0089B805 /* tinyxml.cpp in Sources */,
+				328FA27714DA6EED0089B805 /* tinyxmlerror.cpp in Sources */,
+				328FA27814DA6EED0089B805 /* tinyxmlparser.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		326F35EF14DA6A3200781F8C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = 4.2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = (
+					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
+					"-DBOOST_MPL_LIMIT_LIST_SIZE=50",
+					"-DTIXML_USE_STL",
+				);
+				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = ../core;
+			};
+			name = Debug;
+		};
+		326F35F014DA6A3200781F8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_VERSION = 4.2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = (
+					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
+					"-DBOOST_MPL_LIMIT_LIST_SIZE=50",
+					"-DTIXML_USE_STL",
+				);
+				SDKROOT = iphoneos;
+				USER_HEADER_SEARCH_PATHS = ../core;
+			};
+			name = Release;
+		};
+		326F35F214DA6A3200781F8C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iflam-Prefix.pch";
+				INFOPLIST_FILE = "flam-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		326F35F314DA6A3200781F8C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iflam-Prefix.pch";
+				INFOPLIST_FILE = "flam-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		326F35CA14DA6A3100781F8C /* Build configuration list for PBXProject "iflam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				326F35EF14DA6A3200781F8C /* Debug */,
+				326F35F014DA6A3200781F8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		326F35F114DA6A3200781F8C /* Build configuration list for PBXNativeTarget "iflam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				326F35F214DA6A3200781F8C /* Debug */,
+				326F35F314DA6A3200781F8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 326F35C714DA6A3100781F8C /* Project object */;
+}
