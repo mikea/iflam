@@ -4,13 +4,13 @@
 #include "genome.h"
 #include "renderer.h"
 
-Component::Component(boost::shared_ptr<Controller> controller)
+FlamComponent::FlamComponent(boost::shared_ptr<Controller> controller)
   : controller_(controller),
     model_(controller_->model()),
     width_(0),
     height_(0) { }
 
-void Component::Tick() {
+void FlamComponent::Tick() {
   {
     controller_->Tick();
     boost::shared_ptr<Genome> newGenome(model_->genome());
@@ -27,14 +27,17 @@ void Component::Tick() {
   }
 }
 
-void Component::SetSize(size_t width, size_t height) {
+void FlamComponent::SetSize(size_t width, size_t height) {
+  if (width_ == width && height_ == height) {
+    return;
+  }
   width_ = width;
   height_ = height;
   buffer_.reset(new RenderBuffer(width_, height_));
   Reset(genome_);
 }
 
-void Component::Reset(boost::shared_ptr<Genome> genome) {
+void FlamComponent::Reset(boost::shared_ptr<Genome> genome) {
   genome_ = genome;
   if (genome_.get()) {
     buffer_->Reset();

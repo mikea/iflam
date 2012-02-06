@@ -4,15 +4,15 @@
 #include <string>
 #include <boost/smart_ptr.hpp>
 
+#include "renderer.h"
+
 class Controller;
 class Genome;
 class Model;
-class RenderState;
-class RenderBuffer;
 
-class Component {
+class FlamComponent {
   public:
-    Component(boost::shared_ptr<Controller> controller);
+    FlamComponent(boost::shared_ptr<Controller> controller);
     void Tick();
     void SetSize(size_t width, size_t height);
 
@@ -27,6 +27,12 @@ class Component {
     boost::shared_ptr<Controller> controller() const {
       return controller_;
     }
+
+    size_t width() const { return width_; }
+    size_t height() const { return height_; }
+
+    template<typename Image>
+    void Render(Image* image) { buffer_->Render(*genome_, image); }
 
   private:
     void Reset(boost::shared_ptr<Genome> genome);

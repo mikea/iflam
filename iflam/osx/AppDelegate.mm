@@ -1,5 +1,10 @@
-
 #import "AppDelegate.h"
+
+#include <CoreAudio/CoreAudio.h>
+#include <CoreFoundation/CFURL.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <boost/assert.hpp>
+#include <boost/filesystem.hpp>
 
 #include "CAAudioUnit.h"
 #include "CAAudioUnitOutputCapturer.h"
@@ -9,13 +14,11 @@
 #include "CAHALAudioSystemObject.h"
 #include "CASpectralProcessor.h"
 #include "CAStreamBasicDescription.h"
+
 #include "animator.h"
+#include "component.h"
+#include "controller.h"
 #include "genome.h"
-#include <CoreAudio/CoreAudio.h>
-#include <CoreFoundation/CFURL.h>
-#include <CoreFoundation/CoreFoundation.h>
-#include <boost/filesystem.hpp>
-#include <boost/assert.hpp>
 
 double clamp(double min,double x,double max) { return (x < min ? min : (x > max ? max : x)); }
 
@@ -264,6 +267,12 @@ Genome* LoadRandomSheep() {
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   NSLog(@"applicationDidFinishLaunching");
 
+  {
+    boost::shared_ptr<Controller> slide_show(
+        new SlideshowController("../sheeps/"));
+    flamView.component = new FlamComponent(slide_show);
+  }
+
   animator_ = new Animator();
   _genome = LoadRandomSheep();
   animator_->Randomize(*_genome);
@@ -281,7 +290,7 @@ Genome* LoadRandomSheep() {
                           selector:@selector(onTimer:)
                           userInfo:nil
                            repeats:YES];*/
-  [flamView setGenome: new Genome(*_genome)];
+/*  [flamView setGenome: new Genome(*_genome)]; */
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
@@ -292,6 +301,7 @@ Genome* LoadRandomSheep() {
 
 
 - (void)newFFtDataAvailable:(Float32*) fftData size:(size_t) size min:(Float32)aMin max:(Float32)aMax {
+  /*
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   if (WallTime() - last_change_ > 30) {
@@ -305,7 +315,7 @@ Genome* LoadRandomSheep() {
   animator_->Animate(signal, genome);
 
   [flamView setGenome: genome];
-  [pool release];
+  [pool release];*/
 }
 
 - (void)onTimer:(NSTimer*)theTimer {

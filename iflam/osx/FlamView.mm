@@ -1,7 +1,9 @@
 // vim: filetype=objc
 #import "FlamView.h"
+
 #import "genome.h"
 #import "renderer.h"
+#import "component.h"
 
 static size_t BytesPerRow(size_t width) {
   size_t bytes_per_row = width * 4;
@@ -13,7 +15,7 @@ class BufferImage {
 public:
     BufferImage(uint8_t* buffer, size_t bytes_per_row, size_t height) : buffer_(buffer), bytes_per_row_(bytes_per_row), height_(height) { }
 
-    void Set(int x, int y, Float r, Float g, Float b, Float a) {
+    void Set(int x, int y, Float r, Float g, Float b, Float /*a*/) {
         size_t offset = x * 4 + (height_ - y - 1) * bytes_per_row_;
         buffer_[offset + 0] = uint8_t(r);
         buffer_[offset + 1] = uint8_t(g);
@@ -30,7 +32,7 @@ private:
 @implementation FlamView
 
 @synthesize delegate;
-@synthesize viewState=_viewState;
+@synthesize component;
 
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
@@ -38,6 +40,9 @@ private:
         // Initialization code here.
         NSLog(@"initWithFrame");
         delegate = nil;
+        _data = nil;
+        _bitmapContext = nil;
+        _component = nil;
         [self resetDefaults];
     }
 
@@ -50,45 +55,58 @@ private:
 
 -(void)resetDefaults {
   lock = [[NSLock alloc] init];
-  _genome = new Genome();
-  _viewState = [[ViewState alloc] initWithGenome: _genome
-                                           width: self.bounds.size.width
-                                          height: self.bounds.size.height];
 }
 
--(void)setGenome:(Genome*) aGenome {
-  // NSLog(@"setGenome");
-  [lock lock];
-  delete _genome;
-  _genome = aGenome;
-  ViewState* newState = [[[ViewState alloc]
-    initWithGenome: _genome
-             width: self.viewState.width
-            height: self.viewState.height] autorelease];
-
-  self.viewState = newState;
-  [lock unlock];
-  [self setNeedsDisplay:YES];
-}
-
-- (void) update {
-  [self setNeedsDisplay:YES];
+-(void)update {
+  [self setNeedsDisplay: YES];
 }
 
 - (void) drawRect:(NSRect)rect {
+  if (self.component == nil) {
+    [self performSelectorOnMainThread:@selector(update)
+                           withObject:nil
+                        waitUntilDone:false];
+    return;
+  }
+
   [lock lock];
  // NSLog(@"drawRect");
 
   NSRect bounds = self.bounds;
+  size_t width = bounds.size.width;
+  size_t height = bounds.size.height;
 
-  self.viewState.renderState->Iterate(200000);
+  if (self.component->width() != width ||
+      self.component->height() != height) {
+    if (_data != nil) {
+      free(_data);
+      CGContextRelease(_bitmapContext);
+    }
+    _data = (uint8_t*) calloc(BytesPerRow(width) * height, 1);
+
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    _bitmapContext = CGBitmapContextCreate(
+        _data,
+        width,
+        height,
+        8,
+        BytesPerRow(width),
+        colorSpace,
+        kCGImageAlphaNoneSkipLast);
+
+    CGColorSpaceRelease(colorSpace);
+  }
+
+  self.component->SetSize(width, height);
+  self.component->Tick();
+
   BufferImage image(
-      self.viewState.imageData,
-      BytesPerRow(self.viewState.width),
-      self.viewState.height);
-  self.viewState.renderBuffer->Render(&image);
+      _data,
+      BytesPerRow(width),
+      height);
+  self.component->Render(&image);
 
-  CGImageRef im = CGBitmapContextCreateImage(self.viewState.bitmapContext);
+  CGImageRef im = CGBitmapContextCreateImage(_bitmapContext);
 
   CGContextRef context = (CGContextRef)
     [[NSGraphicsContext currentContext] graphicsPort];
@@ -114,6 +132,7 @@ private:
 }
 
 - (void)magnifyWithEvent:(NSEvent *)event {
+  /*
   double magnification = [event magnification];
 
   [lock lock];
@@ -121,22 +140,22 @@ private:
   genome->Magnify(magnification);
   // delete old_genome;
   [lock unlock];
-  [self setGenome: genome];
+  [self setGenome: genome];*/
 }
 
 - (void)rotateWithEvent:(NSEvent *)event {
-  double rotation = [event rotation];
+ /* double rotation = [event rotation];
   NSLog(@"rotate: %f", rotation);
   [lock lock];
   Genome* genome = new Genome(*_genome);
   genome->Rotate(rotation);
   // delete old_genome;
   [lock unlock];
-  [self setGenome: genome];
+  [self setGenome: genome];*/
 }
 
 -(void)scrollWheel:(NSEvent *)event {
-  double deltaX = [event deltaY];
+/*  double deltaX = [event deltaY];
   double deltaY = [event deltaX];
   if (deltaX == 0 && deltaY == 0) {
     return;
@@ -151,7 +170,7 @@ private:
   genome->Move(deltaX, deltaY);
   // delete old_genome;
   [lock unlock];
-  [self setGenome: genome];
+  [self setGenome: genome];*/
 }
 
 -(BOOL)isOpaque {
@@ -162,69 +181,6 @@ private:
   if (delegate && [delegate respondsToSelector:@selector(onMouseDown:)]) {
     [delegate onMouseDown: anEvent];
   }
-}
-
-@end
-
-
-
-@implementation ViewState
-
-@synthesize genome=_genome;
-@synthesize width=_width;
-@synthesize height=_height;
-@synthesize imageData=_imageData;
-@synthesize renderBuffer=_renderBuffer;
-@synthesize renderState=_renderState;
-@synthesize bitmapContext=_bitmapContext;
-
-- (id)initWithGenome:(Genome*) aGenome
-               width: (size_t) aWidth
-              height: (size_t) aHeight {
-    self = [super init];
-    if (self) {
-      _lock = [[NSLock alloc] init];
-      _genome = aGenome;
-      _width = aWidth;
-      _height = aHeight;
-      _imageData = (uint8_t*) calloc(BytesPerRow(_width) * _height, 1);
-      _renderBuffer = new RenderBuffer(*_genome, _width, _height);
-      _renderState = new RenderState(*_genome, _renderBuffer);
-
-      CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-      _bitmapContext = CGBitmapContextCreate(
-          _imageData,
-          _width,
-          _height,
-          8,
-          BytesPerRow(_width),
-          colorSpace,
-          kCGImageAlphaNoneSkipLast);
-
-      CGColorSpaceRelease(colorSpace);
-
-    }
-
-    return self;
-}
-
--(void)lock {
-  [_lock lock];
-}
-
--(void)unlock {
-  [_lock unlock];
-}
-
-- (void)dealloc {
-  delete _renderBuffer;
-  delete _renderState;
-  free(_imageData);
-  [_lock release];
-  if (_bitmapContext != NULL) {
-    CGContextRelease(_bitmapContext);
-  }
-  [super dealloc];
 }
 
 @end

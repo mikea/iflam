@@ -37,7 +37,7 @@ static GLuint var_samples;
 
 class State {
   public:
-    State(boost::shared_ptr<Component> component, size_t width, size_t height)
+    State(boost::shared_ptr<FlamComponent> component, size_t width, size_t height)
       : view_(component) {
       SetSize(width, height);
     }
@@ -56,7 +56,7 @@ class State {
       CopyBufferToTexture();
     }
 
-    boost::shared_ptr<Component> component() const { return view_; }
+    boost::shared_ptr<FlamComponent> component() const { return view_; }
 
   private:
 
@@ -99,7 +99,7 @@ class State {
           data_.get());
     }
 
-    boost::shared_ptr<Component> view_;
+    boost::shared_ptr<FlamComponent> view_;
 
     size_t width_;
     size_t height_;
@@ -264,7 +264,7 @@ int main(int argc, char *argv[]) {
         new SlideshowController("../sheeps/"));
     boost::shared_ptr<Controller> animation(
         new AnimatingController(slide_show));
-    boost::shared_ptr<Component> c(new Component(animation));
+    boost::shared_ptr<FlamComponent> c(new FlamComponent(animation));
     state = new State(c, 0, 0);
   }
 
