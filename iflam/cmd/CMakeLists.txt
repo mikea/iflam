@@ -9,8 +9,13 @@ ADD_PNG()
 
 #############################################
 
+FILE(GLOB cmd_boost_srcs
+  "${BOOST_ROOT}/libs/program_options/src/*.cpp"
+  )
+
 add_executable(iflam-render
   main.cpp
+  ${cmd_boost_srcs}
   )
 
 target_link_libraries(iflam-render core ${Boost_LIBRARIES} ${PNG_LIBRARIES})
