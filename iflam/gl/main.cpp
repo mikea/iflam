@@ -156,8 +156,8 @@ void printShaderInfoLog(GLint shader) {
   }
 }
 
-extern const unsigned char blur_fragment[];
-extern const unsigned char blur_vertex[];
+extern const unsigned char render_main_fragment_i[];
+extern const unsigned char render_vertex_i[];
 
 void glCheckProgramLog() {
   int logLen = 0;
@@ -185,7 +185,7 @@ void init() {
   {
     GLint compiled;
     vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-    const GLchar* ptr = (const GLchar*) blur_vertex;
+    const GLchar* ptr = (const GLchar*) render_vertex_i;
     glShaderSource(vertex_shader_id, 1, &ptr, NULL);
     glCompileShader(vertex_shader_id);
     glGetShaderiv(vertex_shader_id, GL_COMPILE_STATUS, &compiled);
@@ -198,7 +198,7 @@ void init() {
   {
     GLint compiled;
     fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar* ptr = (const GLchar*) blur_fragment;
+    const GLchar* ptr = (const GLchar*) render_main_fragment_i;
     glShaderSource(fragment_shader_id, 1, &ptr, NULL);
     glCompileShader(fragment_shader_id);
 
@@ -264,7 +264,7 @@ int main(int argc, char *argv[]) {
         new SlideshowController("../sheeps/"));
     boost::shared_ptr<Controller> animation(
         new AnimatingController(slide_show));
-    boost::shared_ptr<FlamComponent> c(new FlamComponent(animation));
+    boost::shared_ptr<FlamComponent> c(new FlamComponent(slide_show));
     state = new State(c, 0, 0);
   }
 

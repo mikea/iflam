@@ -28,7 +28,10 @@ set(ENV{HDF5_ROOT} "$ENV{HOME}/Packages/hdf5")
 
 if (UNIX AND (NOT APPLE))
   ADD_HDF5()
-  add_executable(hdf5_render hdf5_main.cpp)
+  add_executable(hdf5_render
+    hdf5_main.cpp
+    ${cmd_boost_srcs}
+    )
   target_link_libraries(hdf5_render core
     ${HDF5_LIBRARIES} ${PNG_LIBRARIES} ${Boost_LIBRARIES})
 endif()
