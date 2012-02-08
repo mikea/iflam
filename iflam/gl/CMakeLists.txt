@@ -30,7 +30,11 @@ add_definitions(-DGL_GLEXT_PROTOTYPES)
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
-add_executable(iflamgl main.cpp render.vertex.cpp render_main.fragment.cpp ${gl_boost_srcs})
+add_executable(iflamgl
+  main.cpp
+  render.cpp
+  render.vertex.cpp render_main.fragment.cpp
+  ${gl_boost_srcs})
 target_link_libraries(iflamgl core ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
 
 
