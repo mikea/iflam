@@ -1,12 +1,9 @@
-uniform float scale;
 uniform float k1;
 uniform float k2;
 uniform float vibrancy;
 uniform float gamma;
 uniform float highpow;
 uniform float samples;
-
-uniform sampler2D tex;
 
 vec3 rgb2hsv(vec3 rgb) {
   float r = rgb[0];
@@ -65,7 +62,6 @@ vec3 hsv2rgb(vec3 hsv) {
   float q = v * (1.0 - (s * f));
   float t = v * (1.0 - (s * (1.0 - f)));
 
-  float rd, gd, bd;
   if (j == 0) {
       return vec3(v, t, p);
   } else if (j == 1) {
@@ -139,4 +135,33 @@ float calc_gamma(float x) {
   if (x < 0.0) return 0.0;
   return x;
 }
+
+vec3 render(float r, float g, float b, float freq) {
+  if (freq == 0.0) {
+    return vec3(0.0, 0.0, 0.0);
+  }
+
+  float ls = k1 * log(1.0 + freq * k2) / freq;
+  r *= ls;
+  g *= ls;
+  b *= ls;
+  freq *= ls;
+
+  float tmp = freq / 255.0;
+  float alpha = pow(tmp, gamma);
+
+  vec3 rgb = vec3(r, g, b);
+  rgb = calc_new_rgb(rgb, vibrancy * 256.0 * alpha / tmp);
+  r = rgb[0];
+  g = rgb[1];
+  b = rgb[2];
+
+  r = calc_gamma(r);
+  g = calc_gamma(g);
+  b = calc_gamma(b);
+
+  return vec3(r/255.0, g/255.0, b/255.0);
+}
+
+
 
