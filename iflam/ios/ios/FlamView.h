@@ -3,6 +3,9 @@
 class FlamComponent;
 
 @interface FlamView : UIView {
+    CAEAGLLayer* _eaglLayer;
+    EAGLContext* _context;
+    
     FlamComponent* _component;
     uint8_t* _data;
     CGContextRef _bitmapContext;

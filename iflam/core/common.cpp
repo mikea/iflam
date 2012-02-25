@@ -6,6 +6,10 @@ namespace {
 boost::random::uniform_real_distribution<> rndDist(0, 1);
 boost::random::uniform_real_distribution<> crndDist(-1, 1);
 boost::random::uniform_int_distribution<> brndDist(0, 1);
+
+    // exceptions
+    struct error : virtual boost::exception, virtual std::exception { };
+    typedef boost::error_info<struct tag_error_message, std::string> error_message;
 }
 
 Random::Random() : rng_(std::time(0)) { }

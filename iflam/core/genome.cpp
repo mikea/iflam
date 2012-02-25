@@ -172,6 +172,9 @@ namespace {
     "mobius",
   };
 
+    // exceptions
+    struct error : virtual boost::exception, virtual std::exception { };
+    typedef boost::error_info<struct tag_error_message, std::string> error_message;
 }
 
 struct apply_error : virtual error { };

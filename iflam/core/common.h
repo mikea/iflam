@@ -24,10 +24,6 @@ class array : public boost::array<T, N> {
 
 typedef array<Float, 3> Color;
 
-// exceptions
-struct error : virtual boost::exception, virtual std::exception { };
-typedef boost::error_info<struct tag_error_message, std::string> error_message;
-
 // constants
 const Float kPI = boost::math::constants::pi<Float>();
 const Float kEpsilon = 1e-10;

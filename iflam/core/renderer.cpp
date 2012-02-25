@@ -9,7 +9,12 @@ const size_t kFLen = 6 + kVLen;
 const size_t kChooseXformGrain = 16384;
 const Float kGamma = 2.5;
 
+    // exceptions
+    struct error : virtual boost::exception, virtual std::exception { };
+    typedef boost::error_info<struct tag_error_message, std::string> error_message;
+
 }  // namespace
+
 
 double _pow(double a, double b) {
     int tmp = (*(1 + (int *)&a));

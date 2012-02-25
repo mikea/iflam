@@ -26,6 +26,8 @@
 		3284DCD014DF77A900D32338 /* clone_current_exception_non_intrusive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCCF14DF77A900D32338 /* clone_current_exception_non_intrusive.cpp */; };
 		3290F17814DF7A12005C77F5 /* FlamView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3290F17714DF7A12005C77F5 /* FlamView.mm */; };
 		3290F17B14DF7AB6005C77F5 /* sheeps in Resources */ = {isa = PBXBuildFile; fileRef = 3290F17A14DF7AB6005C77F5 /* sheeps */; };
+		32F0D05914E25F0C00A74E6E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F0D05814E25F0C00A74E6E /* OpenGLES.framework */; };
+		32F0D05C14E25F2600A74E6E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F0D05B14E25F2600A74E6E /* QuartzCore.framework */; };
 		32FF2B7C14DF78840048DF04 /* animator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6714DF78840048DF04 /* animator.cpp */; };
 		32FF2B7E14DF78840048DF04 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6A14DF78840048DF04 /* color.cpp */; };
 		32FF2B7F14DF78840048DF04 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6C14DF78840048DF04 /* common.cpp */; };
@@ -65,6 +67,8 @@
 		3290F17614DF7A12005C77F5 /* FlamView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlamView.h; sourceTree = "<group>"; };
 		3290F17714DF7A12005C77F5 /* FlamView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamView.mm; sourceTree = "<group>"; };
 		3290F17A14DF7AB6005C77F5 /* sheeps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sheeps; path = ../../sheeps; sourceTree = "<group>"; };
+		32F0D05814E25F0C00A74E6E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		32F0D05B14E25F2600A74E6E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		32FF2B6714DF78840048DF04 /* animator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animator.cpp; path = ../core/animator.cpp; sourceTree = "<group>"; };
 		32FF2B6814DF78840048DF04 /* animator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animator.h; path = ../core/animator.h; sourceTree = "<group>"; };
 		32FF2B6A14DF78840048DF04 /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color.cpp; path = ../core/color.cpp; sourceTree = "<group>"; };
@@ -92,6 +96,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32F0D05C14E25F2600A74E6E /* QuartzCore.framework in Frameworks */,
+				32F0D05914E25F0C00A74E6E /* OpenGLES.framework in Frameworks */,
 				322889FD14DF6EA400E67796 /* UIKit.framework in Frameworks */,
 				322889FF14DF6EA400E67796 /* Foundation.framework in Frameworks */,
 				32288A0114DF6EA400E67796 /* CoreGraphics.framework in Frameworks */,
@@ -124,6 +130,8 @@
 		322889FB14DF6EA400E67796 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				32F0D05B14E25F2600A74E6E /* QuartzCore.framework */,
+				32F0D05814E25F0C00A74E6E /* OpenGLES.framework */,
 				322889FC14DF6EA400E67796 /* UIKit.framework */,
 				322889FE14DF6EA400E67796 /* Foundation.framework */,
 				32288A0014DF6EA400E67796 /* CoreGraphics.framework */,
@@ -233,6 +241,9 @@
 /* Begin PBXProject section */
 		322889EF14DF6EA200E67796 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = 322889F214DF6EA200E67796 /* Build configuration list for PBXProject "ios" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -351,9 +362,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
@@ -361,6 +373,7 @@
 					"-DTIXML_USE_STL",
 				);
 				PRODUCT_NAME = flamios;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				WRAPPER_EXTENSION = app;
 			};
@@ -374,9 +387,10 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
@@ -384,6 +398,7 @@
 					"-DTIXML_USE_STL",
 				);
 				PRODUCT_NAME = flamios;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
