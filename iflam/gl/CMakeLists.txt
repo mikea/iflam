@@ -34,6 +34,7 @@ add_executable(iflamgl
   main.cpp
   render.cpp
   render.vertex.cpp render_main.fragment.cpp
+  flam_gl_view.cpp flam_gl_view.h
   ${gl_boost_srcs})
 target_link_libraries(iflamgl core ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
 
