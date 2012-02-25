@@ -76,11 +76,8 @@ private:
             return nil;
         }
         
-        // CADisplayLink* displayLink = [self.window.screen displayLinkWithTarget:self selector:@selector(drawFrame)];
-        // [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-        glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        [_context presentRenderbuffer:GL_RENDERBUFFER];
+        CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawFrame:)];
+        [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     }
     
     return self;
@@ -95,7 +92,9 @@ private:
 }
 
 - (void) drawFrame:(CADisplayLink *)link {
-    NSLog(@"drawFrame");
+    glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    [_context presentRenderbuffer:GL_RENDERBUFFER];
 }
 
 /*
