@@ -1,0 +1,21 @@
+uniform float scale;
+uniform sampler2D tex;
+
+#include "render.fragment"
+
+void main(void){
+  vec2 c = vec2(gl_TexCoord[0]);
+  vec4 accum = texture2D(tex, vec2(c.x, c.y));
+
+  float r = scale * accum[0];
+  float g = scale * accum[1];
+  float b = scale * accum[2];
+  float freq = scale * accum[3];
+
+  vec3 result = render(r, g, b, freq);
+
+  gl_FragColor = vec4(result[0], result[1], result[2], 1.0);
+  //gl_FragColor = vec4(freq / 255, freq / 255, freq/255, 1.0);
+}
+
+

@@ -9,8 +9,18 @@ ADD_BOOST()
 
 add_executable(bin2c bin2c.c)
 
-BIN2C(blur.vertex)
-BIN2C(blur.fragment)
+macro(SHADER _from)
+  PARSE_ARGUMENTS(SHADER
+    "DEPENDS"
+    ""
+    ${ARGN})
+  CPP(${CMAKE_CURRENT_SOURCE_DIR}/${_from} ${_from}.i DEPENDS ${SHADER_DEPENDS})
+  BIN2C(${_from}.i ${_from}.cpp ${_from})
+endmacro(SHADER)
+
+SHADER(render.vertex)
+SHADER(render_main.fragment
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/render.fragment)
 
 FILE(GLOB gl_boost_srcs
   )
@@ -20,7 +30,11 @@ add_definitions(-DGL_GLEXT_PROTOTYPES)
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
 
-add_executable(iflamgl main.cpp blur.vertex.cpp blur.fragment.cpp ${gl_boost_srcs})
+add_executable(iflamgl
+  main.cpp
+  render.cpp
+  render.vertex.cpp render_main.fragment.cpp
+  ${gl_boost_srcs})
 target_link_libraries(iflamgl core ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})
 
 

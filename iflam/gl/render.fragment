@@ -1,12 +1,9 @@
-uniform float scale;
 uniform float k1;
 uniform float k2;
 uniform float vibrancy;
 uniform float gamma;
 uniform float highpow;
 uniform float samples;
-
-uniform sampler2D tex;
 
 vec3 rgb2hsv(vec3 rgb) {
   float r = rgb[0];
@@ -65,7 +62,6 @@ vec3 hsv2rgb(vec3 hsv) {
   float q = v * (1.0 - (s * f));
   float t = v * (1.0 - (s * (1.0 - f)));
 
-  float rd, gd, bd;
   if (j == 0) {
       return vec3(v, t, p);
   } else if (j == 1) {
@@ -140,18 +136,9 @@ float calc_gamma(float x) {
   return x;
 }
 
-void main(void){
-  vec2 c = vec2(gl_TexCoord[0]);
-  vec4 accum = texture2D(tex, vec2(c.x, c.y));
-
-  float r = scale * accum[0];
-  float g = scale * accum[1];
-  float b = scale * accum[2];
-  float freq = scale * accum[3];
-
+vec3 render(float r, float g, float b, float freq) {
   if (freq == 0.0) {
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-    return;
+    return vec3(0.0, 0.0, 0.0);
   }
 
   float ls = k1 * log(1.0 + freq * k2) / freq;
@@ -173,8 +160,8 @@ void main(void){
   g = calc_gamma(g);
   b = calc_gamma(b);
 
-  gl_FragColor = vec4(r/255.0, g/255.0, b/255.0, 1.0);
-  //gl_FragColor = vec4(freq / 255, freq / 255, freq/255, 1.0);
+  return vec3(r/255.0, g/255.0, b/255.0);
 }
+
 
 
