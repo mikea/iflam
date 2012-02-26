@@ -129,10 +129,10 @@ void FlamGLView::Render() {
   glBindTexture(GL_TEXTURE_2D, texture_id);
 
   GLfloat vertices[] = {
-    0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0,
-    1.0, 1.0, 0.0,
-    1.0, 0.0, 0.0
+    0.0, 0.0, 0.0, 1.0,
+    0.0, 1.0, 0.0, 1.0,
+    1.0, 1.0, 0.0, 1.0,
+    1.0, 0.0, 0.0, 1.0
   };
 
   GLfloat texCoords[] = {
@@ -146,7 +146,7 @@ void FlamGLView::Render() {
   GLuint textureAttribute = 1;
 
   glVertexAttribPointer(positionAttribute,
-      3 /* number of components */,
+      4 /* number of components */,
       GL_FLOAT,
       GL_FALSE,
       0,
