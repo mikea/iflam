@@ -13,6 +13,9 @@
 extern const unsigned char render_main_fragment_i[];
 extern const unsigned char render_vertex_i[];
 
+const GLuint kAttrPosition = 0;
+const GLuint kAttrTexCoord = 1;
+
 FlamGLView::FlamGLView(boost::shared_ptr<FlamComponent> component)
   : component_(component) {
   }
@@ -98,10 +101,10 @@ void FlamGLView::Init() {
   var_samples = glGetUniformLocation(program_id, "samples");
   CHECK_GL_ERROR();
 
-  glBindAttribLocation(program_id, 0, "vPosition");
+  glBindAttribLocation(program_id, kAttrPosition, "a_position");
   CHECK_GL_ERROR();
 
-  glBindAttribLocation(program_id, 1, "vTexCoord");
+  glBindAttribLocation(program_id, kAttrTexCoord, "a_texCoord");
   CHECK_GL_ERROR();
 }
 
@@ -128,44 +131,47 @@ void FlamGLView::Render() {
   //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glBindTexture(GL_TEXTURE_2D, texture_id);
 
-  GLfloat vertices[] = {
-    0.0, 0.0, 0.0, 1.0,
-    0.0, 1.0, 0.0, 1.0,
-    1.0, 1.0, 0.0, 1.0,
-    1.0, 0.0, 0.0, 1.0
-  };
+  {
+    GLfloat vCoords[] = {
+      -1.0, -1.0, 0.0,
+      -1.0,  1.0, 0.0,
+      1.0,  1.0, 0.0,
+      1.0, -1.0, 0.0
+    };
+    glVertexAttribPointer(kAttrPosition,
+        3 /* number of components */,
+        GL_FLOAT,
+        GL_FALSE /* normalize */,
+        0,
+        vCoords);
+    glEnableVertexAttribArray(kAttrPosition);
+  }
 
-  GLfloat texCoords[] = {
-    0.0, 0.0,
-    0.0, 1.0,
-    1.0, 1.0,
-    1.0, 0.0
-  };
+  {
+    GLfloat texCoords[] = {
+      0.0, 0.0,
+      0.0, 1.0,
+      1.0, 1.0,
+      1.0, 0.0
+    };
 
-  GLuint positionAttribute = 0;
-  GLuint textureAttribute = 1;
+    glVertexAttribPointer(kAttrTexCoord,
+        2 /* number of components */,
+        GL_FLOAT,
+        GL_FALSE /* normalize */,
+        0,
+        texCoords);
+    glEnableVertexAttribArray(kAttrTexCoord);
+  }
 
-  glVertexAttribPointer(positionAttribute,
-      4 /* number of components */,
-      GL_FLOAT,
-      GL_FALSE,
-      0,
-      vertices);
-  glEnableVertexAttribArray(positionAttribute);
-
-  glVertexAttribPointer(textureAttribute,
-      2 /* number of components */,
-      GL_FLOAT,
-      GL_FALSE,
-      0,
-      texCoords);
-  glEnableVertexAttribArray(textureAttribute);
-
-
-  glDrawArrays(GL_TRIANGLE_FAN, 0 /* first */, 4 /* count */);
+  glDrawArrays(
+      GL_TRIANGLE_FAN,
+      0 /* first */,
+      4 /* count */);
 
   glFlush();
   glDisable(GL_TEXTURE_2D);
+  CHECK_GL_ERROR();
 }
 
 void FlamGLView::CopyBufferToTexture() {
