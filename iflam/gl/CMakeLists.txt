@@ -14,7 +14,10 @@ macro(SHADER _from)
     "DEPENDS"
     ""
     ${ARGN})
-  CPP(${CMAKE_CURRENT_SOURCE_DIR}/${_from} ${_from}.i DEPENDS ${SHADER_DEPENDS})
+  CPP(${CMAKE_CURRENT_SOURCE_DIR}/${_from} ${_from}.i
+    FLAGS "-P"
+    DEPENDS ${SHADER_DEPENDS})
+
   BIN2C(${_from}.i ${_from}.cpp ${_from})
 endmacro(SHADER)
 

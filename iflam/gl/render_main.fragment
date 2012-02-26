@@ -1,11 +1,12 @@
 uniform float scale;
 uniform sampler2D tex;
 
+varying vec2 texCoord;
+
 #include "render.fragment"
 
 void main(void){
-  vec2 c = vec2(gl_TexCoord[0]);
-  vec4 accum = texture2D(tex, vec2(c.x, c.y));
+  vec4 accum = texture2D(tex, vec2(texCoord.x, texCoord.y));
 
   float r = scale * accum[0];
   float g = scale * accum[1];

@@ -110,12 +110,12 @@ ENDMACRO(PARSE_ARGUMENTS)
 # (CPP <from> <to> [DEPENDS list])
 macro(CPP _from _to) # deps
   PARSE_ARGUMENTS(CPP
-    "DEPENDS"
+    "DEPENDS;FLAGS"
     ""
     ${ARGN})
   add_custom_command(
     OUTPUT ${_to}
-    COMMAND cpp ${_from} ${_to}
+    COMMAND cpp ${CPP_FLAGS} ${_from} ${_to}
     DEPENDS ${_from} ${CPP_DEPENDS})
 endmacro(CPP)
 

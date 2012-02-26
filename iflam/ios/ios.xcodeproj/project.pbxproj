@@ -16,6 +16,7 @@
 		32288A2314DF727500E67796 /* FlamiosViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2114DF727500E67796 /* FlamiosViewController.mm */; };
 		324B930314F8D0BF00482AD6 /* render_main.fragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324B930114F8D0BE00482AD6 /* render_main.fragment.cpp */; };
 		324B930414F8D0BF00482AD6 /* render.vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324B930214F8D0BE00482AD6 /* render.vertex.cpp */; };
+		324B930714F8D5A400482AD6 /* flam_gl_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324B930514F8D5A400482AD6 /* flam_gl_view.cpp */; };
 		3284DCBE14DF778900D32338 /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBD14DF778900D32338 /* error_code.cpp */; };
 		3284DCC714DF779D00D32338 /* codecvt_error_category.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */; };
 		3284DCC814DF779D00D32338 /* operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC014DF779D00D32338 /* operations.cpp */; };
@@ -58,6 +59,8 @@
 		32288A2114DF727500E67796 /* FlamiosViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamiosViewController.mm; sourceTree = "<group>"; };
 		324B930114F8D0BE00482AD6 /* render_main.fragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = render_main.fragment.cpp; path = ../../../build/gl/render_main.fragment.cpp; sourceTree = "<group>"; };
 		324B930214F8D0BE00482AD6 /* render.vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = render.vertex.cpp; path = ../../../build/gl/render.vertex.cpp; sourceTree = "<group>"; };
+		324B930514F8D5A400482AD6 /* flam_gl_view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flam_gl_view.cpp; path = ../../gl/flam_gl_view.cpp; sourceTree = "<group>"; };
+		324B930614F8D5A400482AD6 /* flam_gl_view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = flam_gl_view.h; path = ../../gl/flam_gl_view.h; sourceTree = "<group>"; };
 		3284DCBD14DF778900D32338 /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = error_code.cpp; path = ../../../../../Packages/boost_1_48_0/libs/system/src/error_code.cpp; sourceTree = "<group>"; };
 		3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = codecvt_error_category.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/codecvt_error_category.cpp; sourceTree = "<group>"; };
 		3284DCC014DF779D00D32338 /* operations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = operations.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/operations.cpp; sourceTree = "<group>"; };
@@ -146,6 +149,8 @@
 		32288A0214DF6EA400E67796 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				324B930514F8D5A400482AD6 /* flam_gl_view.cpp */,
+				324B930614F8D5A400482AD6 /* flam_gl_view.h */,
 				324B930114F8D0BE00482AD6 /* render_main.fragment.cpp */,
 				324B930214F8D0BE00482AD6 /* render.vertex.cpp */,
 				32288A0B14DF6EA500E67796 /* FlamiosAppDelegate.h */,
@@ -311,6 +316,7 @@
 				3290F17814DF7A12005C77F5 /* FlamView.mm in Sources */,
 				324B930314F8D0BF00482AD6 /* render_main.fragment.cpp in Sources */,
 				324B930414F8D0BF00482AD6 /* render.vertex.cpp in Sources */,
+				324B930714F8D5A400482AD6 /* flam_gl_view.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

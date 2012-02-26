@@ -3,9 +3,12 @@
 #define CHECK_GL_ERROR() \
   do { \
     GLenum __err = glGetError(); \
-    BOOST_VERIFY_MSG(__err == GL_NO_ERROR, (std::string("GL Error: ") + std::string((const char*)gluErrorString(__err))).c_str()); \
+    BOOST_VERIFY_MSG(__err == GL_NO_ERROR, (std::string("GL Error: ") + \
+          boost::lexical_cast<std::string>(__err)).c_str()); \
   } while (0)
 
+
+/////////////////
 
 extern const unsigned char render_main_fragment_i[];
 extern const unsigned char render_vertex_i[];
@@ -16,7 +19,6 @@ FlamGLView::FlamGLView(boost::shared_ptr<FlamComponent> component)
 
 void FlamGLView::Iter() {
   component_->Tick();
-  glutSetWindowTitle(component_->controller()->GetWindowTitle().c_str());
 
   CopyBufferToTexture();
 }
@@ -24,8 +26,6 @@ void FlamGLView::Iter() {
 
 void FlamGLView::Init() {
   glClearColor (0.0, 0.0, 0.0, 0.0);
-  glShadeModel(GL_FLAT);
-  glEnable(GL_DEPTH_TEST);
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -97,6 +97,12 @@ void FlamGLView::Init() {
 
   var_samples = glGetUniformLocation(program_id, "samples");
   CHECK_GL_ERROR();
+
+  glBindAttribLocation(program_id, 0, "vPosition");
+  CHECK_GL_ERROR();
+
+  glBindAttribLocation(program_id, 1, "vTexCoord");
+  CHECK_GL_ERROR();
 }
 
 void FlamGLView::SetSize(int w, int h) {
@@ -109,12 +115,6 @@ void FlamGLView::SetSize(int w, int h) {
 
   glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluOrtho2D(0, 1, 1, 0);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
   data_.reset(new float[width_ * height_ * 4]);
   component_->SetSize(width_, height_);
 }
@@ -122,17 +122,48 @@ void FlamGLView::SetSize(int w, int h) {
 void FlamGLView::Render() {
   Iter();
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT);
 
   glEnable(GL_TEXTURE_2D);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+  //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glBindTexture(GL_TEXTURE_2D, texture_id);
-  glBegin(GL_QUADS);
-  glTexCoord2f(0.0, 0.0); glVertex3f(0.0, 0.0, 0.0);
-  glTexCoord2f(0.0, 1.0); glVertex3f(0.0, 1.0, 0.0);
-  glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 0.0);
-  glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 0.0, 0.0);
-  glEnd();
+
+  GLfloat vertices[] = {
+    0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    1.0, 1.0, 0.0,
+    1.0, 0.0, 0.0
+  };
+
+  GLfloat texCoords[] = {
+    0.0, 0.0,
+    0.0, 1.0,
+    1.0, 1.0,
+    1.0, 0.0
+  };
+
+  GLuint positionAttribute = 0;
+  GLuint textureAttribute = 1;
+
+  glVertexAttribPointer(positionAttribute,
+      3 /* number of components */,
+      GL_FLOAT,
+      GL_FALSE,
+      0,
+      vertices);
+  glEnableVertexAttribArray(positionAttribute);
+
+  glVertexAttribPointer(textureAttribute,
+      2 /* number of components */,
+      GL_FLOAT,
+      GL_FALSE,
+      0,
+      texCoords);
+  glEnableVertexAttribArray(textureAttribute);
+
+
+  glDrawArrays(GL_TRIANGLE_FAN, 0 /* first */, 4 /* count */);
+
   glFlush();
   glDisable(GL_TEXTURE_2D);
 }

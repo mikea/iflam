@@ -1,15 +1,25 @@
 #ifndef __FLAM_GL_VIEW__
 #define __FLAM_GL_VIEW__
 
-
 // TODO: optimize includes
 #ifdef __APPLE__
-#include <GLUT/glut.h>
-#include <GL/glext.h>
-#define GL_RGBA32F  0x8814
+
+#include <TargetConditionals.h>
+
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+    // iphone
+    #include <OpenGLES/ES2/gl.h>
+    #include <OpenGLES/ES2/glext.h>
 #else
-#include <GL/glut.h>
+    // macos
+    #include <GL/gl.h>
 #endif
+#define GL_RGBA32F  0x8814
+
+#else
+    #include <GL/gl.h>
+#endif
+
 #include <string>
 #include <fstream>
 #include <streambuf>

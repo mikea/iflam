@@ -1,7 +1,5 @@
 #ifdef __APPLE__
 #include <GLUT/glut.h>
-#include <GL/glext.h>
-//#define GL_RGBA32F  0x8814
 #else
 #include <GL/glut.h>
 #endif
@@ -18,6 +16,7 @@
 static FlamGLView* view;
 
 void renderScene(void) {
+  glutSetWindowTitle(view->component()->controller()->GetWindowTitle().c_str());
   view->Render();
   glutSwapBuffers();
 }
