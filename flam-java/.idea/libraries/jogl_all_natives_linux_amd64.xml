@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="jogl-all-natives-linux-amd64">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/jogl-all-natives-linux-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/jogl.all.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/gluegen-rt.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/gluegen.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jogl-java-src.zip!/" />
+    </SOURCES>
+  </library>
+</component>
