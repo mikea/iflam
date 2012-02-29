@@ -16,10 +16,9 @@ import javax.swing.*;
  */
 public class Main implements GLEventListener {
 // ------------------------------ FIELDS ------------------------------
-    private double theta = 0;
-    private double s = 0;
-    private double c = 0;
-    private FBObject fbo;
+
+    private FBObject fbo1;
+    private FBObject fbo2;
 
 // ------------------------ INTERFACE METHODS ------------------------
 
@@ -34,94 +33,153 @@ public class Main implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-        fbo.destroy(gl);
+        fbo1.destroy(gl);
     }
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        update();
         render(drawable.getGL().getGL2());
     }
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2 gl = drawable.getGL().getGL2();
-        if (fbo != null) {
-            fbo.destroy(gl);
+        if (fbo1 != null) {
+            fbo1.destroy(gl);
         }
-        fbo = new FBObject(width, height);
+        fbo1 = createFBO(width, height, gl);
+        if (fbo2 != null) {
+            fbo2.destroy(gl);
+        }
+        fbo2 = createFBO(width, height, gl);
+    }
+
+// -------------------------- OTHER METHODS --------------------------
+
+    private FBObject createFBO(int width, int height, GL2 gl) {
+        FBObject fbo = new FBObject(width, height);
         fbo.init(gl);
         fbo.attachTexture2D(gl, 0, GL2.GL_NEAREST, GL2.GL_NEAREST, 0, 0);
         if (!fbo.isStatusValid()) {
             throw new IllegalStateException();
         }
         fbo.unbind(gl);
+        return fbo;
     }
 
-// -------------------------- OTHER METHODS --------------------------
+    private void iter(final GL2 gl, final FBObject src, FBObject dst) {
+        renderToFBO(gl, dst, new Runnable() {
+            @Override
+            public void run() {
+                useFbo(gl, src, 0, new Runnable() {
+                    @Override
+                    public void run() {
+                        gl.glClearColor(0, 0, 0, 1);
+                        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+                        gl.glColor4d(1, 1, 1, 1);
+                        gl.glLoadIdentity();
+                        {
+                            gl.glBegin(GL2.GL_QUADS);
+                            gl.glTexCoord2d(0.0, 0.0);
+                            gl.glVertex2d(-1.0, -0.7);
 
-    private void render(GL2 gl) {
-        {
-            fbo.bind(gl);
-            renderScene(gl);
+                            gl.glTexCoord2d(0.0, 1.0);
+                            gl.glVertex2d(-0.9, 0);
+
+                            gl.glTexCoord2d(1.0, 1.0);
+                            gl.glVertex2d(0.4, 0.3);
+
+                            gl.glTexCoord2d(1.0, 0.0);
+                            gl.glVertex2d(0, -0.9);
+                            gl.glEnd();
+                        }
+                        {
+                            gl.glBegin(GL2.GL_QUADS);
+                            gl.glTexCoord2d(0.0, 0.0);
+                            gl.glVertex2d(-0.5, 0.0);
+
+                            gl.glTexCoord2d(0.0, 1.0);
+                            gl.glVertex2d(0.1, 0.7);
+
+                            gl.glTexCoord2d(1.0, 1.0);
+                            gl.glVertex2d(0.6, 0.1);
+
+                            gl.glTexCoord2d(1.0, 0.0);
+                            gl.glVertex2d(0.2, -0.7);
+                            gl.glEnd();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private void render(final GL2 gl) {
+        // start by filling in fbo1
+        renderToFBO(gl, fbo1, new Runnable() {
+            @Override
+            public void run() {
+                gl.glClearColor(1f, 0, 0, 1);
+                gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+                gl.glLoadIdentity();
+            }
+        });
+
+        for (int i = 0; i < 5; ++i) {
+            iter(gl, fbo1, fbo2);
+            FBObject tmp = fbo1;
+            fbo1 = fbo2;
+            fbo2 = tmp;
+        }
+
+        showFBO(gl, fbo1, 0);
+    }
+
+    private static void renderToFBO(GL2 gl, FBObject fbo, Runnable runnable) {
+        fbo.bind(gl);
+        try {
+            runnable.run();
+        } finally {
             fbo.unbind(gl);
         }
-
-        renderFBO(gl);
     }
 
-    private void renderFBO(GL2 gl) {
+    private static void showFBO(final GL2 gl, FBObject fbo, int texture) {
+        useFbo(gl, fbo, texture, new Runnable() {
+            @Override
+            public void run() {
+                gl.glClearColor(0, 0, 0, 1);
+                gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+                gl.glLoadIdentity();
+                {
+                    gl.glColor3f(1, 1, 1);
+                    gl.glBegin(GL2.GL_QUADS);
+                    gl.glTexCoord2d(0.0, 0.0);
+                    gl.glVertex2d(-1.0, -1.0);
+
+                    gl.glTexCoord2d(0.0, 1.0);
+                    gl.glVertex2d(-1.0, 1.0);
+
+                    gl.glTexCoord2d(1.0, 1.0);
+                    gl.glVertex2d(1.0, 1.0);
+
+                    gl.glTexCoord2d(1.0, 0.0);
+                    gl.glVertex2d(1.0, -1.0);
+                    gl.glEnd();
+                }
+            }
+        });
+    }
+
+    private static void useFbo(GL2 gl, FBObject fbo, int texture, Runnable runnable) {
         gl.glEnable(GL.GL_TEXTURE_2D);
-        fbo.use(gl, 0);
-        gl.glClearColor(0, 0, 0, 1);
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        gl.glLoadIdentity();
-        {
-            gl.glColor3f(1, 1, 1);
-            gl.glBegin(GL2.GL_QUADS);
-            gl.glTexCoord2d(0.0, 0.0);
-            gl.glVertex2d(-1.0, -1.0);
-
-            gl.glTexCoord2d(0.0, 1.0);
-            gl.glVertex2d(-1.0, 1.0);
-
-            gl.glTexCoord2d(1.0, 1.0);
-            gl.glVertex2d(1.0, 1.0);
-
-            gl.glTexCoord2d(1.0, 0.0);
-            gl.glVertex2d(1.0, -1.0);
-            gl.glEnd();
+        fbo.use(gl, texture);
+        try {
+            runnable.run();
+        } finally {
+            fbo.unuse(gl);
+            gl.glDisable(GL.GL_TEXTURE_2D);
         }
-        fbo.unuse(gl);
-        gl.glDisable(GL.GL_TEXTURE_2D);
-    }
-
-    private void renderScene(GL2 gl) {
-        gl.glClearColor(.1f, .1f, .1f, 1);
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        gl.glLoadIdentity();
-        {
-            gl.glBegin(GL.GL_TRIANGLES);
-            gl.glColor3f(1, 0, 0);
-            gl.glVertex2d(-c, -c);
-//            gl.glVertex2d(0, 0);
-
-            gl.glColor3f(0, 0, 1);
-            gl.glVertex2d(0, c);
-//            gl.glVertex2d(0, 1);
-
-            gl.glColor3f(0, 1, 0);
-            gl.glVertex2d(s, -s);
-//            gl.glVertex2d(1, 0);
-
-            gl.glEnd();
-        }
-    }
-
-    private void update() {
-        theta += 0.01;
-        s = Math.sin(theta);
-        c = Math.cos(theta);
     }
 
 // --------------------------- main() method ---------------------------
