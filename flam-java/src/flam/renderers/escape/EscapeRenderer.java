@@ -5,6 +5,9 @@ import flam.GenomeView;
 import flam.RenderBuffer;
 import flam.RenderState;
 import flam.Renderer;
+import flam.Xform;
+
+import java.util.List;
 
 /**
  */
@@ -28,7 +31,8 @@ public class EscapeRenderer implements Renderer {
         double c[] = new double[3];
 
         GenomeView view = state.view;
-        
+        List<Xform> xforms = state.getGenome().xforms;
+
         for (int y = 0; y < buffer.getHeight(); ++y) {
             for (int x = 0; x < buffer.getWidth(); ++x) {
                 v[0] = x;
@@ -38,11 +42,11 @@ public class EscapeRenderer implements Renderer {
                 int i;
 
                 for (i = 0; i < 255; ++i) {
-                    if ((c[0] * c[0] + c[1] * c[1]) > 4) {
+                    if ((c[0] * c[0] + c[1] * c[1]) > .9) {
                         break;
                     }
 
-                    state.getGenome().pickRandomXform().applyTo(c, c);
+                    xforms.get(i % xforms.size()).applyTo(c, c);
                 }
 
                 buffer.set(x, y, i);
