@@ -11,19 +11,26 @@ add_executable(bin2c bin2c.c)
 
 macro(SHADER _from)
   PARSE_ARGUMENTS(SHADER
-    "DEPENDS"
+    "DEPENDS;CPP_FLAGS;SUFFIX"
     ""
     ${ARGN})
-  CPP(${CMAKE_CURRENT_SOURCE_DIR}/${_from} ${_from}.i
-    FLAGS "-P"
+  CPP(${CMAKE_CURRENT_SOURCE_DIR}/${_from} "${_from}${SHADER_SUFFIX}.i"
+    FLAGS "-P" ${SHADER_CPP_FLAGS}
     DEPENDS ${SHADER_DEPENDS})
 
-  BIN2C(${_from}.i ${_from}.cpp ${_from})
+  BIN2C("${_from}${SHADER_SUFFIX}.i" ${_from}${SHADER_SUFFIX}.cpp ${_from})
 endmacro(SHADER)
 
 SHADER(render.vertex)
+
 SHADER(render_main.fragment
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/render.fragment)
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/render.fragment
+  SUFFIX "")
+
+SHADER(render_main.fragment
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/render.fragment
+  SUFFIX "_es"
+  CPP_FLAGS "-DES")
 
 FILE(GLOB gl_boost_srcs
   )
@@ -37,6 +44,8 @@ add_executable(iflamgl
   main.cpp
   render.cpp
   render.vertex.cpp render_main.fragment.cpp
+  # add ES version for dependency too
+  render_main.fragment_es.cpp
   flam_gl_view.cpp flam_gl_view.h
   ${gl_boost_srcs})
 target_link_libraries(iflamgl core ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES})

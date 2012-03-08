@@ -3,7 +3,7 @@
 #import <OpenGLES/EAGLDrawable.h>
 
 #include "component.h"
-
+#include "flam_gl_view.h"
 
 static size_t BytesPerRow(size_t width) {
     size_t bytes_per_row = width * 4;
@@ -32,10 +32,12 @@ private:
 
 @implementation FlamView
 
-- (id)initWithFrame:(CGRect)frame component:(FlamComponent*) component {
+- (id)initWithFrame:(CGRect)frame component:(boost::shared_ptr<FlamComponent>*) component {
     self = [super initWithFrame:frame];
     if (self) {
-        _component = component;
+        _component = *component;
+        _gl_view = new FlamGLView(_component);
+        
         _data = nil;
         _bitmapContext = nil;
 
@@ -76,6 +78,9 @@ private:
             return nil;
         }
         
+        _gl_view->Init();
+        _gl_view->SetSize(width, height);
+        
         CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawFrame:)];
         [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     }
@@ -92,8 +97,8 @@ private:
 }
 
 - (void) drawFrame:(CADisplayLink *)link {
-    glClearColor(0, 104.0/255.0, 55.0/255.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    NSLog(@"drawFrame");
+    _gl_view->Render();
     [_context presentRenderbuffer:GL_RENDERBUFFER];
 }
 

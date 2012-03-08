@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		320E352014FAFBAD009268FF /* render_main.fragment_es.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320E351F14FAFBAD009268FF /* render_main.fragment_es.cpp */; };
 		322889FD14DF6EA400E67796 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322889FC14DF6EA400E67796 /* UIKit.framework */; };
 		322889FF14DF6EA400E67796 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322889FE14DF6EA400E67796 /* Foundation.framework */; };
 		32288A0114DF6EA400E67796 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32288A0014DF6EA400E67796 /* CoreGraphics.framework */; };
@@ -45,6 +46,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		320E351F14FAFBAD009268FF /* render_main.fragment_es.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = render_main.fragment_es.cpp; path = ../../../build/gl/render_main.fragment_es.cpp; sourceTree = "<group>"; };
 		322889F814DF6EA400E67796 /* flamios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flamios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		322889FC14DF6EA400E67796 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		322889FE14DF6EA400E67796 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -149,6 +151,7 @@
 		32288A0214DF6EA400E67796 /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				320E351F14FAFBAD009268FF /* render_main.fragment_es.cpp */,
 				324B930514F8D5A400482AD6 /* flam_gl_view.cpp */,
 				324B930614F8D5A400482AD6 /* flam_gl_view.h */,
 				324B930114F8D0BE00482AD6 /* render_main.fragment.cpp */,
@@ -317,6 +320,7 @@
 				324B930314F8D0BF00482AD6 /* render_main.fragment.cpp in Sources */,
 				324B930414F8D0BF00482AD6 /* render.vertex.cpp in Sources */,
 				324B930714F8D5A400482AD6 /* flam_gl_view.cpp in Sources */,
+				320E352014FAFBAD009268FF /* render_main.fragment_es.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

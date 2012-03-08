@@ -10,8 +10,13 @@
 
 /////////////////
 
-extern const unsigned char render_main_fragment_i[];
 extern const unsigned char render_vertex_i[];
+
+#ifdef FLAM_ES
+  extern const unsigned char render_main_fragment_es_i[];
+#else
+  extern const unsigned char render_main_fragment_i[];
+#endif
 
 const GLuint kAttrPosition = 0;
 const GLuint kAttrTexCoord = 1;
@@ -52,7 +57,13 @@ void FlamGLView::Init() {
   {
     GLint compiled;
     fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar* ptr = (const GLchar*) render_main_fragment_i;
+
+    #ifdef FLAM_ES
+      const GLchar* ptr = (const GLchar*) render_main_fragment_es_i;
+    #else
+      const GLchar* ptr = (const GLchar*) render_main_fragment_i;
+    #endif
+
     glShaderSource(fragment_shader_id, 1, &ptr, NULL);
     glCompileShader(fragment_shader_id);
 
@@ -101,6 +112,11 @@ void FlamGLView::Init() {
   var_samples = glGetUniformLocation(program_id, "samples");
   CHECK_GL_ERROR();
 
+  var_tex = glGetUniformLocation(program_id, "tex");
+  CHECK_GL_ERROR();
+  glUniform1i(var_tex, 0);
+  CHECK_GL_ERROR();
+
   glBindAttribLocation(program_id, kAttrPosition, "a_position");
   CHECK_GL_ERROR();
 
@@ -118,18 +134,24 @@ void FlamGLView::SetSize(int w, int h) {
 
   glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 
-  data_.reset(new float[width_ * height_ * 4]);
+  data_.reset(new GLfloat[width_ * height_ * 4]);
   component_->SetSize(width_, height_);
+  CHECK_GL_ERROR();
 }
 
 void FlamGLView::Render() {
+  CHECK_GL_ERROR();
   Iter();
 
+  CHECK_GL_ERROR();
   glClear(GL_COLOR_BUFFER_BIT);
+  CHECK_GL_ERROR();
 
-  glEnable(GL_TEXTURE_2D);
+  // glEnable(GL_TEXTURE_2D);
+  // CHECK_GL_ERROR();
   //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
   glBindTexture(GL_TEXTURE_2D, texture_id);
+  CHECK_GL_ERROR();
 
   {
     GLfloat vCoords[] = {
@@ -170,7 +192,7 @@ void FlamGLView::Render() {
       4 /* count */);
 
   glFlush();
-  glDisable(GL_TEXTURE_2D);
+  //glDisable(GL_TEXTURE_2D);
   CHECK_GL_ERROR();
 }
 
@@ -181,9 +203,20 @@ void FlamGLView::CopyBufferToTexture() {
 
   const Genome& genome = *component_->genome();
   {
+    /*
     const Float* accum = render_buffer->accum();
     for (size_t i = 0; i < height_ * width_ * 4 ; ++i) {
       data_[i] = accum[i] / scale;
+    }*/
+    scale = 1;
+    for (size_t x = 0; x < width_; ++x) {
+      for (size_t y = 0; y < height_; ++y) {
+        size_t idx = (x + y * width_) * 4;
+        data_[idx] = 0;
+        data_[idx + 1] = 0;
+        data_[idx + 2] = 0;
+        data_[idx + 3] = 1.0 * x / width_;
+      }
     }
   }
 
@@ -194,23 +227,26 @@ void FlamGLView::CopyBufferToTexture() {
   glUniform1f(var_gamma, 1.0 / genome.gamma());
   glUniform1f(var_highpow, genome.highlight_power());
   glUniform1f(var_samples, render_buffer->samples());
-  //RGBAImage<TT> image(data_, width_ * 4, height_, 1.0, 1.0/255.0);
-  //render_buffer->Render(&image);
+  CHECK_GL_ERROR();
 
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  CHECK_GL_ERROR();
 
   glTexImage2D(
       GL_TEXTURE_2D,  // target
-      0,  // level
-      GL_RGBA32F, // internal format
-      width_,  // width
+      0,        // level
+      GL_RGBA,  // internal format
+      width_,   // width
       height_,  // height
-      0, // border
+      0,        // border
       GL_RGBA,  // data format
       GL_FLOAT,
       data_.get());
+    
+  CHECK_GL_ERROR();
 }
 
 void FlamGLView::PrintShaderInfoLog(GLint shader) {

@@ -7,6 +7,7 @@
 #include <TargetConditionals.h>
 
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+    #define FLAM_ES
     // iphone
     #include <OpenGLES/ES2/gl.h>
     #include <OpenGLES/ES2/glext.h>
@@ -49,7 +50,7 @@ class FlamGLView {
 
     size_t width_;
     size_t height_;
-    boost::scoped_array<float> data_;
+    boost::scoped_array<GLfloat> data_;
 
     GLuint texture_id;
     GLuint fragment_shader_id;
@@ -63,6 +64,7 @@ class FlamGLView {
     GLuint var_gamma;
     GLuint var_highpow;
     GLuint var_samples;
+    GLuint var_tex;
 
 };
 
