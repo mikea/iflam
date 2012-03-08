@@ -2,6 +2,7 @@
 #import "FlamView.h"
 
 #include "controller.h"
+#include "component.h"
 
 @implementation FlamiosViewController
 
@@ -12,7 +13,7 @@
             NSString* path = [[NSBundle mainBundle] pathForResource: @"sheeps"
                                                              ofType: nil];
             boost::shared_ptr<Controller> slide_show(new SlideshowController([path UTF8String]));
-            _component = boost::make_shared<FlamComponent>(slide_show);
+            _component = new FlamComponent(slide_show);
         }
         
     }
@@ -21,11 +22,11 @@
 }
 
 - (void) loadView {
-    self.view = [[FlamView alloc]initWithFrame:[[UIScreen mainScreen] bounds] component:&_component];
+    self.view = [[FlamView alloc]initWithFrame:[[UIScreen mainScreen] bounds] component:_component];
 }
 
 - (void)dealloc {
-    _component.reset();
+    delete _component;
     [super dealloc];
 }
 

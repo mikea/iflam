@@ -1,9 +1,6 @@
 #import "FlamView.h"
-#import <QuartzCore/QuartzCore.h>
-#import <OpenGLES/EAGLDrawable.h>
-
 #include "component.h"
-#include "flam_gl_view.h"
+
 
 static size_t BytesPerRow(size_t width) {
     size_t bytes_per_row = width * 4;
@@ -32,77 +29,21 @@ private:
 
 @implementation FlamView
 
-- (id)initWithFrame:(CGRect)frame component:(boost::shared_ptr<FlamComponent>*) component {
+- (id)initWithFrame:(CGRect)frame component:(FlamComponent*) component {
     self = [super initWithFrame:frame];
     if (self) {
-        _component = *component;
-        _gl_view = new FlamGLView(_component);
-        
+        _component = component;
         _data = nil;
         _bitmapContext = nil;
-
-        _eaglLayer = (CAEAGLLayer*)self.layer;
-        _eaglLayer.opaque = YES;
-
-        _context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-        [EAGLContext setCurrentContext: _context];
-
-        // Create framebuffer
-        GLuint framebuffer;
-        glGenFramebuffers(1, &framebuffer);
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-        // Create renderbuffer
-        GLuint colorRenderbuffer;
-        glGenRenderbuffers(1, &colorRenderbuffer);
-        glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-        [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRenderbuffer);
-        
-        GLint width;
-        GLint height;
-        glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
-        glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
-        
-        // Create depth buffer
-/*        GLuint depthRenderbuffer;
-        glGenRenderbuffers(1, &depthRenderbuffer);
-        glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
-  */      
-        // Check status
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if(status != GL_FRAMEBUFFER_COMPLETE) {
-            NSLog(@"failed to make complete framebuffer object %x", status);
-            return nil;
-        }
-        
-        _gl_view->Init();
-        _gl_view->SetSize(width, height);
-        
-        CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawFrame:)];
-        [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     }
     
     return self;
-}
-
-+ (Class) layerClass {
-    return [CAEAGLLayer class];
 }
 
 -(void)update {
     [self setNeedsDisplay];
 }
 
-- (void) drawFrame:(CADisplayLink *)link {
-    NSLog(@"drawFrame");
-    _gl_view->Render();
-    [_context presentRenderbuffer:GL_RENDERBUFFER];
-}
-
-/*
 - (void) drawRect:(CGRect)rect {
     CGRect bounds = self.bounds;
     size_t width = bounds.size.width;
@@ -124,8 +65,8 @@ private:
                                                8,
                                                BytesPerRow(width),
                                                colorSpace,
-                                               kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little);
-        CGContextSetInterpolationQuality(_bitmapContext, kCGInterpolationNone);
+                                               kCGImageAlphaNoneSkipLast);
+        
         CGColorSpaceRelease(colorSpace);
     }
     
@@ -155,7 +96,7 @@ private:
                            withObject:nil
                         waitUntilDone:false];
 }
-*/
+
 
 
 

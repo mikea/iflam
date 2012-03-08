@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		320E352014FAFBAD009268FF /* render_main.fragment_es.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320E351F14FAFBAD009268FF /* render_main.fragment_es.cpp */; };
 		322889FD14DF6EA400E67796 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322889FC14DF6EA400E67796 /* UIKit.framework */; };
 		322889FF14DF6EA400E67796 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 322889FE14DF6EA400E67796 /* Foundation.framework */; };
 		32288A0114DF6EA400E67796 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32288A0014DF6EA400E67796 /* CoreGraphics.framework */; };
@@ -15,9 +14,6 @@
 		32288A0A14DF6EA500E67796 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 32288A0914DF6EA500E67796 /* main.m */; };
 		32288A2214DF727500E67796 /* FlamiosAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */; };
 		32288A2314DF727500E67796 /* FlamiosViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2114DF727500E67796 /* FlamiosViewController.mm */; };
-		324B930314F8D0BF00482AD6 /* render_main.fragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324B930114F8D0BE00482AD6 /* render_main.fragment.cpp */; };
-		324B930414F8D0BF00482AD6 /* render.vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324B930214F8D0BE00482AD6 /* render.vertex.cpp */; };
-		324B930714F8D5A400482AD6 /* flam_gl_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324B930514F8D5A400482AD6 /* flam_gl_view.cpp */; };
 		3284DCBE14DF778900D32338 /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBD14DF778900D32338 /* error_code.cpp */; };
 		3284DCC714DF779D00D32338 /* codecvt_error_category.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */; };
 		3284DCC814DF779D00D32338 /* operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC014DF779D00D32338 /* operations.cpp */; };
@@ -30,8 +26,6 @@
 		3284DCD014DF77A900D32338 /* clone_current_exception_non_intrusive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCCF14DF77A900D32338 /* clone_current_exception_non_intrusive.cpp */; };
 		3290F17814DF7A12005C77F5 /* FlamView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3290F17714DF7A12005C77F5 /* FlamView.mm */; };
 		3290F17B14DF7AB6005C77F5 /* sheeps in Resources */ = {isa = PBXBuildFile; fileRef = 3290F17A14DF7AB6005C77F5 /* sheeps */; };
-		32F0D05914E25F0C00A74E6E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F0D05814E25F0C00A74E6E /* OpenGLES.framework */; };
-		32F0D05C14E25F2600A74E6E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F0D05B14E25F2600A74E6E /* QuartzCore.framework */; };
 		32FF2B7C14DF78840048DF04 /* animator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6714DF78840048DF04 /* animator.cpp */; };
 		32FF2B7E14DF78840048DF04 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6A14DF78840048DF04 /* color.cpp */; };
 		32FF2B7F14DF78840048DF04 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6C14DF78840048DF04 /* common.cpp */; };
@@ -46,7 +40,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		320E351F14FAFBAD009268FF /* render_main.fragment_es.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = render_main.fragment_es.cpp; path = ../../../build/gl/render_main.fragment_es.cpp; sourceTree = "<group>"; };
 		322889F814DF6EA400E67796 /* flamios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flamios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		322889FC14DF6EA400E67796 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		322889FE14DF6EA400E67796 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -59,10 +52,6 @@
 		32288A1114DF6EA600E67796 /* FlamiosViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlamiosViewController.h; sourceTree = "<group>"; };
 		32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamiosAppDelegate.mm; sourceTree = "<group>"; };
 		32288A2114DF727500E67796 /* FlamiosViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamiosViewController.mm; sourceTree = "<group>"; };
-		324B930114F8D0BE00482AD6 /* render_main.fragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = render_main.fragment.cpp; path = ../../../build/gl/render_main.fragment.cpp; sourceTree = "<group>"; };
-		324B930214F8D0BE00482AD6 /* render.vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = render.vertex.cpp; path = ../../../build/gl/render.vertex.cpp; sourceTree = "<group>"; };
-		324B930514F8D5A400482AD6 /* flam_gl_view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = flam_gl_view.cpp; path = ../../gl/flam_gl_view.cpp; sourceTree = "<group>"; };
-		324B930614F8D5A400482AD6 /* flam_gl_view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = flam_gl_view.h; path = ../../gl/flam_gl_view.h; sourceTree = "<group>"; };
 		3284DCBD14DF778900D32338 /* error_code.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = error_code.cpp; path = ../../../../../Packages/boost_1_48_0/libs/system/src/error_code.cpp; sourceTree = "<group>"; };
 		3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = codecvt_error_category.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/codecvt_error_category.cpp; sourceTree = "<group>"; };
 		3284DCC014DF779D00D32338 /* operations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = operations.cpp; path = ../../../../../Packages/boost_1_48_0/libs/filesystem/v3/src/operations.cpp; sourceTree = "<group>"; };
@@ -76,8 +65,6 @@
 		3290F17614DF7A12005C77F5 /* FlamView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlamView.h; sourceTree = "<group>"; };
 		3290F17714DF7A12005C77F5 /* FlamView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FlamView.mm; sourceTree = "<group>"; };
 		3290F17A14DF7AB6005C77F5 /* sheeps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sheeps; path = ../../sheeps; sourceTree = "<group>"; };
-		32F0D05814E25F0C00A74E6E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		32F0D05B14E25F2600A74E6E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		32FF2B6714DF78840048DF04 /* animator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animator.cpp; path = ../core/animator.cpp; sourceTree = "<group>"; };
 		32FF2B6814DF78840048DF04 /* animator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = animator.h; path = ../core/animator.h; sourceTree = "<group>"; };
 		32FF2B6A14DF78840048DF04 /* color.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color.cpp; path = ../core/color.cpp; sourceTree = "<group>"; };
@@ -105,8 +92,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32F0D05C14E25F2600A74E6E /* QuartzCore.framework in Frameworks */,
-				32F0D05914E25F0C00A74E6E /* OpenGLES.framework in Frameworks */,
 				322889FD14DF6EA400E67796 /* UIKit.framework in Frameworks */,
 				322889FF14DF6EA400E67796 /* Foundation.framework in Frameworks */,
 				32288A0114DF6EA400E67796 /* CoreGraphics.framework in Frameworks */,
@@ -139,8 +124,6 @@
 		322889FB14DF6EA400E67796 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				32F0D05B14E25F2600A74E6E /* QuartzCore.framework */,
-				32F0D05814E25F0C00A74E6E /* OpenGLES.framework */,
 				322889FC14DF6EA400E67796 /* UIKit.framework */,
 				322889FE14DF6EA400E67796 /* Foundation.framework */,
 				32288A0014DF6EA400E67796 /* CoreGraphics.framework */,
@@ -151,11 +134,6 @@
 		32288A0214DF6EA400E67796 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				320E351F14FAFBAD009268FF /* render_main.fragment_es.cpp */,
-				324B930514F8D5A400482AD6 /* flam_gl_view.cpp */,
-				324B930614F8D5A400482AD6 /* flam_gl_view.h */,
-				324B930114F8D0BE00482AD6 /* render_main.fragment.cpp */,
-				324B930214F8D0BE00482AD6 /* render.vertex.cpp */,
 				32288A0B14DF6EA500E67796 /* FlamiosAppDelegate.h */,
 				32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */,
 				32288A1114DF6EA600E67796 /* FlamiosViewController.h */,
@@ -255,9 +233,6 @@
 /* Begin PBXProject section */
 		322889EF14DF6EA200E67796 /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-				LastUpgradeCheck = 0420;
-			};
 			buildConfigurationList = 322889F214DF6EA200E67796 /* Build configuration list for PBXProject "ios" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -317,10 +292,6 @@
 				32FF2B8614DF78840048DF04 /* tinyxmlerror.cpp in Sources */,
 				32FF2B8714DF78840048DF04 /* tinyxmlparser.cpp in Sources */,
 				3290F17814DF7A12005C77F5 /* FlamView.mm in Sources */,
-				324B930314F8D0BF00482AD6 /* render_main.fragment.cpp in Sources */,
-				324B930414F8D0BF00482AD6 /* render.vertex.cpp in Sources */,
-				324B930714F8D5A400482AD6 /* flam_gl_view.cpp in Sources */,
-				320E352014FAFBAD009268FF /* render_main.fragment_es.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,10 +351,9 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_VERSION = "";
+				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
@@ -391,7 +361,6 @@
 					"-DTIXML_USE_STL",
 				);
 				PRODUCT_NAME = flamios;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				WRAPPER_EXTENSION = app;
 			};
@@ -405,10 +374,9 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_VERSION = "";
+				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
@@ -416,7 +384,6 @@
 					"-DTIXML_USE_STL",
 				);
 				PRODUCT_NAME = flamios;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

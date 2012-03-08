@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-#include "component.h"
+class FlamComponent;
 
 @interface FlamiosViewController : UIViewController {
-    boost::shared_ptr<FlamComponent> _component;
+    FlamComponent* _component;
 }
 
 @end
