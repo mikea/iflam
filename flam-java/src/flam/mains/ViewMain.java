@@ -21,8 +21,8 @@ public class ViewMain {
     private static final JFrame frame = new JFrame();
 
     public static void main(String[] args) throws IOException, SAXException {
-        openGenome("../sheeps/1079.flam3");
-//        openGenome("flams/e_1.flam3");
+//        openGenome("../sheeps/1079.flam3");
+        openGenome("flams/linear_1.flam3");
 
         frame.setPreferredSize(new Dimension(512, 512));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
