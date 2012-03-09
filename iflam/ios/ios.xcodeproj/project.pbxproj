@@ -233,6 +233,9 @@
 /* Begin PBXProject section */
 		322889EF14DF6EA200E67796 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = 322889F214DF6EA200E67796 /* Build configuration list for PBXProject "ios" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -351,9 +354,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_VERSION = 4.2;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
@@ -361,6 +365,7 @@
 					"-DTIXML_USE_STL",
 				);
 				PRODUCT_NAME = flamios;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				WRAPPER_EXTENSION = app;
 			};
@@ -374,9 +379,10 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ios/ios-Prefix.pch";
-				GCC_VERSION = 4.2;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
@@ -384,6 +390,7 @@
 					"-DTIXML_USE_STL",
 				);
 				PRODUCT_NAME = flamios;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/aizatsky/Projects/iflam/iflam/core;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

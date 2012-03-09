@@ -8,10 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+#include <boost/smart_ptr.hpp>
+
 class FlamComponent;
+class SlideshowController;
 
 @interface FlamiosViewController : UIViewController {
     FlamComponent* _component;
+    boost::shared_ptr<SlideshowController> _controller;
 }
 
 @end

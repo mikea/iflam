@@ -12,8 +12,8 @@
         {
             NSString* path = [[NSBundle mainBundle] pathForResource: @"sheeps"
                                                              ofType: nil];
-            boost::shared_ptr<Controller> slide_show(new SlideshowController([path UTF8String]));
-            _component = new FlamComponent(slide_show);
+            _controller.reset(new SlideshowController([path UTF8String]));
+            _component = new FlamComponent(_controller);
         }
         
     }
@@ -23,9 +23,22 @@
 
 - (void) loadView {
     self.view = [[FlamView alloc]initWithFrame:[[UIScreen mainScreen] bounds] component:_component];
+    UISwipeGestureRecognizer* swipeRecognizer = [[UISwipeGestureRecognizer alloc]
+                                                 initWithTarget: self
+                                                         action: @selector(handleSwipe:)];
+    swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+    [self.view addGestureRecognizer: swipeRecognizer];
+    [swipeRecognizer release];
+    
+}
+
+- (void) handleSwipe: (UIGestureRecognizer *)sender {
+    NSLog(@"handleSwipe");
+    _controller->Next();
 }
 
 - (void)dealloc {
+    _controller.reset();
     delete _component;
     [super dealloc];
 }
