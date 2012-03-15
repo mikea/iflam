@@ -14,29 +14,29 @@
 		32288A0A14DF6EA500E67796 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 32288A0914DF6EA500E67796 /* main.m */; };
 		32288A2214DF727500E67796 /* FlamiosAppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2014DF727500E67796 /* FlamiosAppDelegate.mm */; };
 		32288A2314DF727500E67796 /* FlamiosViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 32288A2114DF727500E67796 /* FlamiosViewController.mm */; };
-		3284DCBE14DF778900D32338 /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBD14DF778900D32338 /* error_code.cpp */; };
-		3284DCC714DF779D00D32338 /* codecvt_error_category.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */; };
-		3284DCC814DF779D00D32338 /* operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC014DF779D00D32338 /* operations.cpp */; };
-		3284DCC914DF779D00D32338 /* path_traits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC114DF779D00D32338 /* path_traits.cpp */; };
-		3284DCCA14DF779D00D32338 /* path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC214DF779D00D32338 /* path.cpp */; };
-		3284DCCB14DF779D00D32338 /* portability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC314DF779D00D32338 /* portability.cpp */; };
-		3284DCCC14DF779D00D32338 /* unique_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC414DF779D00D32338 /* unique_path.cpp */; };
-		3284DCCD14DF779D00D32338 /* utf8_codecvt_facet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC514DF779D00D32338 /* utf8_codecvt_facet.cpp */; };
-		3284DCCE14DF779D00D32338 /* windows_file_codecvt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC614DF779D00D32338 /* windows_file_codecvt.cpp */; };
-		3284DCD014DF77A900D32338 /* clone_current_exception_non_intrusive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCCF14DF77A900D32338 /* clone_current_exception_non_intrusive.cpp */; };
+		3284DCBE14DF778900D32338 /* error_code.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBD14DF778900D32338 /* error_code.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCC714DF779D00D32338 /* codecvt_error_category.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCBF14DF779D00D32338 /* codecvt_error_category.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCC814DF779D00D32338 /* operations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC014DF779D00D32338 /* operations.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCC914DF779D00D32338 /* path_traits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC114DF779D00D32338 /* path_traits.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCCA14DF779D00D32338 /* path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC214DF779D00D32338 /* path.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCCB14DF779D00D32338 /* portability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC314DF779D00D32338 /* portability.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCCC14DF779D00D32338 /* unique_path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC414DF779D00D32338 /* unique_path.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCCD14DF779D00D32338 /* utf8_codecvt_facet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC514DF779D00D32338 /* utf8_codecvt_facet.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCCE14DF779D00D32338 /* windows_file_codecvt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCC614DF779D00D32338 /* windows_file_codecvt.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		3284DCD014DF77A900D32338 /* clone_current_exception_non_intrusive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3284DCCF14DF77A900D32338 /* clone_current_exception_non_intrusive.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		3290F17814DF7A12005C77F5 /* FlamView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3290F17714DF7A12005C77F5 /* FlamView.mm */; };
 		3290F17B14DF7AB6005C77F5 /* sheeps in Resources */ = {isa = PBXBuildFile; fileRef = 3290F17A14DF7AB6005C77F5 /* sheeps */; };
-		32FF2B7C14DF78840048DF04 /* animator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6714DF78840048DF04 /* animator.cpp */; };
-		32FF2B7E14DF78840048DF04 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6A14DF78840048DF04 /* color.cpp */; };
-		32FF2B7F14DF78840048DF04 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6C14DF78840048DF04 /* common.cpp */; };
-		32FF2B8014DF78840048DF04 /* component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6E14DF78840048DF04 /* component.cpp */; };
-		32FF2B8114DF78840048DF04 /* controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7014DF78840048DF04 /* controller.cpp */; };
-		32FF2B8214DF78840048DF04 /* genome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7214DF78840048DF04 /* genome.cpp */; };
-		32FF2B8314DF78840048DF04 /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7414DF78840048DF04 /* renderer.cpp */; };
-		32FF2B8414DF78840048DF04 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7614DF78840048DF04 /* tinystr.cpp */; };
-		32FF2B8514DF78840048DF04 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7814DF78840048DF04 /* tinyxml.cpp */; };
-		32FF2B8614DF78840048DF04 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7A14DF78840048DF04 /* tinyxmlerror.cpp */; };
-		32FF2B8714DF78840048DF04 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7B14DF78840048DF04 /* tinyxmlparser.cpp */; };
+		32FF2B7C14DF78840048DF04 /* animator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6714DF78840048DF04 /* animator.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B7E14DF78840048DF04 /* color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6A14DF78840048DF04 /* color.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B7F14DF78840048DF04 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6C14DF78840048DF04 /* common.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8014DF78840048DF04 /* component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B6E14DF78840048DF04 /* component.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8114DF78840048DF04 /* controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7014DF78840048DF04 /* controller.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8214DF78840048DF04 /* genome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7214DF78840048DF04 /* genome.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8314DF78840048DF04 /* renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7414DF78840048DF04 /* renderer.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8414DF78840048DF04 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7614DF78840048DF04 /* tinystr.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8514DF78840048DF04 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7814DF78840048DF04 /* tinyxml.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8614DF78840048DF04 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7A14DF78840048DF04 /* tinyxmlerror.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		32FF2B8714DF78840048DF04 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FF2B7B14DF78840048DF04 /* tinyxmlparser.cpp */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -234,7 +234,7 @@
 		322889EF14DF6EA200E67796 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 			};
 			buildConfigurationList = 322889F214DF6EA200E67796 /* Build configuration list for PBXProject "ios" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -350,6 +350,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -357,7 +358,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",
@@ -375,6 +376,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -382,7 +384,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = /Users/aizatsky/Packages/boost_1_48_0;
 				INFOPLIST_FILE = "ios/ios-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DBOOST_MPL_CFG_NO_PREPROCESSED_HEADERS",

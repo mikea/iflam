@@ -22,14 +22,20 @@
 }
 
 - (void) loadView {
-    self.view = [[FlamView alloc]initWithFrame:[[UIScreen mainScreen] bounds] component:_component];
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    self.view = [[FlamView alloc]initWithFrame:screenBounds component:_component];
     UISwipeGestureRecognizer* swipeRecognizer = [[UISwipeGestureRecognizer alloc]
                                                  initWithTarget: self
                                                          action: @selector(handleSwipe:)];
     swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
     [self.view addGestureRecognizer: swipeRecognizer];
-    [swipeRecognizer release];
     
+    UIToolbar* toolbar = [[UIToolbar alloc] initWithFrame: CGRectMake(0, 0, screenBounds.size.width, 24)];
+    toolbar.translucent = YES;
+    toolbar.barStyle = UIBarStyleBlack;
+    //toolbar.autoresizingMask |= UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    //toolbar.shouldAutorotateToInterfaceOrientation = YES;
+    [self.view addSubview:toolbar];
 }
 
 - (void) handleSwipe: (UIGestureRecognizer *)sender {
@@ -40,7 +46,6 @@
 - (void)dealloc {
     _controller.reset();
     delete _component;
-    [super dealloc];
 }
 
 - (void)didReceiveMemoryWarning {

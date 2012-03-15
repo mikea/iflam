@@ -14,8 +14,8 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self.window makeKeyAndVisible];
 
-    FlamiosViewController* flamController = [[FlamiosViewController alloc] init];
-    [self.window addSubview:flamController.view];
+    self.viewController = [[FlamiosViewController alloc] init];
+    [self.window addSubview:self.viewController.view];
     
     return YES;
 }
@@ -59,11 +59,10 @@
      */
 }
 
-- (void)dealloc
-{
-    [_window release];
-    [_viewController release];
-    [super dealloc];
+- (void)dealloc {
+    NSLog(@"dealloc");
 }
+
+
 
 @end
