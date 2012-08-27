@@ -245,7 +245,7 @@ Genome* LoadRandomSheep() {
 
   std::vector<boost::filesystem::path> paths;
   std::copy(
-      boost::filesystem::directory_iterator("/Users/aizatsky/Projects/iflam/sheeps"),
+      boost::filesystem::directory_iterator("/Users/aizatsky/local/iflam/sheeps"),
       boost::filesystem::directory_iterator(),
       std::back_inserter(paths));
   while (true) {
@@ -269,7 +269,7 @@ Genome* LoadRandomSheep() {
 
   {
     boost::shared_ptr<Controller> slide_show(
-        new SlideshowController("../sheeps/"));
+        new SlideshowController("/Users/aizatsky/local/iflam/sheeps/"));
     flamView.component = new FlamComponent(slide_show);
   }
 
