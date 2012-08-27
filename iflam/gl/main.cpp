@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   {
     boost::shared_ptr<Controller> slide_show(
-        new SlideshowController("../dir/"));
+        new SlideshowController(dir));
     boost::shared_ptr<Controller> animation(
         new AnimatingController(slide_show));
     boost::shared_ptr<FlamComponent> c(new FlamComponent(slide_show));

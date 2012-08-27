@@ -24,6 +24,7 @@ void SlideshowController::LoadRandomSheep() {
     boost::filesystem::path p = paths[rnd_.irnd(paths.size())];
     if (boost::filesystem::is_regular_file(p) &&
         boost::filesystem::extension(p) == ".flam3") {
+      std::cout << "Loading: " << p << "\n";
       boost::shared_ptr<Genome> g(new Genome());
       g->Read(p.native());
       model_->set_genome(g);
