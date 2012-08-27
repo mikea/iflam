@@ -5,10 +5,10 @@
 macro(ADD_BOOST)
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_DEBUG ON)
-  set(BOOST_ROOT "$ENV{HOME}/homebrew/Cellar/boost/1.49.0")
+  set(BOOST_ROOT "$ENV{HOME}/homebrew/Cellar/boost/1.50.0")
   set(BOOST_INCLUDEDIR "${BOOST_ROOT}/include")
   set(BOOST_LIBRARYDIR "${BOOST_ROOT}/lib")
-  find_package(Boost 1.49 REQUIRED
+  find_package(Boost 1.50 REQUIRED
     exception program_options unit_test_framework filesystem system
     )
 
@@ -25,9 +25,9 @@ macro(ADD_BOOST)
 endmacro(ADD_BOOST)
 
 macro(ADD_PNG)
+  set(PNG_INCLUDE_DIR "$ENV{HOME}/homebrew/include")
   find_package(PNG REQUIRED)
 
-  set(PNG_INCLUDE_DIR "$ENV{HOME}/homebrew/Cellar/libpng/1.5.12/include")
   if (PNG_FOUND)
     message(STATUS "PNG include dir: ${PNG_INCLUDE_DIR}")
     include_directories(${PNG_INCLUDE_DIR})

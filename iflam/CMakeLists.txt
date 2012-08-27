@@ -1,10 +1,19 @@
 cmake_minimum_required(VERSION 2.8)
+
+if (APPLE)
+  set(CMAKE_CXX_COMPILER clang++)
+  set(CMAKE_C_COMPILER clang)
+endif()
+
 project(iflam)
+
+
+set(CMAKE_INCLUDE_PATH "$ENV{HOME}/homebrew/include")
+set(CMAKE_LIBRARY_PATH "$ENV{HOME}/homebrew/lib")
+
 set(CMAKE_CXX_FLAGS "-g -Wall -Wextra -O0 -fno-strict-aliasing -msse2 -ffast-math")
 
 if (APPLE)
-  #set(CMAKE_CXX_COMPILER clang++)
-  #set(CMAKE_C_COMPILER clang)
 else(APPLE)
   set(CMAKE_CXX_FLAGS "-fassociative-math ${CMAKE_CXX_FLAGS}")
 endif()
@@ -20,7 +29,7 @@ if (IPHONE)
 else (IPHONE)
   enable_testing()
 
-  #add_subdirectory(cmd)
+  add_subdirectory(cmd)
   add_subdirectory(gl)
 
   if (APPLE)

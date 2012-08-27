@@ -1,4 +1,9 @@
+// Needed for GIL
+#define png_infopp_NULL (png_infopp)NULL
+#define int_p_NULL (int*)NULL
+
 #include <assert.h>
+#include <boost/make_shared.hpp>
 #include <boost/program_options.hpp>
 #include "genome.h"
 #include "renderer.h"
@@ -59,7 +64,7 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Rendering " << in_file << " to " << out_file << "\n";
 
-  boost::shared_ptr<Genome> genome;
+  boost::shared_ptr<Genome> genome = boost::make_shared<Genome>();
   genome->Read(in_file);
 
   RenderBuffer render_buffer(width, height);
