@@ -5,10 +5,14 @@
 macro(ADD_BOOST)
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_DEBUG ON)
-  set(BOOST_ROOT "$ENV{HOME}/homebrew/Cellar/boost/1.50.0")
+  if (APPLE)
+    set(BOOST_ROOT "$ENV{HOME}/homebrew/Cellar/boost/1.50.0")
+  else(APPLE)
+    set(BOOST_ROOT "$ENV{HOME}/Packages/boost_1_48_0")
+  endif()
   set(BOOST_INCLUDEDIR "${BOOST_ROOT}/include")
   set(BOOST_LIBRARYDIR "${BOOST_ROOT}/lib")
-  find_package(Boost 1.50 REQUIRED
+  find_package(Boost 1.48 REQUIRED
     exception program_options unit_test_framework filesystem system
     )
 
