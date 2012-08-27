@@ -15,14 +15,6 @@ add_library(tinyxml
   tinyxml/tinyxmlparser.cpp
   )
 
-FILE(GLOB core_boost_srcs
-  "${BOOST_ROOT}/libs/exception/src/*.cpp"
-  "${BOOST_ROOT}/libs/system/src/*.cpp"
-  "${BOOST_ROOT}/libs/filesystem/v3/src/*.cpp"
-  )
-
-add_library(core_boost ${core_boost_srcs})
-
 
 add_library(core
   common.cpp common.h
@@ -33,7 +25,7 @@ add_library(core
   controller.cpp controller.h
   component.cpp component.h
   )
-target_link_libraries(core tinyxml core_boost)
+target_link_libraries(core tinyxml ${Boost_LIBRARIES})
 
 # target_link_libraries(core tinyxml ${Boost_LIBRARIES})
 

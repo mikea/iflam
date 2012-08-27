@@ -4,6 +4,8 @@ project(iflam_osx)
 include("../CMakeFunctions.txt")
 include_directories("../core")
 
+ADD_BOOST()
+
 add_definitions(-D__ASSERTMACROS__)
 include_directories("CA/PublicUtility" "CA/AUBase" "CA/Utility")
 
