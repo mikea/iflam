@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CIDR_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/../../core">
+      <sourceFolder url="file://$MODULE_DIR$/../../core" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/CMakeLists.txt">
+      <sourceFolder url="file://$MODULE_DIR$/../core/CMakeLists.txt" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/animator.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/animator.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/animator.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/animator.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/clrenderer.cl">
+      <sourceFolder url="file://$MODULE_DIR$/../core/clrenderer.cl" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/color.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/color.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/color.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/color.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/color_test.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/color_test.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/common.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/common.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/common.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/common.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/component.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/component.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/component.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/component.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/controller.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/controller.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/controller.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/controller.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/genome.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/genome.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/genome.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/genome.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/renderer.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/renderer.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/renderer.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/renderer.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/tinyxml/tinystr.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/tinyxml/tinystr.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/tinyxml/tinystr.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/tinyxml/tinystr.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/tinyxml/tinyxml.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/tinyxml/tinyxml.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/tinyxml/tinyxml.h">
+      <sourceFolder url="file://$MODULE_DIR$/../core/tinyxml/tinyxml.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/tinyxml/tinyxmlerror.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/tinyxml/tinyxmlerror.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../core/tinyxml/tinyxmlparser.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../core/tinyxml/tinyxmlparser.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/AppDelegate.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/AppDelegate.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/AppDelegate.mm">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/AppDelegate.mm" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUBase.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUBase.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUBase.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUDispatch.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUDispatch.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUDispatch.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUDispatch.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUInputElement.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUInputElement.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUInputElement.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUInputElement.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUOutputElement.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUOutputElement.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUOutputElement.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUOutputElement.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUResources.r">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUResources.r" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUScopeElement.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUScopeElement.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/AUScopeElement.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/AUScopeElement.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/ComponentBase.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/ComponentBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/AUBase/ComponentBase.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/AUBase/ComponentBase.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUOutputBL.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUOutputBL.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUOutputBL.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUOutputBL.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUParamInfo.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUParamInfo.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUParamInfo.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/AUParamInfo.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMap.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMap.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMap.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMap.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMapManager.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMapManager.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMapManager.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUMIDIMapManager.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUParameter.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUParameter.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUParameter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAUParameter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAtomic.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAtomic.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAtomicStack.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAtomicStack.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioBufferList.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioBufferList.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioBufferList.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioBufferList.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioChannelLayout.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioChannelLayout.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioChannelLayout.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioChannelLayout.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioChannelLayoutObject.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioChannelLayoutObject.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioFileFormats.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioFileFormats.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioFileFormats.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioFileFormats.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioTimeStamp.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioTimeStamp.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioTimeStamp.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioTimeStamp.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioUnit.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioUnit.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioUnit.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioUnit.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioUnitOutputCapturer.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioUnitOutputCapturer.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioValueRange.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioValueRange.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioValueRange.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAudioValueRange.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAutoDisposer.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAAutoDisposer.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABitOperations.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABitOperations.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABool.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABool.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABufferList.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABufferList.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABufferList.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABufferList.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABundleLocker.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABundleLocker.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABundleLocker.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CABundleLocker.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAByteOrder.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAByteOrder.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFArray.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFArray.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFArray.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFArray.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFData.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFData.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDictionary.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDictionary.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDictionary.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDictionary.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDistributedNotification.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDistributedNotification.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDistributedNotification.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFDistributedNotification.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMachPort.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMachPort.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMachPort.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMachPort.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMessagePort.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMessagePort.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMessagePort.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFMessagePort.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFNumber.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFNumber.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFNumber.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFNumber.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFObject.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFObject.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFPlugIn.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFPlugIn.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFPreferences.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFPreferences.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFPreferences.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFPreferences.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFString.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFString.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFString.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CACFString.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponent.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponent.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponent.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponent.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponentDescription.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponentDescription.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponentDescription.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAComponentDescription.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugMacros.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugMacros.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugMacros.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugMacros.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugPrintf.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugPrintf.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugPrintf.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugPrintf.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugger.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugger.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugger.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CADebugger.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAException.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAException.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAFilePathUtils.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAFilePathUtils.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAFilePathUtils.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAFilePathUtils.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAGuard.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAGuard.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAGuard.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAGuard.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioDevice.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioDevice.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioDevice.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioDevice.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioObject.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioObject.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioObject.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioObject.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioStream.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioStream.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioStream.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioStream.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioSystemObject.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioSystemObject.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioSystemObject.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHALAudioSystemObject.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHostTimeBase.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHostTimeBase.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHostTimeBase.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAHostTimeBase.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CALogMacros.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CALogMacros.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMath.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMath.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMixMap.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMixMap.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMutex.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMutex.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMutex.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAMutex.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPThread.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPThread.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPThread.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPThread.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPersistence.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPersistence.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAProcess.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAProcess.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAProcess.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAProcess.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPropertyAddress.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAPropertyAddress.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAReferenceCounted.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAReferenceCounted.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CARingBuffer.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CARingBuffer.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CARingBuffer.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CARingBuffer.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASettingsStorage.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASettingsStorage.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASettingsStorage.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASettingsStorage.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASharedLibrary.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASharedLibrary.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASharedLibrary.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASharedLibrary.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASpectralProcessor.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASpectralProcessor.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASpectralProcessor.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CASpectralProcessor.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamBasicDescription.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamBasicDescription.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamBasicDescription.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamBasicDescription.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamRangedDescription.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamRangedDescription.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamRangedDescription.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAStreamRangedDescription.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAThreadSafeList.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAThreadSafeList.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CATink.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CATink.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CATokenMap.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CATokenMap.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVectorUnit.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVectorUnit.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVectorUnit.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVectorUnit.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVectorUnitTypes.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVectorUnitTypes.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVolumeCurve.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVolumeCurve.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVolumeCurve.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAVolumeCurve.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAXException.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAXException.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAXException.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/CAXException.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/MatrixMixerVolumes.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/MatrixMixerVolumes.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/PublicUtility/MatrixMixerVolumes.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/PublicUtility/MatrixMixerVolumes.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUBaseHelper.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUBaseHelper.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUBaseHelper.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUBaseHelper.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUBuffer.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUBuffer.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUBuffer.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUBuffer.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUDebugDispatcher.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUDebugDispatcher.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUDebugDispatcher.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUDebugDispatcher.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUInputFormatConverter.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUInputFormatConverter.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUSilentTimeout.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUSilentTimeout.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUTimestampGenerator.cpp">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUTimestampGenerator.cpp" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CA/Utility/AUTimestampGenerator.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CA/Utility/AUTimestampGenerator.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/CMakeLists.txt">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/CMakeLists.txt" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/FlamView.h">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/FlamView.h" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/FlamView.mm">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/FlamView.mm" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/en.lproj/InfoPlist.strings">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/en.lproj/InfoPlist.strings" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/iflam-Info.plist">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/iflam-Info.plist" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/iflam-Prefix.pch">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/iflam-Prefix.pch" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/main.m">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/main.m" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/../osx/main.mm">
+      <sourceFolder url="file://$MODULE_DIR$/../osx/main.mm" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
+
