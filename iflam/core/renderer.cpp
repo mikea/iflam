@@ -135,7 +135,7 @@ RenderState::RenderState(const Genome& genome, RenderBuffer* buffer)
     view_width_(genome_width_ / ppux_),
     xform_distrib_(new int[genome_.xforms().size() * kChooseXformGrain]),
     last_xform_(0) {
-  rnd.seed(0);
+  rnd_.seed(0);
   size_t xforms_size = genome_.xforms().size();
 //  for (size_t i = 0; i < xforms_size * kChooseXformGrain; ++i) {
 //    xform_distrib_[i] = 0;
@@ -204,9 +204,9 @@ void RenderState::CreateXformDist(int xi, int k) {
 RenderState::~RenderState() { }
 
 void RenderState::Reseed() {
-  xyc_[0] = rnd.crnd();
-  xyc_[1] = rnd.crnd();
-  xyc_[2] = rnd.crnd();
+  xyc_[0] = rnd_.crnd();
+  xyc_[1] = rnd_.crnd();
+  xyc_[2] = rnd_.crnd();
 }
 
 void RenderState::Iterate(int iterations) {
@@ -238,14 +238,14 @@ void RenderState::UpdateBuffer(Float x, Float y, Float a, Float opacity) {
   }
 }
 
-int RenderState::DoIterationRound(int i) {
+int RenderState::DoIterationRound(int i, array<Float, 3>* xyc) {
   Float xyc2[3];
 
   const Xform& xform = PickRandomXform();
-  if (!xform.Apply(xyc_.c_array(), xyc_.c_array(), &rnd)) {
-    xyc_[0] = rnd.crnd();
-    xyc_[1] = rnd.crnd();
-    xyc_[2] = rnd.crnd();
+  if (!xform.Apply(xyc->c_array(), xyc->c_array(), &rnd_)) {
+    xyc->at(0) = rnd_.crnd();
+    xyc->at(1) = rnd_.crnd();
+    xyc->at(2) = rnd_.crnd();
     ++consequent_errors_;
     if (consequent_errors_ < 200) {
       return i - 4;
@@ -263,11 +263,11 @@ int RenderState::DoIterationRound(int i) {
 
 
   if (genome_.has_final_xform()) {
-    genome_.final_xform().Apply(xyc_.c_array(), xyc2, &rnd);
+    genome_.final_xform().Apply(xyc->c_array(), xyc2, &rnd_);
   } else {
-    xyc2[0] = xyc_[0];
-    xyc2[1] = xyc_[1];
-    xyc2[2] = xyc_[2];
+    xyc2[0] = xyc->at(0);
+    xyc2[1] = xyc->at(1);
+    xyc2[2] = xyc->at(2);
   }
 
   if (genome_.rotate() != 0) {
@@ -305,13 +305,13 @@ void RenderState::IterateImpl(int iterations) {
 
 
   for (int i = -20; i < iterations; ++i) {
-    i = DoIterationRound(i);
+    i = DoIterationRound(i, &xyc_);
   }
 }
 
 const Xform& RenderState::PickRandomXform() {
   size_t k;
-  size_t r = rnd.irnd(kChooseXformGrain);
+  size_t r = rnd_.irnd(kChooseXformGrain);
 
   if (chaos_enabled_) {
     k = xform_distrib_[last_xform_ * kChooseXformGrain + r];

@@ -53,19 +53,23 @@ static size_t BytesPerRow(size_t width) {
   }
 
   [lock lock];
- // NSLog(@"drawRect");
 
   NSRect bounds = self.bounds;
+  NSLog(@"drawRect, %@", NSStringFromRect(bounds));
+
   size_t width = bounds.size.width;
   size_t height = bounds.size.height;
 
   if (self.component->width() != width ||
       self.component->height() != height) {
     if (_data != nil) {
+      NSLog(@"free old bitmap");
       free(_data);
       CGContextRelease(_bitmapContext);
     }
+    NSLog(@"allocating buffer");
     _data = (uint8_t*) calloc(BytesPerRow(width) * height, 1);
+    NSAssert(_data, @"can't allocate buffer");
 
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     _bitmapContext = CGBitmapContextCreate(
@@ -76,6 +80,7 @@ static size_t BytesPerRow(size_t width) {
         BytesPerRow(width),
         colorSpace,
         kCGImageAlphaNoneSkipLast);
+    NSAssert(_bitmapContext, @"can't allocate bitmap");
 
     CGColorSpaceRelease(colorSpace);
   }

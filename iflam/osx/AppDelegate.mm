@@ -259,13 +259,44 @@ Genome* LoadRandomSheep() {
   }
 }
 
-@implementation AppDelegate
+@interface MyWindow:NSWindow{}
+@end
 
-@synthesize window;
-@synthesize flamView;
+@implementation MyWindow
+ -(BOOL) canBecomeKeyWindow{
+  return YES;
+ }
+@end
+
+@implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   NSLog(@"applicationDidFinishLaunching");
+
+  // Init window and view
+
+  {
+    NSRect windowRect = NSMakeRect(100.0, 350.0, 400.0, 400.0);
+    window = [[MyWindow alloc]
+      initWithContentRect: windowRect
+      styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
+      backing: NSBackingStoreBuffered
+      defer: NO];
+
+    [window setTitle: @"iFlam"];
+    flamView = [[FlamView alloc] init];
+    [window setContentView: flamView];
+    [window setDelegate: self];
+    [window setCollectionBehavior:
+      [window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary];
+    [window makeKeyAndOrderFront: nil];
+
+
+    [flamView setDelegate: self];
+  }
+
+
+  //
 
   {
     boost::shared_ptr<Controller> slide_show(
@@ -325,6 +356,13 @@ Genome* LoadRandomSheep() {
   [flamView setGenome: genome]; */
 }
 
+// Window delegate
+-(void)windowWillClose:(NSNotification *)notification {
+    [NSApp terminate:self];
+}
+
+
+// View delegate
 - (void)onMouseDown:(NSEvent*) anEvent {
   NSLog(@"onMouseDown");
   animator_->Randomize(*_genome);

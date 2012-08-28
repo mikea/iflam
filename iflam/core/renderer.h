@@ -88,7 +88,7 @@ class RenderState {
     void Reseed();
     void IterateImpl(int iterations);
 
-    int DoIterationRound(int i);
+    int DoIterationRound(int i, array<Float, 3>* xyc);
     void UpdateBuffer(Float x, Float y, Float a, Float opacity);
 
     void CreateXformDist(int xi, int xf);
@@ -118,7 +118,7 @@ class RenderState {
     bool chaos_enabled_;
     size_t last_xform_;
 
-    Random rnd;
+    Random rnd_;
 };
 
 class PixelInterface {

@@ -12,7 +12,7 @@ include_directories("CA/PublicUtility" "CA/AUBase" "CA/Utility")
 add_executable(
   iflamapp
   MACOSX_BUNDLE
-  main.m
+  main.mm
   en.lproj/MainMenu.xib
   AppDelegate.mm AppDelegate.h
   FlamView.mm FlamView.h

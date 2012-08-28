@@ -6,7 +6,7 @@ class Genome;
 class Animator;
 
 
-@interface AppDelegate : NSObject <NSApplicationDelegate> {
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate> {
 @private
   NSWindow* window;
   FlamView* flamView;
@@ -15,10 +15,6 @@ class Animator;
   Animator* animator_;
   double last_change_;
 }
-
-@property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet FlamView *flamView;
-
 
 - (void)newFFtDataAvailable:(Float32*) fftData size:(size_t) size min:(Float32)aMin max:(Float32)aMax;
 
