@@ -1,5 +1,5 @@
 /*
-     File: CAVectorUnitTypes.h 
+     File: AUPlugInDispatch.h 
  Abstract:  Part of CoreAudio Utility Classes  
   Version: 1.01 
   
@@ -44,16 +44,85 @@
  Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
 */
-#ifndef __CAVectorUnitTypes_h__
-#define __CAVectorUnitTypes_h__
+#ifndef __AUPlugInBase_h__
+#define __AUPlugInBase_h__
 
-enum {
-	kVecUninitialized = -1,
-	kVecNone = 0,
-	kVecAltivec = 1,
-	kVecSSE2 = 100,
-	kVecSSE3 = 101,
-	kVecNeon = 200
+#if !defined(__COREAUDIO_USE_FLAT_INCLUDES__)
+	#include <AudioUnit/AudioComponent.h>
+	#if !CA_BASIC_AU_FEATURES
+		#include <AudioUnit/MusicDevice.h>
+	#endif
+#else
+	#include "AudioComponent.h"
+	#include "MusicDevice.h"
+#endif
+
+#include "ComponentBase.h"
+
+struct AUBaseLookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUBaseFactory : public APFactory<AUBaseLookup, Implementor>
+{
 };
 
-#endif
+struct AUOutputLookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUOutputBaseFactory : public APFactory<AUOutputLookup, Implementor>
+{
+};
+
+struct AUComplexOutputLookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUOutputComplexBaseFactory : public APFactory<AUComplexOutputLookup, Implementor>
+{
+};
+
+struct AUBaseProcessLookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUBaseProcessFactory : public APFactory<AUBaseProcessLookup, Implementor>
+{
+};
+
+struct AUBaseProcessMultipleLookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUBaseProcessMultipleFactory : public APFactory<AUBaseProcessMultipleLookup, Implementor>
+{
+};
+
+#if !CA_BASIC_AU_FEATURES
+struct AUMIDILookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUMIDIEffectFactory : public APFactory<AUMIDILookup, Implementor>
+{
+};
+
+struct AUMIDIProcessLookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUMIDIProcessFactory : public APFactory<AUMIDIProcessLookup, Implementor>
+{
+};
+
+struct AUMusicLookup {
+	static AudioComponentMethod Lookup (SInt16 selector);
+};
+template <class Implementor>
+class AUMusicDeviceFactory : public APFactory<AUMusicLookup, Implementor>
+{
+};
+#endif // CA_BASIC_AU_FEATURES
+
+#endif // __AUPlugInBase_h__

@@ -1,42 +1,48 @@
-/*	Copyright © 2007 Apple Inc. All Rights Reserved.
-	
-	Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
-			Apple Inc. ("Apple") in consideration of your agreement to the
-			following terms, and your use, installation, modification or
-			redistribution of this Apple software constitutes acceptance of these
-			terms.  If you do not agree with these terms, please do not use,
-			install, modify or redistribute this Apple software.
-			
-			In consideration of your agreement to abide by the following terms, and
-			subject to these terms, Apple grants you a personal, non-exclusive
-			license, under Apple's copyrights in this original Apple software (the
-			"Apple Software"), to use, reproduce, modify and redistribute the Apple
-			Software, with or without modifications, in source and/or binary forms;
-			provided that if you redistribute the Apple Software in its entirety and
-			without modifications, you must retain this notice and the following
-			text and disclaimers in all such redistributions of the Apple Software. 
-			Neither the name, trademarks, service marks or logos of Apple Inc. 
-			may be used to endorse or promote products derived from the Apple
-			Software without specific prior written permission from Apple.  Except
-			as expressly stated in this notice, no other rights or licenses, express
-			or implied, are granted by Apple herein, including but not limited to
-			any patent rights that may be infringed by your derivative works or by
-			other works in which the Apple Software may be incorporated.
-			
-			The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
-			MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
-			THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
-			FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
-			OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
-			
-			IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
-			OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-			SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-			INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
-			MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
-			AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
-			STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
-			POSSIBILITY OF SUCH DAMAGE.
+/*
+     File: CAAudioValueRange.cpp 
+ Abstract:  CAAudioValueRange.h  
+  Version: 1.01 
+  
+ Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
+ Inc. ("Apple") in consideration of your agreement to the following 
+ terms, and your use, installation, modification or redistribution of 
+ this Apple software constitutes acceptance of these terms.  If you do 
+ not agree with these terms, please do not use, install, modify or 
+ redistribute this Apple software. 
+  
+ In consideration of your agreement to abide by the following terms, and 
+ subject to these terms, Apple grants you a personal, non-exclusive 
+ license, under Apple's copyrights in this original Apple software (the 
+ "Apple Software"), to use, reproduce, modify and redistribute the Apple 
+ Software, with or without modifications, in source and/or binary forms; 
+ provided that if you redistribute the Apple Software in its entirety and 
+ without modifications, you must retain this notice and the following 
+ text and disclaimers in all such redistributions of the Apple Software. 
+ Neither the name, trademarks, service marks or logos of Apple Inc. may 
+ be used to endorse or promote products derived from the Apple Software 
+ without specific prior written permission from Apple.  Except as 
+ expressly stated in this notice, no other rights or licenses, express or 
+ implied, are granted by Apple herein, including but not limited to any 
+ patent rights that may be infringed by your derivative works or by other 
+ works in which the Apple Software may be incorporated. 
+  
+ The Apple Software is provided by Apple on an "AS IS" basis.  APPLE 
+ MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION 
+ THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS 
+ FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND 
+ OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS. 
+  
+ IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL 
+ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, 
+ MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED 
+ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), 
+ STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
+ POSSIBILITY OF SUCH DAMAGE. 
+  
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
+  
 */
 //==================================================================================================
 //	Includes
@@ -51,6 +57,22 @@
 //==================================================================================================
 //	CAAudioValueRange
 //==================================================================================================
+
+Float64	CAAudioValueRange::BoundValue(const AudioValueRange& inRange, Float64 inValue)
+{
+	if (inValue <= inRange.mMinimum)
+	{
+		return inRange.mMinimum;
+	}
+	else if (inValue >= inRange.mMaximum)
+	{
+		return inRange.mMaximum;
+	}
+	else
+	{
+		return inValue;
+	}
+}
 
 Float64 CAAudioValueRange::PickCommonSampleRate(const AudioValueRange& inRange)
 {
@@ -223,22 +245,18 @@ void	CAAudioValueRange_ComputeUnion(const AudioValueRange& inRange, const CAAudi
 	}
 }
 
-void	CAAudioValueRange_ComputeIntersection(const AudioValueRange& inRange, const CAAudioValueRangeList& inRangeList, CAAudioValueRangeList& outIntersections)
+void	CAAudioValueRange_ComputeIntersection(UInt32 inNumberRangeList1Items, AudioValueRange inRangeList1[], const CAAudioValueRangeList& inRangeList2, CAAudioValueRangeList& outIntersections)
 {
 	outIntersections.clear();
-	//	iterate through the list and compute the intersections
-	CAAudioValueRangeList::const_iterator theIterator = inRangeList.begin();
-	while(theIterator != inRangeList.end())
+	for(UInt32 theRangeList1Index = 0; theRangeList1Index < inNumberRangeList1Items; ++theRangeList1Index)
 	{
-		//	figure out if the range intersects
-		AudioValueRange theIntersection;
-		if(CAAudioValueRange::Intersection(inRange, *theIterator, theIntersection))
+		for(CAAudioValueRangeList::const_iterator theRangeList2Iterator = inRangeList2.begin(); theRangeList2Iterator != inRangeList2.end(); std::advance(theRangeList2Iterator, 1))
 		{
-			//	it does, so add the intersection to the return list
-			outIntersections.push_back(theIntersection);
+			AudioValueRange theIntersection;
+			if(CAAudioValueRange::Intersection(inRangeList1[theRangeList1Index], *theRangeList2Iterator, theIntersection))
+			{
+				outIntersections.push_back(theIntersection);
+			}
 		}
-		
-		//	go to the next one
-		std::advance(theIterator, 1);
 	}
 }

@@ -1,42 +1,48 @@
-/*	Copyright © 2007 Apple Inc. All Rights Reserved.
-	
-	Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
-			Apple Inc. ("Apple") in consideration of your agreement to the
-			following terms, and your use, installation, modification or
-			redistribution of this Apple software constitutes acceptance of these
-			terms.  If you do not agree with these terms, please do not use,
-			install, modify or redistribute this Apple software.
-			
-			In consideration of your agreement to abide by the following terms, and
-			subject to these terms, Apple grants you a personal, non-exclusive
-			license, under Apple's copyrights in this original Apple software (the
-			"Apple Software"), to use, reproduce, modify and redistribute the Apple
-			Software, with or without modifications, in source and/or binary forms;
-			provided that if you redistribute the Apple Software in its entirety and
-			without modifications, you must retain this notice and the following
-			text and disclaimers in all such redistributions of the Apple Software. 
-			Neither the name, trademarks, service marks or logos of Apple Inc. 
-			may be used to endorse or promote products derived from the Apple
-			Software without specific prior written permission from Apple.  Except
-			as expressly stated in this notice, no other rights or licenses, express
-			or implied, are granted by Apple herein, including but not limited to
-			any patent rights that may be infringed by your derivative works or by
-			other works in which the Apple Software may be incorporated.
-			
-			The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
-			MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
-			THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
-			FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
-			OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
-			
-			IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
-			OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-			SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-			INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
-			MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
-			AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
-			STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
-			POSSIBILITY OF SUCH DAMAGE.
+/*
+     File: AUBase.cpp 
+ Abstract:  AUBase.h  
+  Version: 1.01 
+  
+ Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
+ Inc. ("Apple") in consideration of your agreement to the following 
+ terms, and your use, installation, modification or redistribution of 
+ this Apple software constitutes acceptance of these terms.  If you do 
+ not agree with these terms, please do not use, install, modify or 
+ redistribute this Apple software. 
+  
+ In consideration of your agreement to abide by the following terms, and 
+ subject to these terms, Apple grants you a personal, non-exclusive 
+ license, under Apple's copyrights in this original Apple software (the 
+ "Apple Software"), to use, reproduce, modify and redistribute the Apple 
+ Software, with or without modifications, in source and/or binary forms; 
+ provided that if you redistribute the Apple Software in its entirety and 
+ without modifications, you must retain this notice and the following 
+ text and disclaimers in all such redistributions of the Apple Software. 
+ Neither the name, trademarks, service marks or logos of Apple Inc. may 
+ be used to endorse or promote products derived from the Apple Software 
+ without specific prior written permission from Apple.  Except as 
+ expressly stated in this notice, no other rights or licenses, express or 
+ implied, are granted by Apple herein, including but not limited to any 
+ patent rights that may be infringed by your derivative works or by other 
+ works in which the Apple Software may be incorporated. 
+  
+ The Apple Software is provided by Apple on an "AS IS" basis.  APPLE 
+ MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION 
+ THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS 
+ FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND 
+ OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS. 
+  
+ IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL 
+ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, 
+ MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED 
+ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), 
+ STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
+ POSSIBILITY OF SUCH DAMAGE. 
+  
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
+  
 */
 #include "AUBase.h"
 #include "AUDispatch.h"
@@ -84,29 +90,28 @@ SInt32 AUBase::sVectorUnitType = kVecUninitialized;
 AUBase::AUBase(	AudioComponentInstance			inInstance, 
 				UInt32							numInputElements,
 				UInt32							numOutputElements,
-				UInt32							numGroupElements,
-				UInt32							numPartElements) :
+				UInt32							numGroupElements) :
 	ComponentBase(inInstance),
 	mElementsCreated(false),
 	mInitialized(false),
 	mHasBegunInitializing(false),
 	mInitNumInputEls(numInputElements), mInitNumOutputEls(numOutputElements), 
-#if !TARGET_OS_IPHONE
-	mInitNumGroupEls(numGroupElements), mInitNumPartEls(numPartElements),
+#if !CA_BASIC_AU_FEATURES
+	mInitNumGroupEls(numGroupElements),
 #endif
 	mRenderCallbacksTouched(false),
 	mRenderThreadID (NULL),
 	mWantsRenderThreadID (false),
-	mLastRenderedSampleTime(kNoLastRenderedSampleTime),
 	mLastRenderError(0),
 	mBuffersAllocated(false),
 	mLogString (NULL)
-	#if !TARGET_OS_IPHONE
+	#if !CA_NO_AU_UI_FEATURES
 		,
-		mContextName(NULL),
-		mDebugDispatcher (NULL)
+		mContextName(NULL)
 	#endif
 {
+	ResetRenderTime ();
+	
 	if(!sAUBaseCFStringsInitialized)
 	{
 		kUntitledString = CFSTR("Untitled");
@@ -136,7 +141,7 @@ AUBase::AUBase(	AudioComponentInstance			inInstance,
 	if (mAudioUnitAPIVersion > 1) 
 		mParamList.reserve (24);
 
-#if !TARGET_OS_IPHONE
+#if !CA_NO_AU_UI_FEATURES
 	memset (&mHostCallbackInfo, 0, sizeof (mHostCallbackInfo));
 #endif
 
@@ -151,7 +156,7 @@ AUBase::AUBase(	AudioComponentInstance			inInstance,
 AUBase::~AUBase()
 {
 	if (mCurrentPreset.presetName) CFRelease (mCurrentPreset.presetName);
-#if !TARGET_OS_IPHONE
+#if !CA_NO_AU_UI_FEATURES
 	if (mContextName) CFRelease (mContextName);
 #endif
 	if (mLogString) delete [] mLogString;
@@ -164,10 +169,11 @@ void	AUBase::CreateElements()
 	if (!mElementsCreated) {
 		Inputs().Initialize(this, kAudioUnitScope_Input, mInitNumInputEls);
 		Outputs().Initialize(this, kAudioUnitScope_Output, mInitNumOutputEls);
-#if !TARGET_OS_IPHONE
+#if !CA_BASIC_AU_FEATURES
 		Groups().Initialize(this, kAudioUnitScope_Group, mInitNumGroupEls);
-		Parts().Initialize(this, kAudioUnitScope_Part, mInitNumPartEls);
 #endif
+		CreateExtendedElements();
+		
 		mElementsCreated = true;
 	}
 }
@@ -221,11 +227,7 @@ OSStatus			AUBase::DoInitialize()
 			mHasBegunInitializing = true;
 			ReallocateBuffers();	// calls CreateElements()
 			mInitialized = true;	// signal that it's okay to render
-#if TARGET_OS_WIN32
-			MemoryBarrier();
-#else
-			OSMemoryBarrier();
-#endif
+			CAMemoryBarrier();
 		}
 	}
 
@@ -252,6 +254,9 @@ void				AUBase::DoCleanup()
 {
 	if (mInitialized)
 		Cleanup();
+		
+	ResetRenderTime ();
+
 	mInitialized = false;
 	mHasBegunInitializing = false;
 }
@@ -267,7 +272,7 @@ void				AUBase::Cleanup()
 OSStatus			AUBase::Reset(					AudioUnitScope 					inScope,
 													AudioUnitElement 				inElement)
 {
-	mLastRenderedSampleTime = kNoLastRenderedSampleTime;
+	ResetRenderTime ();
 	return noErr;
 }
 
@@ -323,7 +328,7 @@ OSStatus			AUBase::DispatchGetPropertyInfo(AudioUnitPropertyID				inID,
 		break;
 		
 	case kAudioUnitProperty_PresentPreset:
-#if !TARGET_OS_IPHONE
+#if !CA_USE_AUDIO_PLUGIN_ONLY
 #ifndef __LP64__
 	case kAudioUnitProperty_CurrentPreset:
 #endif
@@ -351,6 +356,12 @@ OSStatus			AUBase::DispatchGetPropertyInfo(AudioUnitPropertyID				inID,
 		
 	case kAudioUnitProperty_ParameterInfo:
 		outDataSize = sizeof(AudioUnitParameterInfo);
+		outWritable = false;
+		validateElement = false;
+		break;
+
+	case kAudioUnitProperty_ParameterHistoryInfo:
+		outDataSize = sizeof(AudioUnitParameterHistoryInfo);
 		outWritable = false;
 		validateElement = false;
 		break;
@@ -438,22 +449,15 @@ OSStatus			AUBase::DispatchGetPropertyInfo(AudioUnitPropertyID				inID,
 		break;
 #endif
 
-#if !CA_AU_IS_ONLY_PLUGIN
+#if !CA_USE_AUDIO_PLUGIN_ONLY
 	case kAudioUnitProperty_FastDispatch:
 		ca_require(inScope == kAudioUnitScope_Global, InvalidScope);
+		if (!IsCMgrObject()) goto InvalidProperty;
 		outDataSize = sizeof(void *);
 		outWritable = false;
 		validateElement = false;
 		break;
-#endif
-	
-#if !TARGET_OS_IPHONE
-	case kAudioUnitProperty_ContextName:
-		ca_require(inScope == kAudioUnitScope_Global, InvalidScope);
-		outDataSize = sizeof(CFStringRef);
-		outWritable = true;
-		break;
-	
+
 	case kAudioUnitProperty_GetUIComponentList:
 		ca_require(inScope == kAudioUnitScope_Global, InvalidScope);
 		outDataSize = GetNumCustomUIComponents();
@@ -463,7 +467,15 @@ OSStatus			AUBase::DispatchGetPropertyInfo(AudioUnitPropertyID				inID,
 		
 		outWritable = false;
 		break;
-
+#endif
+	
+#if !CA_NO_AU_UI_FEATURES
+	case kAudioUnitProperty_ContextName:
+		ca_require(inScope == kAudioUnitScope_Global, InvalidScope);
+		outDataSize = sizeof(CFStringRef);
+		outWritable = true;
+		break;
+	
 	case kAudioUnitProperty_ParameterValueStrings:
 		result = GetParameterValueStrings(inScope, inElement, NULL);
 		if (result == noErr) {
@@ -492,7 +504,7 @@ OSStatus			AUBase::DispatchGetPropertyInfo(AudioUnitPropertyID				inID,
 		outWritable = false;
 		break;
 
-#endif // !TARGET_OS_IPHONE
+#endif // !CA_NO_AU_UI_FEATURES
 
 	case 'lrst' :  // kAudioUnitProperty_LastRenderedSampleTime
 		outDataSize = sizeof(Float64);
@@ -550,6 +562,13 @@ OSStatus			AUBase::DispatchGetProperty(	AudioUnitPropertyID 			inID,
 		result = GetParameterInfo(inScope, inElement, *(AudioUnitParameterInfo *)outData);
 		break;
 
+	case kAudioUnitProperty_ParameterHistoryInfo:
+		{
+			AudioUnitParameterHistoryInfo* info = (AudioUnitParameterHistoryInfo*)outData;
+			result = GetParameterHistoryInfo(inScope, inElement, info->updatesPerSecond, info->historyDurationInSeconds);
+		}
+		break;
+
 	case kAudioUnitProperty_ClassInfo:
 		{
 			*(CFPropertyListRef *)outData = NULL;
@@ -565,7 +584,7 @@ OSStatus			AUBase::DispatchGetProperty(	AudioUnitPropertyID 			inID,
 		break;
 	
 	case kAudioUnitProperty_PresentPreset:
-#if !TARGET_OS_IPHONE
+#if !CA_USE_AUDIO_PLUGIN_ONLY
 #ifndef __LP64__
 	case kAudioUnitProperty_CurrentPreset:
 #endif
@@ -655,28 +674,35 @@ OSStatus			AUBase::DispatchGetProperty(	AudioUnitPropertyID 			inID,
 #endif
 
 		
-#if !CA_AU_IS_ONLY_PLUGIN
+#if !CA_USE_AUDIO_PLUGIN_ONLY
 	case kAudioUnitProperty_FastDispatch:
-		switch (inElement) {
-		case kAudioUnitGetParameterSelect:
-			*(AudioUnitGetParameterProc *)outData = (AudioUnitGetParameterProc)AudioUnitBaseGetParameter;
-			break;
-		case kAudioUnitSetParameterSelect:
-			*(AudioUnitSetParameterProc *)outData = (AudioUnitSetParameterProc)AudioUnitBaseSetParameter;
-			break;
-		case kAudioUnitRenderSelect:
-			if (AudioUnitAPIVersion() > 1)
-				*(AudioUnitRenderProc *)outData = (AudioUnitRenderProc)AudioUnitBaseRender;
-			else result = kAudioUnitErr_InvalidElement;
-			break;
-		default:
-			result = GetProperty(inID, inScope, inElement, outData);
-			break;
+		if (!IsCMgrObject()) result = kAudioUnitErr_InvalidProperty;
+		else {
+			switch (inElement) {
+			case kAudioUnitGetParameterSelect:
+				*(AudioUnitGetParameterProc *)outData = (AudioUnitGetParameterProc)CMgr_AudioUnitBaseGetParameter;
+				break;
+			case kAudioUnitSetParameterSelect:
+				*(AudioUnitSetParameterProc *)outData = (AudioUnitSetParameterProc)CMgr_AudioUnitBaseSetParameter;
+				break;
+			case kAudioUnitRenderSelect:
+				if (AudioUnitAPIVersion() > 1)
+					*(AudioUnitRenderProc *)outData = (AudioUnitRenderProc)CMgr_AudioUnitBaseRender;
+				else result = kAudioUnitErr_InvalidElement;
+				break;
+			default:
+				result = GetProperty(inID, inScope, inElement, outData);
+				break;
+			}
 		}
+		break;
+
+	case kAudioUnitProperty_GetUIComponentList:
+		GetUIComponentDescs ((ComponentDescription*)outData);
 		break;
 #endif
 
-#if !TARGET_OS_IPHONE
+#if !CA_NO_AU_UI_FEATURES
  	case kAudioUnitProperty_ParameterValueStrings:
 		result = GetParameterValueStrings(inScope, inElement, (CFArrayRef *)outData);
 		break;
@@ -695,10 +721,6 @@ OSStatus			AUBase::DispatchGetProperty(	AudioUnitPropertyID 			inID,
 		*(HostCallbackInfo *)outData = mHostCallbackInfo;
 		break;
 	
-	case kAudioUnitProperty_GetUIComponentList:
-		GetUIComponentDescs ((ComponentDescription*)outData);
-		break;
-
 	case kAudioUnitProperty_ContextName:
 		*(CFStringRef *)outData = mContextName;
 		if (mContextName) {
@@ -727,10 +749,10 @@ OSStatus			AUBase::DispatchGetProperty(	AudioUnitPropertyID 			inID,
 		}
 		break;
 
-#endif  // !TARGET_OS_IPHONE
+#endif  // !CA_NO_AU_UI_FEATURES
 
 	case 'lrst' : // kAudioUnitProperty_LastRenderedSampleTime
-		*(Float64*)outData = mLastRenderedSampleTime;
+		*(Float64*)outData = mCurrentRenderTime.mSampleTime;
 		break;
 
 	default:
@@ -843,7 +865,7 @@ OSStatus			AUBase::DispatchSetProperty(	AudioUnitPropertyID 			inID,
 		break;
 
 	case kAudioUnitProperty_PresentPreset:
-#if !TARGET_OS_IPHONE
+#if !CA_USE_AUDIO_PLUGIN_ONLY
 #ifndef __LP64__
 	case kAudioUnitProperty_CurrentPreset:
 #endif
@@ -897,13 +919,13 @@ OSStatus			AUBase::DispatchSetProperty(	AudioUnitPropertyID 			inID,
 		break;
 #endif
 
-#if !TARGET_OS_IPHONE
+#if !CA_NO_AU_UI_FEATURES
 	case kAudioUnitProperty_SetExternalBuffer:
 		ca_require(inDataSize >= sizeof(AudioUnitExternalBuffer), InvalidPropertyValue);
 		ca_require(IsInitialized(), Uninitialized);
 		{
 			AudioUnitExternalBuffer &buf = *(AudioUnitExternalBuffer*)inData;
-			if (intptr_t(buf.buffer) & 0x0F) result = paramErr;
+			if (intptr_t(buf.buffer) & 0x0F) result = kAudio_ParamError;
 			else if (inScope == kAudioUnitScope_Input) {
 				AUInputElement *input = GetInput(inElement);
 				input->UseExternalBuffer(buf);
@@ -937,7 +959,7 @@ OSStatus			AUBase::DispatchSetProperty(	AudioUnitPropertyID 			inID,
 			PropertyChanged(inID, inScope, inElement);
 		break;
 	}
-#endif // !TARGET_OS_IPHONE
+#endif // !CA_NO_AU_UI_FEATURES
 	
 	default:
 		result = SetProperty(inID, inScope, inElement, inData, inDataSize);
@@ -951,11 +973,11 @@ NotWritable:
 	return kAudioUnitErr_PropertyNotWritable;
 InvalidFormat:
 	return kAudioUnitErr_FormatNotSupported;
-#if !TARGET_OS_IPHONE
+#if !CA_NO_AU_UI_FEATURES
 Uninitialized:
 	return kAudioUnitErr_Uninitialized;
 #endif
-#if (MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_5) || TARGET_OS_IPHONE
+#if (MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_5) || CA_USE_AUDIO_PLUGIN_ONLY
 Initialized:
 	return kAudioUnitErr_Initialized;
 #endif
@@ -986,7 +1008,7 @@ OSStatus			AUBase::DispatchRemovePropertyValue (AudioUnitPropertyID		inID,
 		break;
 	}
 	
-#if !TARGET_OS_IPHONE
+#if !CA_NO_AU_UI_FEATURES
 	case kAudioUnitProperty_ContextName:
 		if (mContextName) CFRelease(mContextName);
 		mContextName = NULL;
@@ -1010,7 +1032,7 @@ OSStatus			AUBase::DispatchRemovePropertyValue (AudioUnitPropertyID		inID,
 		}
 		break;
 	}
-#endif // !TARGET_OS_IPHONE	
+#endif // !CA_NO_AU_UI_FEATURES	
 
 	default:
 		result = RemovePropertyValue (inID, inScope, inElement);		
@@ -1018,7 +1040,7 @@ OSStatus			AUBase::DispatchRemovePropertyValue (AudioUnitPropertyID		inID,
 	}
 		
 	return result;
-#if !TARGET_OS_IPHONE
+#if !CA_NO_AU_UI_FEATURES
 InvalidScope:
 	return kAudioUnitErr_InvalidScope;
 #endif
@@ -1119,7 +1141,7 @@ OSStatus			AUBase::SetRenderNotification(	AURenderCallback		 		inProc,
 													void *							inRefCon)
 {
 	if (inProc == NULL)
-		return paramErr;
+		return kAudio_ParamError;
 
 	mRenderCallbacksTouched = true;
 	mRenderCallbacks.deferred_add(RenderCallback(inProc, inRefCon));
@@ -1143,12 +1165,6 @@ OSStatus 	AUBase::GetParameter(			AudioUnitParameterID			inID,
 													AudioUnitElement 				inElement,
 													AudioUnitParameterValue &		outValue)
 {
-#if !TARGET_OS_IPHONE
-	if (inScope == kAudioUnitScope_Group) {
-		return GetGroupParameter (inID, inElement, outValue);
-	}
-#endif
-	
 	AUElement *elem = SafeGetElement(inScope, inElement);
 	outValue = elem->GetParameter(inID);
 	return noErr;
@@ -1163,37 +1179,10 @@ OSStatus 	AUBase::SetParameter(			AudioUnitParameterID			inID,
 													AudioUnitParameterValue			inValue,
 													UInt32							inBufferOffsetInFrames)
 {
-#if !TARGET_OS_IPHONE
-	if (inScope == kAudioUnitScope_Group) {
-		return SetGroupParameter (inID, inElement, inValue, inBufferOffsetInFrames);
-	}
-#endif
-	
 	AUElement *elem = SafeGetElement(inScope, inElement);
 	elem->SetParameter(inID, inValue);
 	return noErr;
 }
-
-#if !TARGET_OS_IPHONE
-//_____________________________________________________________________________
-//
-OSStatus 	AUBase::SetGroupParameter(		AudioUnitParameterID			inID,
-													AudioUnitElement 				inElement,
-													AudioUnitParameterValue			inValue,
-													UInt32							inBufferOffsetInFrames)
-{
-	return kAudioUnitErr_InvalidScope;
-}
-
-//_____________________________________________________________________________
-//
-OSStatus 	AUBase::GetGroupParameter(		AudioUnitParameterID			inID,
-													AudioUnitElement 				inElement,
-													AudioUnitParameterValue &		outValue)
-{
-	return kAudioUnitErr_InvalidScope;
-}
-#endif
 
 //_____________________________________________________________________________
 //
@@ -1362,7 +1351,7 @@ OSStatus			AUBase::DoRender(		AudioUnitRenderActionFlags &	ioActionFlags,
 	OSStatus theError;
 	RenderCallbackList::iterator rcit;
 	
-	CATRACE(kCATrace_AUBaseRenderStart, (int)this, inBusNumber, inFramesToProcess, 0);
+	AUTRACE(kCATrace_AUBaseRenderStart, mComponentInstance, (intptr_t)this, inBusNumber, inFramesToProcess, 0);
 	DISABLE_DENORMALS
 	
 	try {
@@ -1372,7 +1361,7 @@ OSStatus			AUBase::DoRender(		AudioUnitRenderActionFlags &	ioActionFlags,
 		
 		AUOutputElement *output = GetOutput(inBusNumber);	// will throw if non-existant
 		if (output->GetStreamFormat().NumberChannelStreams() != ioData.mNumberBuffers) {
-			DebugMessageN4("%s:%d ioData.mNumberBuffers=%u, output->GetStreamFormat().NumberChannelStreams()=%u; paramErr",
+			DebugMessageN4("%s:%d ioData.mNumberBuffers=%u, output->GetStreamFormat().NumberChannelStreams()=%u; kAudio_ParamError",
 				__FILE__, __LINE__, (unsigned)ioData.mNumberBuffers, (unsigned)output->GetStreamFormat().NumberChannelStreams());
 			goto ParamErr;
 		}
@@ -1383,8 +1372,8 @@ OSStatus			AUBase::DoRender(		AudioUnitRenderActionFlags &	ioActionFlags,
 			if (buf.mData != NULL) {
 				// only care about the size if the buffer is non-null
 				if (buf.mDataByteSize < expectedBufferByteSize) {
-					// if the buffer is too small, we cannot render safely. paramErr.
-					DebugMessageN7("%s:%d %u frames, %u bytes/frame, expected %u-byte buffer; ioData.mBuffers[%u].mDataByteSize=%u; paramErr",
+					// if the buffer is too small, we cannot render safely. kAudio_ParamError.
+					DebugMessageN7("%s:%d %u frames, %u bytes/frame, expected %u-byte buffer; ioData.mBuffers[%u].mDataByteSize=%u; kAudio_ParamError",
 						__FILE__, __LINE__, (unsigned)inFramesToProcess, (unsigned)output->GetStreamFormat().mBytesPerFrame, expectedBufferByteSize, ibuf, (unsigned)buf.mDataByteSize);
 					goto ParamErr;
 				}
@@ -1412,11 +1401,11 @@ OSStatus			AUBase::DoRender(		AudioUnitRenderActionFlags &	ioActionFlags,
 			flags = ioActionFlags | kAudioUnitRenderAction_PreRender;
 			for (rcit = mRenderCallbacks.begin(); rcit != mRenderCallbacks.end(); ++rcit) {
 				RenderCallback &rc = *rcit;
-				CATRACE(kCATrace_AUBaseRenderCallbackStart, (int)this, (int)rc.mRenderNotify, 1, 0);
+				AUTRACE(kCATrace_AUBaseRenderCallbackStart, mComponentInstance, (intptr_t)this, (intptr_t)rc.mRenderNotify, 1, 0);
 				(*(AURenderCallback)rc.mRenderNotify)(rc.mRenderNotifyRefCon, 
 								&flags,
 								&inTimeStamp, inBusNumber, inFramesToProcess, &ioData);
-				CATRACE(kCATrace_AUBaseRenderCallbackEnd, (int)this, (int)rc.mRenderNotify, 1, 0);
+				AUTRACE(kCATrace_AUBaseRenderCallbackEnd, mComponentInstance, (intptr_t)this, (intptr_t)rc.mRenderNotify, 1, 0);
 			}
 		}
 		
@@ -1431,11 +1420,11 @@ OSStatus			AUBase::DoRender(		AudioUnitRenderActionFlags &	ioActionFlags,
 		if (mRenderCallbacksTouched) {
 			for (rcit = mRenderCallbacks.begin(); rcit != mRenderCallbacks.end(); ++rcit) {
 				RenderCallback &rc = *rcit;
-				CATRACE(kCATrace_AUBaseRenderCallbackStart, (int)this, (int)rc.mRenderNotify, 2, 0);
+				AUTRACE(kCATrace_AUBaseRenderCallbackStart, mComponentInstance, (intptr_t)this, (intptr_t)rc.mRenderNotify, 2, 0);
 				(*(AURenderCallback)rc.mRenderNotify)(rc.mRenderNotifyRefCon, 
 								&flags,
 								&inTimeStamp, inBusNumber, inFramesToProcess, &ioData);
-				CATRACE(kCATrace_AUBaseRenderCallbackEnd, (int)this, (int)rc.mRenderNotify, 2, 0);
+				AUTRACE(kCATrace_AUBaseRenderCallbackEnd, mComponentInstance, (intptr_t)this, (intptr_t)rc.mRenderNotify, 2, 0);
 			}
 		}
 
@@ -1457,15 +1446,220 @@ OSStatus			AUBase::DoRender(		AudioUnitRenderActionFlags &	ioActionFlags,
 	}
 done:	
 	RESTORE_DENORMALS
-	CATRACE(kCATrace_AUBaseRenderEnd, (int)this, theError, 0, 0);
+	AUTRACE(kCATrace_AUBaseRenderEnd, mComponentInstance, (intptr_t)this, theError, ioActionFlags, ioData.mBuffers[0].mData != NULL ? *(int64_t *)ioData.mBuffers[0].mData : 0);
 	
 	return theError;
 	
 Uninitialized:	theError = kAudioUnitErr_Uninitialized;				goto errexit;
-ParamErr:		theError = paramErr;								goto errexit;
+ParamErr:		theError = kAudio_ParamError;						goto errexit;
 TooManyFrames:	theError = kAudioUnitErr_TooManyFramesToProcess;	goto errexit;
 errexit:
 	DebugMessageN2 ("  from %s, render err: %d", GetLoggingString(), (int)theError);
+	SetRenderError(theError);
+	goto done;
+}
+
+//_____________________________________________________________________________
+//
+OSStatus	AUBase::DoProcess (	AudioUnitRenderActionFlags  &		ioActionFlags,
+								const AudioTimeStamp &				inTimeStamp,
+								UInt32								inFramesToProcess,
+								AudioBufferList &					ioData)
+{
+	OSStatus theError;
+	AUTRACE(kCATrace_AUBaseRenderStart, mComponentInstance, (intptr_t)this, inFramesToProcess, 0, 0);
+	DISABLE_DENORMALS
+
+	try {
+		
+		if (!(ioActionFlags & (1 << 9)/*kAudioUnitRenderAction_DoNotCheckRenderArgs*/)) {
+			ca_require(IsInitialized(), Uninitialized);
+			ca_require(inFramesToProcess <= mMaxFramesPerSlice, TooManyFrames);
+
+			AUInputElement *input = GetInput(0);	// will throw if non-existant
+			if (input->GetStreamFormat().NumberChannelStreams() != ioData.mNumberBuffers) {
+				DebugMessageN4("%s:%d ioData.mNumberBuffers=%u, input->GetStreamFormat().NumberChannelStreams()=%u; kAudio_ParamError",
+					__FILE__, __LINE__, (unsigned)ioData.mNumberBuffers, (unsigned)input->GetStreamFormat().NumberChannelStreams());
+				goto ParamErr;
+			}
+
+			unsigned expectedBufferByteSize = inFramesToProcess * input->GetStreamFormat().mBytesPerFrame;
+			for (unsigned ibuf = 0; ibuf < ioData.mNumberBuffers; ++ibuf) {
+				AudioBuffer &buf = ioData.mBuffers[ibuf];
+				if (buf.mData != NULL) {
+					// only care about the size if the buffer is non-null
+					if (buf.mDataByteSize < expectedBufferByteSize) {
+						// if the buffer is too small, we cannot render safely. kAudio_ParamError.
+						DebugMessageN7("%s:%d %u frames, %u bytes/frame, expected %u-byte buffer; ioData.mBuffers[%u].mDataByteSize=%u; kAudio_ParamError",
+							__FILE__, __LINE__, (unsigned)inFramesToProcess, (unsigned)input->GetStreamFormat().mBytesPerFrame, expectedBufferByteSize, ibuf, (unsigned)buf.mDataByteSize);
+						goto ParamErr;
+					}
+					// Some clients incorrectly pass bigger buffers than expectedBufferByteSize.
+					// We will generally set the buffer size at the end of rendering, before we return.
+					// However we should ensure that no one, DURING rendering, READS a
+					// potentially incorrect size. This can lead to doing too much work, or
+					// reading past the end of an input buffer into unmapped memory.
+					buf.mDataByteSize = expectedBufferByteSize;
+				}
+			}
+		}
+		
+		if (WantsRenderThreadID())
+		{
+			#if TARGET_OS_MAC
+				mRenderThreadID = pthread_self();
+			#elif TARGET_OS_WIN32
+				mRenderThreadID = GetCurrentThreadId();
+			#endif
+		}
+		
+		if (NeedsToRender (inTimeStamp)) {
+			theError = ProcessBufferLists (ioActionFlags, ioData, ioData, inFramesToProcess);
+		} else
+			theError = noErr;
+			
+	}
+	catch (OSStatus err) {
+		theError = err;
+		goto errexit;
+	}
+	catch (...) {
+		theError = -1;
+		goto errexit;
+	}
+done:	
+	RESTORE_DENORMALS
+	AUTRACE(kCATrace_AUBaseRenderEnd, mComponentInstance, (intptr_t)this, theError, ioActionFlags, ioData.mBuffers[0].mData != NULL ? *(int64_t *)ioData.mBuffers[0].mData : 0);
+	
+	return theError;
+	
+Uninitialized:	theError = kAudioUnitErr_Uninitialized;				goto errexit;
+ParamErr:		theError = kAudio_ParamError;						goto errexit;
+TooManyFrames:	theError = kAudioUnitErr_TooManyFramesToProcess;	goto errexit;
+errexit:
+	DebugMessageN2 ("  from %s, process err: %d", GetLoggingString(), (int)theError);
+	SetRenderError(theError);
+	goto done;
+}
+
+OSStatus	AUBase::DoProcessMultiple (	AudioUnitRenderActionFlags  & ioActionFlags,
+							   const AudioTimeStamp &				inTimeStamp,
+							   UInt32								inFramesToProcess,
+							   UInt32								inNumberInputBufferLists,
+							   const AudioBufferList **				inInputBufferLists,
+							   UInt32								inNumberOutputBufferLists,
+							   AudioBufferList **					ioOutputBufferLists)
+{
+	OSStatus theError;
+	DISABLE_DENORMALS
+	
+	try {
+		
+		if (!(ioActionFlags & (1 << 9)/*kAudioUnitRenderAction_DoNotCheckRenderArgs*/)) {
+			ca_require(IsInitialized(), Uninitialized);
+			ca_require(inFramesToProcess <= mMaxFramesPerSlice, TooManyFrames);
+			
+			for (unsigned ibl = 0; ibl < inNumberInputBufferLists; ++ibl) {
+				if (inInputBufferLists[ibl] != NULL) {
+					AUInputElement *input = GetInput(ibl);	// will throw if non-existant
+					unsigned expectedBufferByteSize = inFramesToProcess * input->GetStreamFormat().mBytesPerFrame;
+					
+					if (input->GetStreamFormat().NumberChannelStreams() != inInputBufferLists[ibl]->mNumberBuffers) {
+						DebugMessageN5("%s:%d inInputBufferLists[%u]->mNumberBuffers=%u, input->GetStreamFormat().NumberChannelStreams()=%u; kAudio_ParamError",
+									   __FILE__, __LINE__, ibl, (unsigned)inInputBufferLists[ibl]->mNumberBuffers, (unsigned)input->GetStreamFormat().NumberChannelStreams());
+						goto ParamErr;
+					}
+					
+					for (unsigned ibuf = 0; ibuf < inInputBufferLists[ibl]->mNumberBuffers; ++ibuf) {
+						const AudioBuffer &buf = inInputBufferLists[ibl]->mBuffers[ibuf];
+						if (buf.mData != NULL) {
+							if (buf.mDataByteSize < expectedBufferByteSize) {
+								// the buffer is too small
+								DebugMessageN8("%s:%d %u frames, %u bytes/frame, expected %u-byte buffer; inInputBufferLists[%u].mBuffers[%u].mDataByteSize=%u; kAudio_ParamError",
+											   __FILE__, __LINE__, (unsigned)inFramesToProcess, (unsigned)input->GetStreamFormat().mBytesPerFrame, expectedBufferByteSize, ibl, ibuf, (unsigned)buf.mDataByteSize);
+								goto ParamErr;
+							}
+						} else {
+							// the buffer must exist
+							goto ParamErr;
+						}
+					}
+				} else {
+					// skip NULL input audio buffer list
+				}
+			}
+			
+			for (unsigned obl = 0; obl < inNumberOutputBufferLists; ++obl) {
+				if (ioOutputBufferLists[obl] != NULL) {
+					AUOutputElement *output = GetOutput(obl);	// will throw if non-existant
+					unsigned expectedBufferByteSize = inFramesToProcess * output->GetStreamFormat().mBytesPerFrame;
+
+					if (output->GetStreamFormat().NumberChannelStreams() != ioOutputBufferLists[obl]->mNumberBuffers) {
+						DebugMessageN5("%s:%d ioOutputBufferLists[%u]->mNumberBuffers=%u, output->GetStreamFormat().NumberChannelStreams()=%u; kAudio_ParamError",
+									   __FILE__, __LINE__, obl, (unsigned)ioOutputBufferLists[obl]->mNumberBuffers, (unsigned)output->GetStreamFormat().NumberChannelStreams());
+						goto ParamErr;
+					}
+					
+					for (unsigned obuf = 0; obuf < ioOutputBufferLists[obl]->mNumberBuffers; ++obuf) {
+						AudioBuffer &buf = ioOutputBufferLists[obl]->mBuffers[obuf];
+						if (buf.mData != NULL) {
+							// only care about the size if the buffer is non-null
+							if (buf.mDataByteSize < expectedBufferByteSize) {
+								// if the buffer is too small, we cannot render safely. kAudio_ParamError.
+								DebugMessageN8("%s:%d %u frames, %u bytes/frame, expected %u-byte buffer; ioOutputBufferLists[%u]->mBuffers[%u].mDataByteSize=%u; kAudio_ParamError",
+											   __FILE__, __LINE__, (unsigned)inFramesToProcess, (unsigned)output->GetStreamFormat().mBytesPerFrame, expectedBufferByteSize, obl, obuf, (unsigned)buf.mDataByteSize);
+								goto ParamErr;
+							}
+							// Some clients incorrectly pass bigger buffers than expectedBufferByteSize.
+							// We will generally set the buffer size at the end of rendering, before we return.
+							// However we should ensure that no one, DURING rendering, READS a
+							// potentially incorrect size. This can lead to doing too much work, or
+							// reading past the end of an input buffer into unmapped memory.
+							buf.mDataByteSize = expectedBufferByteSize;
+						}
+					}
+				} else {
+					// skip NULL output audio buffer list
+				}
+			}
+		}
+		
+		if (WantsRenderThreadID())
+		{
+#if TARGET_OS_MAC
+			mRenderThreadID = pthread_self();
+#elif TARGET_OS_WIN32
+			mRenderThreadID = GetCurrentThreadId();
+#endif
+		}
+		
+		if (NeedsToRender (inTimeStamp)) {
+			if (inNumberInputBufferLists == 1 && inNumberOutputBufferLists == 1)
+				theError = ProcessBufferLists (ioActionFlags, *inInputBufferLists[0], *ioOutputBufferLists[0], inFramesToProcess);
+			else {
+				theError = ProcessMultipleBufferLists (ioActionFlags, inFramesToProcess, inNumberInputBufferLists, inInputBufferLists, inNumberOutputBufferLists, ioOutputBufferLists);
+			}
+		} else
+			theError = noErr;
+	}
+	catch (OSStatus err) {
+		theError = err;
+		goto errexit;
+	}
+	catch (...) {
+		theError = -1;
+		goto errexit;
+	}
+done:	
+	RESTORE_DENORMALS
+	
+	return theError;
+	
+Uninitialized:	theError = kAudioUnitErr_Uninitialized;				goto errexit;
+ParamErr:		theError = kAudio_ParamError;						goto errexit;
+TooManyFrames:	theError = kAudioUnitErr_TooManyFramesToProcess;	goto errexit;
+errexit:
+	DebugMessageN2 ("  from %s, processmultiple err: %d", GetLoggingString(), (int)theError);
 	SetRenderError(theError);
 	goto done;
 }
@@ -1750,10 +1944,9 @@ OSStatus			AUBase::SaveState(		CFPropertyListRef * outData)
 		AddNumToDictionary (dict, kRenderQualityString, value);
 	}
 	
-#if !TARGET_OS_IPHONE
 // Does the unit support the CPULoad Quality property - if so, save it...
 	Float32 cpuLoad;
-	result = DispatchGetProperty (kAudioUnitProperty_CPULoad,
+	result = DispatchGetProperty (6/*kAudioUnitProperty_CPULoad*/,
 								kAudioUnitScope_Global,
 								0,
 								&cpuLoad);
@@ -1763,7 +1956,6 @@ OSStatus			AUBase::SaveState(		CFPropertyListRef * outData)
 		CFDictionarySetValue (dict, kCPULoadString, num);
 		CFRelease (num);
 	}
-#endif
 
 // Do we have any element names for any of our scopes?	
 	// first check to see if we have any names...
@@ -1874,7 +2066,7 @@ OSStatus			AUBase::RestoreState(	CFPropertyListRef	plist)
 	}
 	
 	CFRetain (mCurrentPreset.presetName);
-#if !TARGET_OS_IPHONE
+#if !CA_USE_AUDIO_PLUGIN_ONLY
 #ifndef __LP64__
 	PropertyChanged(kAudioUnitProperty_CurrentPreset, kAudioUnitScope_Global, 0);
 #endif
@@ -1892,19 +2084,17 @@ OSStatus			AUBase::RestoreState(	CFPropertyListRef	plist)
 								sizeof(value));
 	}
 	
-#if !TARGET_OS_IPHONE
 // Does the unit support the CPULoad Quality property - if so, save it...
 	if (CFDictionaryGetValueIfPresent (dict, kCPULoadString, reinterpret_cast<const void**>(&cfnum))) 
 	{
 		Float32 floatValue;
 		CFNumberGetValue (cfnum, kCFNumberFloatType, &floatValue);
-		DispatchSetProperty (kAudioUnitProperty_CPULoad,
+		DispatchSetProperty (6/*kAudioUnitProperty_CPULoad*/,
 								kAudioUnitScope_Global,
 								0,
 								&floatValue,
 								sizeof(floatValue));
 	}
-#endif
 
 // Do we have any element names for any of our scopes?
 	CFDictionaryRef nameDict;
@@ -1950,22 +2140,24 @@ bool				AUBase::SetAFactoryPresetAsCurrent (const AUPreset & inPreset)
 	return true;
 }
 
+#if !CA_USE_AUDIO_PLUGIN_ONLY
 int			AUBase::GetNumCustomUIComponents () 
 {
 	return 0;
 }
 
-#if !TARGET_OS_IPHONE
 void		AUBase::GetUIComponentDescs (ComponentDescription* inDescArray) {}
 #endif
 	
 bool		AUBase::HasIcon () 
-{ 
+{
+#if !CA_NO_AU_UI_FEATURES
 	CFURLRef url = CopyIconLocation(); 
 	if (url) {
 		CFRelease (url);
 		return true;
 	}
+#endif
 	return false;
 }
 
@@ -2021,6 +2213,17 @@ OSStatus			AUBase::GetParameterValueStrings(AudioUnitScope			inScope,
 
 //_____________________________________________________________________________
 //
+OSStatus			AUBase::GetParameterHistoryInfo(	AudioUnitScope					inScope,
+														AudioUnitParameterID			inParameterID,
+														Float32 &						outUpdatesPerSecond,
+														Float32 &						outHistoryDurationInSeconds)
+{
+	return kAudioUnitErr_InvalidProperty;
+}
+
+
+//_____________________________________________________________________________
+//
 OSStatus			AUBase::CopyClumpName(			AudioUnitScope			inScope, 
 													UInt32					inClumpID, 
 													UInt32					inDesiredNameLength,
@@ -2047,16 +2250,16 @@ AUElement *			AUBase::CreateElement(			AudioUnitScope					scope,
 {
 	switch (scope) {
 	case kAudioUnitScope_Global:
-		return new AUGlobalElement(this);
+		return new AUElement(this);
 	case kAudioUnitScope_Input:
 		return new AUInputElement(this);
 	case kAudioUnitScope_Output:
 		return new AUOutputElement(this);
-#if !TARGET_OS_IPHONE
+#if !CA_BASIC_AU_FEATURES
 	case kAudioUnitScope_Group:
-		return new AUGroupElement(this);
+		return new AUElement(this);
 	case kAudioUnitScope_Part:
-		return new AUPartElement(this);
+		return new AUElement(this);
 #endif
 	}
 	COMPONENT_THROW(kAudioUnitErr_InvalidScope);
@@ -2079,7 +2282,7 @@ bool	AUBase::FormatIsCanonical(		const CAStreamBasicDescription &f)
 #else
 		&&	(f.mFormatFlags & kLinearPCMFormatFlagIsFloat) != 0
 #endif
-		&&	((f.mFormatFlags & kAudioFormatFlagIsNonInterleaved) == 0) == (mAudioUnitAPIVersion == 1)
+        &&	((f.mChannelsPerFrame == 1) || ((f.mFormatFlags & kAudioFormatFlagIsNonInterleaved) == 0) == (mAudioUnitAPIVersion == 1))
 #if TARGET_RT_BIG_ENDIAN
 		&&	(f.mFormatFlags & kLinearPCMFormatFlagIsBigEndian) != 0
 #else

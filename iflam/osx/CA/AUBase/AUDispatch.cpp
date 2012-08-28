@@ -1,45 +1,52 @@
-/*	Copyright © 2007 Apple Inc. All Rights Reserved.
-	
-	Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
-			Apple Inc. ("Apple") in consideration of your agreement to the
-			following terms, and your use, installation, modification or
-			redistribution of this Apple software constitutes acceptance of these
-			terms.  If you do not agree with these terms, please do not use,
-			install, modify or redistribute this Apple software.
-			
-			In consideration of your agreement to abide by the following terms, and
-			subject to these terms, Apple grants you a personal, non-exclusive
-			license, under Apple's copyrights in this original Apple software (the
-			"Apple Software"), to use, reproduce, modify and redistribute the Apple
-			Software, with or without modifications, in source and/or binary forms;
-			provided that if you redistribute the Apple Software in its entirety and
-			without modifications, you must retain this notice and the following
-			text and disclaimers in all such redistributions of the Apple Software. 
-			Neither the name, trademarks, service marks or logos of Apple Inc. 
-			may be used to endorse or promote products derived from the Apple
-			Software without specific prior written permission from Apple.  Except
-			as expressly stated in this notice, no other rights or licenses, express
-			or implied, are granted by Apple herein, including but not limited to
-			any patent rights that may be infringed by your derivative works or by
-			other works in which the Apple Software may be incorporated.
-			
-			The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
-			MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
-			THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
-			FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
-			OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
-			
-			IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
-			OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-			SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-			INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
-			MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
-			AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
-			STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
-			POSSIBILITY OF SUCH DAMAGE.
+/*
+     File: AUDispatch.cpp 
+ Abstract:  AUDispatch.h  
+  Version: 1.01 
+  
+ Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
+ Inc. ("Apple") in consideration of your agreement to the following 
+ terms, and your use, installation, modification or redistribution of 
+ this Apple software constitutes acceptance of these terms.  If you do 
+ not agree with these terms, please do not use, install, modify or 
+ redistribute this Apple software. 
+  
+ In consideration of your agreement to abide by the following terms, and 
+ subject to these terms, Apple grants you a personal, non-exclusive 
+ license, under Apple's copyrights in this original Apple software (the 
+ "Apple Software"), to use, reproduce, modify and redistribute the Apple 
+ Software, with or without modifications, in source and/or binary forms; 
+ provided that if you redistribute the Apple Software in its entirety and 
+ without modifications, you must retain this notice and the following 
+ text and disclaimers in all such redistributions of the Apple Software. 
+ Neither the name, trademarks, service marks or logos of Apple Inc. may 
+ be used to endorse or promote products derived from the Apple Software 
+ without specific prior written permission from Apple.  Except as 
+ expressly stated in this notice, no other rights or licenses, express or 
+ implied, are granted by Apple herein, including but not limited to any 
+ patent rights that may be infringed by your derivative works or by other 
+ works in which the Apple Software may be incorporated. 
+  
+ The Apple Software is provided by Apple on an "AS IS" basis.  APPLE 
+ MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION 
+ THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS 
+ FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND 
+ OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS. 
+  
+ IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL 
+ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, 
+ MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED 
+ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), 
+ STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
+ POSSIBILITY OF SUCH DAMAGE. 
+  
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
+  
 */
 #include "AUBase.h"
 #include "CAXException.h"
+#include "AUDispatch.h"
 
 
 
@@ -60,28 +67,15 @@
 #endif
 
 
-#if AU_DEBUG_DISPATCHER
-	#include "AUDebugDispatcher.h"
-
-	#define INIT_DEBUG_DISPATCHER(This)		\
-		UInt64 nowTime = 0;					\
-		if (This->mDebugDispatcher != NULL) \
-			nowTime = CAHostTimeBase::GetTheCurrentTime();
-#endif
-
 OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *This)
 {
-	if (This == NULL) return paramErr;
+	if (This == NULL) return kAudio_ParamError;
 
-#if AU_DEBUG_DISPATCHER
-	INIT_DEBUG_DISPATCHER(This)
-#endif
-	
 	OSStatus result = noErr;
 
 	switch (params->what) {
 	case kComponentCanDoSelect:
-		switch (params->params[0]) {
+		switch (GetSelectorForCanDo(params)) {
 	// any selectors
 			case kAudioUnitInitializeSelect:
 			case kAudioUnitUninitializeSelect:
@@ -116,11 +110,6 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 	case kAudioUnitInitializeSelect:
 	{
 		result = This->DoInitialize();
-
-				#if AU_DEBUG_DISPATCHER
-					if (This->mDebugDispatcher)
-						This->mDebugDispatcher->Initialize (nowTime, result);
-				#endif
 	}
 		break;
 		
@@ -128,11 +117,6 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 	{
 		This->DoCleanup();
 		result = noErr;
-
-				#if AU_DEBUG_DISPATCHER
-					if (This->mDebugDispatcher)
-						This->mDebugDispatcher->Uninitialize (nowTime, result);
-				#endif
 	}
 		break;
 
@@ -155,14 +139,6 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 				*poutDataSize = dataSize;
 			if (poutWritable != NULL)
 				*poutWritable = writable;
-
-			#if AU_DEBUG_DISPATCHER
-				if (This->mDebugDispatcher)
-					This->mDebugDispatcher->GetPropertyInfo (nowTime, result, pinID, pinScope, pinElement, 
-																poutDataSize, poutWritable);
-			#endif
-		
-			
 		}
 		break;
 
@@ -181,7 +157,7 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 			
 			if (pioDataSize == NULL) {
 				ca_debug_string("AudioUnitGetProperty: null size pointer");
-				result = paramErr;
+				result = kAudio_ParamError;
 				goto finishGetProperty;
 			}
 			if (poutData == NULL) {
@@ -197,7 +173,7 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 			{
 				ca_debug_string("AudioUnitGetProperty: *ioDataSize == 0 on entry");
 				// $$$ or should we allow this as a shortcut for finding the size?
-				result = paramErr;
+				result = kAudio_ParamError;
 				goto finishGetProperty;
 			}
 			
@@ -229,14 +205,7 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 				*pioDataSize = 0;
 
 			finishGetProperty:
-				
-				#if AU_DEBUG_DISPATCHER
-					if (This->mDebugDispatcher)
-						This->mDebugDispatcher->GetProperty (nowTime, result, pinID, pinScope, pinElement, 
-																pioDataSize, poutData);
-				#else
-					;
-				#endif
+				;
 
 		}
 		break;
@@ -257,26 +226,19 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 				} else {
 					if (pinData == NULL) {
 						ca_debug_string("AudioUnitSetProperty: inData == NULL");
-						result = paramErr;
+						result = kAudio_ParamError;
 						goto finishSetProperty;
 					}
 
 					if (pinDataSize == 0) {
 						ca_debug_string("AudioUnitSetProperty: inDataSize == 0");
-						result = paramErr;
+						result = kAudio_ParamError;
 						goto finishSetProperty;
 					}
 				}
 			}
 			finishSetProperty:
-				
-				#if AU_DEBUG_DISPATCHER
-					if (This->mDebugDispatcher)
-						This->mDebugDispatcher->SetProperty (nowTime, result, pinID, pinScope, pinElement, 
-														pinData, pinDataSize);
-				#else
 					;
-				#endif
 
 		}
 		break;
@@ -331,7 +293,7 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 			PARAM(AudioUnitScope, pinScope, 1, 4);
 			PARAM(AudioUnitElement, pinElement, 2, 4);
 			PARAM(AudioUnitParameterValue *, poutValue, 3, 4);
-			result = (poutValue == NULL ? paramErr : This->GetParameter(pinID, pinScope, pinElement, *poutValue));
+			result = (poutValue == NULL ? kAudio_ParamError : This->GetParameter(pinID, pinScope, pinElement, *poutValue));
 		}
 		break;
 
@@ -370,7 +332,7 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 				AudioUnitRenderActionFlags tempFlags;
 				
 				if (pinTimeStamp == NULL || pioData == NULL)
-					result = paramErr;
+					result = kAudio_ParamError;
 				else {
 					if (pinActionFlags == NULL) {
 						tempFlags = 0;
@@ -378,12 +340,6 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 					}
 					result = This->DoRender(*pinActionFlags, *pinTimeStamp, pinOutputBusNumber, pinNumberFrames, *pioData);
 				}
-				
-				#if AU_DEBUG_DISPATCHER
-					if (This->mDebugDispatcher)
-						This->mDebugDispatcher->Render (nowTime, result, pinActionFlags, pinTimeStamp, 
-														pinOutputBusNumber, pinNumberFrames, pioData);
-				#endif
 			}			
 		}
 		break;
@@ -392,7 +348,7 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 		{
 			PARAM(AudioUnitScope, pinScope, 0, 2);
 			PARAM(AudioUnitElement, pinElement, 1, 2);
-			This->mLastRenderedSampleTime = -1;
+			This->ResetRenderTime();
 			result = This->Reset(pinScope, pinElement);
 		}
 		break;
@@ -407,16 +363,16 @@ OSStatus		AUBase::ComponentEntryDispatch(ComponentParameters *params, AUBase *Th
 
 // Fast dispatch entry points -- these need to replicate all error-checking logic from above
 
-OSStatus AudioUnitBaseGetParameter(	AUBase *				This,
-													AudioUnitParameterID	inID,
-													AudioUnitScope			inScope,
-													AudioUnitElement		inElement,
-													float					*outValue)
+OSStatus CMgr_AudioUnitBaseGetParameter(	AUBase *				This,
+											AudioUnitParameterID	inID,
+											AudioUnitScope			inScope,
+											AudioUnitElement		inElement,
+											float					*outValue)
 {
 	OSStatus result = AUBase::noErr;
 	
 	try {
-		if (This == NULL || outValue == NULL) return AUBase::paramErr;
+		if (This == NULL || outValue == NULL) return kAudio_ParamError;
 		result = This->GetParameter(inID, inScope, inElement, *outValue);
 	}
 	COMPONENT_CATCH
@@ -424,17 +380,17 @@ OSStatus AudioUnitBaseGetParameter(	AUBase *				This,
 	return result;
 }
 
-OSStatus AudioUnitBaseSetParameter(	AUBase * 				This,
-													AudioUnitParameterID	inID,
-													AudioUnitScope			inScope,
-													AudioUnitElement		inElement,
-													float					inValue,
-													UInt32					inBufferOffset)
+OSStatus CMgr_AudioUnitBaseSetParameter(	AUBase * 				This,
+											AudioUnitParameterID	inID,
+											AudioUnitScope			inScope,
+											AudioUnitElement		inElement,
+											float					inValue,
+											UInt32					inBufferOffset)
 {
 	OSStatus result = AUBase::noErr;
 	
 	try {
-		if (This == NULL) return AUBase::paramErr;
+		if (This == NULL) return kAudio_ParamError;
 		result = This->SetParameter(inID, inScope, inElement, inValue, inBufferOffset);
 	}
 	COMPONENT_CATCH
@@ -442,18 +398,14 @@ OSStatus AudioUnitBaseSetParameter(	AUBase * 				This,
 	return result;
 }
 
-OSStatus AudioUnitBaseRender(			AUBase *				This,
-													AudioUnitRenderActionFlags *ioActionFlags,
-													const AudioTimeStamp *	inTimeStamp,
-													UInt32					inBusNumber,
-													UInt32					inNumberFrames,
-													AudioBufferList *		ioData)
+OSStatus CMgr_AudioUnitBaseRender(			AUBase *				This,
+											AudioUnitRenderActionFlags *ioActionFlags,
+											const AudioTimeStamp *	inTimeStamp,
+											UInt32					inBusNumber,
+											UInt32					inNumberFrames,
+											AudioBufferList *		ioData)
 {
-	if (inTimeStamp == NULL || ioData == NULL) return AUBase::paramErr;
-
-#if AU_DEBUG_DISPATCHER
-	INIT_DEBUG_DISPATCHER(This)
-#endif
+	if (inTimeStamp == NULL || ioData == NULL) return kAudio_ParamError;
 	
 	OSStatus result = AUBase::noErr;
 	AudioUnitRenderActionFlags tempFlags;
@@ -466,11 +418,6 @@ OSStatus AudioUnitBaseRender(			AUBase *				This,
 		result = This->DoRender(*ioActionFlags, *inTimeStamp, inBusNumber, inNumberFrames, *ioData);
 	}
 	COMPONENT_CATCH
-
-	#if AU_DEBUG_DISPATCHER
-		if (This->mDebugDispatcher)
-			This->mDebugDispatcher->Render (nowTime, result, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, ioData);
-	#endif
 	
 	return result;
 }

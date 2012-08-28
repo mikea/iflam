@@ -1,53 +1,57 @@
-/*	Copyright © 2007 Apple Inc. All Rights Reserved.
-	
-	Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
-			Apple Inc. ("Apple") in consideration of your agreement to the
-			following terms, and your use, installation, modification or
-			redistribution of this Apple software constitutes acceptance of these
-			terms.  If you do not agree with these terms, please do not use,
-			install, modify or redistribute this Apple software.
-			
-			In consideration of your agreement to abide by the following terms, and
-			subject to these terms, Apple grants you a personal, non-exclusive
-			license, under Apple's copyrights in this original Apple software (the
-			"Apple Software"), to use, reproduce, modify and redistribute the Apple
-			Software, with or without modifications, in source and/or binary forms;
-			provided that if you redistribute the Apple Software in its entirety and
-			without modifications, you must retain this notice and the following
-			text and disclaimers in all such redistributions of the Apple Software. 
-			Neither the name, trademarks, service marks or logos of Apple Inc. 
-			may be used to endorse or promote products derived from the Apple
-			Software without specific prior written permission from Apple.  Except
-			as expressly stated in this notice, no other rights or licenses, express
-			or implied, are granted by Apple herein, including but not limited to
-			any patent rights that may be infringed by your derivative works or by
-			other works in which the Apple Software may be incorporated.
-			
-			The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
-			MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
-			THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
-			FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
-			OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
-			
-			IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
-			OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-			SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-			INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
-			MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
-			AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
-			STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
-			POSSIBILITY OF SUCH DAMAGE.
+/*
+     File: CAAudioUnit.cpp 
+ Abstract:  CAAudioUnit.h  
+  Version: 1.01 
+  
+ Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
+ Inc. ("Apple") in consideration of your agreement to the following 
+ terms, and your use, installation, modification or redistribution of 
+ this Apple software constitutes acceptance of these terms.  If you do 
+ not agree with these terms, please do not use, install, modify or 
+ redistribute this Apple software. 
+  
+ In consideration of your agreement to abide by the following terms, and 
+ subject to these terms, Apple grants you a personal, non-exclusive 
+ license, under Apple's copyrights in this original Apple software (the 
+ "Apple Software"), to use, reproduce, modify and redistribute the Apple 
+ Software, with or without modifications, in source and/or binary forms; 
+ provided that if you redistribute the Apple Software in its entirety and 
+ without modifications, you must retain this notice and the following 
+ text and disclaimers in all such redistributions of the Apple Software. 
+ Neither the name, trademarks, service marks or logos of Apple Inc. may 
+ be used to endorse or promote products derived from the Apple Software 
+ without specific prior written permission from Apple.  Except as 
+ expressly stated in this notice, no other rights or licenses, express or 
+ implied, are granted by Apple herein, including but not limited to any 
+ patent rights that may be infringed by your derivative works or by other 
+ works in which the Apple Software may be incorporated. 
+  
+ The Apple Software is provided by Apple on an "AS IS" basis.  APPLE 
+ MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION 
+ THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS 
+ FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND 
+ OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS. 
+  
+ IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL 
+ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, 
+ MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED 
+ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), 
+ STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
+ POSSIBILITY OF SUCH DAMAGE. 
+  
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
+  
 */
 #include "CAAudioUnit.h"
 
 #if !TARGET_OS_IPHONE
 #if !defined(__COREAUDIO_USE_FLAT_INCLUDES__)
 	#include <CoreServices/../Frameworks/CarbonCore.framework/Headers/Components.h>
-	#include <AudioUnit/MusicDevice.h>
 	#include <dlfcn.h>
 #else
 	#include <Components.h>
-	#include <MusicDevice.h>
 #endif
 #endif
 
@@ -67,6 +71,11 @@ struct StackAUChannelInfo {
 #ifndef CA_AU_USE_FAST_DISPATCH
 	#define CA_AU_USE_FAST_DISPATCH !TARGET_OS_IPHONE
 #endif
+
+#if CA_AU_USE_FAST_DISPATCH
+static void *LoadGetComponentInstanceStorage (void *inst);
+#endif
+
 
 class CAAudioUnit::AUState : public CAReferenceCounted  {
 public:
@@ -126,7 +135,6 @@ public:
 		return AudioUnitRender(mUnit, ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, ioData);
 	}
 	
-#if !TARGET_OS_IPHONE
 	OSStatus		MIDIEvent (UInt32					inStatus,
 								UInt32					inData1,
 								UInt32					inData2,
@@ -176,7 +184,6 @@ public:
 		return paramErr;
 #endif
 	}
-#endif// !TARGET_OS_IPHONE
 
 private:
 	// get the fast dispatch pointers
@@ -220,7 +227,7 @@ private:
 			mStopNoteProc = NULL;
 		
 		if (mRenderProc || mGetParamProc || mSetParamProc || mMIDIEventProc || mStartNoteProc || mStopNoteProc) {
-			mConnInstanceStorage = GetComponentInstanceStorage ( mUnit );
+			mConnInstanceStorage = LoadGetComponentInstanceStorage ( mUnit );
 		} else
 			mConnInstanceStorage = NULL;
 #else
@@ -242,8 +249,8 @@ private:
 private:
 		// get the compiler to tell us when we do a bad thing!!!
 	AUState () {}
-	AUState (const AUState&) {}
-	AUState& operator= (const AUState&) { return *this; } 
+	AUState (const AUState&);
+	AUState& operator= (const AUState&);
 };						
 						
 						
@@ -509,6 +516,7 @@ bool	CAAudioUnit::ValidateChannelPair (int 				inChannelsIn,
 	return false;
 }
 
+static
 bool CheckDynCount (SInt32 inTotalChans, const CAAUChanHelper &inHelper)
 {
 	int totalChans = 0;
@@ -863,7 +871,7 @@ OSStatus	CAAudioUnit::SetNumberChannels (AudioUnitScope	inScope,
 	CAStreamBasicDescription desc;
 	OSStatus result = GetFormat (inScope, inEl, desc);
 		if (result) return result;
-	desc.SetAUCanonical (inChans, desc.IsInterleaved());
+	desc.ChangeNumberChannels (inChans, desc.IsInterleaved());
 	result = SetFormat (inScope, inEl, desc);
 	return result;
 }
@@ -998,10 +1006,12 @@ OSStatus	CAAudioUnit::ConfigureDynamicScope (AudioUnitScope 		inScope,
 	if (result)
 		return result;
 		
-	CAStreamBasicDescription desc;
-	desc.mSampleRate = inSampleRate;
 	for (unsigned int i = 0; i < inNumElements; ++i) {
-		desc.SetAUCanonical (inChannelsPerElement[i], false);
+		CAStreamBasicDescription desc;
+		OSStatus result = GetFormat (inScope, i, desc);
+			if (result) return result;
+		desc.ChangeNumberChannels (inChannelsPerElement[i], desc.IsInterleaved());
+		desc.mSampleRate = inSampleRate;
 		result = SetFormat (inScope, i, desc);
 		if (result)
 			return result;
@@ -1036,6 +1046,21 @@ OSStatus	CAAudioUnit::SetBypass 		(bool	inBypass) const
 	return AudioUnitSetProperty (AU(), kAudioUnitProperty_BypassEffect,
 								kAudioUnitScope_Global, 0,
 								&bypass, sizeof (UInt32));
+}
+
+OSStatus	CAAudioUnit::GetMaxFramesPerSlice (UInt32& outMaxFrames) const
+{
+	UInt32 dataSize = sizeof(outMaxFrames);
+	return AudioUnitGetProperty (AU(), kAudioUnitProperty_MaximumFramesPerSlice,
+								kAudioUnitScope_Global, 0,
+								&outMaxFrames, &dataSize);
+}
+
+OSStatus	CAAudioUnit::SetMaxFramesPerSlice (UInt32 inMaxFrames)
+{
+	return AudioUnitSetProperty (AU(), kAudioUnitProperty_MaximumFramesPerSlice,
+								 kAudioUnitScope_Global, 0,
+								 &inMaxFrames, sizeof (UInt32));	
 }
 
 Float64		CAAudioUnit::Latency () const
@@ -1141,16 +1166,15 @@ bool		CAAudioUnit::HasCustomView () const
 OSStatus		CAAudioUnit::GetParameter(AudioUnitParameterID inID, AudioUnitScope scope, AudioUnitElement element,
 											Float32 &outValue) const
 {
-	return mDataPtr ? mDataPtr->GetParameter (inID, scope, element, outValue) : paramErr;
+	return mDataPtr ? mDataPtr->GetParameter (inID, scope, element, outValue) : static_cast<OSStatus>(paramErr);
 }
 
 OSStatus		CAAudioUnit::SetParameter(AudioUnitParameterID inID, AudioUnitScope scope, AudioUnitElement element,
 											Float32 value, UInt32 bufferOffsetFrames)
 {
-	return mDataPtr ? mDataPtr->SetParameter (inID, scope, element, value, bufferOffsetFrames) : paramErr;
+	return mDataPtr ? mDataPtr->SetParameter (inID, scope, element, value, bufferOffsetFrames) : static_cast<OSStatus>(paramErr);
 }
 
-#if !TARGET_OS_IPHONE
 OSStatus		CAAudioUnit::MIDIEvent (UInt32			inStatus,
 								UInt32					inData1,
 								UInt32					inData2,
@@ -1175,7 +1199,6 @@ OSStatus	CAAudioUnit::StopNote (MusicDeviceGroupID		inGroupID,
 {
 	return mDataPtr ? mDataPtr->StopNote (inGroupID, inNoteInstanceID, inOffsetSampleFrame) : paramErr;
 }
-#endif
 
 
 #pragma mark __Render
@@ -1186,7 +1209,52 @@ OSStatus		CAAudioUnit::Render (AudioUnitRenderActionFlags 			* ioActionFlags,
 												UInt32						inNumberFrames,
 												AudioBufferList				* ioData)
 {
-	return mDataPtr ? mDataPtr->Render (ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, ioData) : paramErr;
+	return mDataPtr ? mDataPtr->Render (ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, ioData) : static_cast<OSStatus>(paramErr);
+}
+
+extern "C" OSStatus
+AudioUnitProcess (					AudioUnit						inUnit, 
+									AudioUnitRenderActionFlags *	ioActionFlags, 
+									const AudioTimeStamp *			inTimeStamp, 
+									UInt32							inNumberFrames, 
+									AudioBufferList *				ioData);
+
+OSStatus		CAAudioUnit::Process (AudioUnitRenderActionFlags 			& ioActionFlags,
+												const AudioTimeStamp 		& inTimeStamp,
+												UInt32						inNumberFrames,
+												AudioBufferList				& ioData)
+{
+#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
+	return AudioUnitProcess (AU(), &ioActionFlags, &inTimeStamp, inNumberFrames, &ioData);
+#else
+	return -4/*unimpErr*/;
+#endif
+}
+
+extern "C" OSStatus
+AudioUnitProcessMultiple (			AudioUnit						inUnit, 
+									AudioUnitRenderActionFlags *	ioActionFlags, 
+									const AudioTimeStamp *			inTimeStamp, 
+									UInt32							inNumberFrames,
+									UInt32							inNumberInputBufferLists,
+									const AudioBufferList **		inInputBufferLists,
+									UInt32							inNumberOutputBufferLists,
+									AudioBufferList **				ioOutputBufferLists);
+
+OSStatus		CAAudioUnit::ProcessMultiple (AudioUnitRenderActionFlags 	& ioActionFlags,
+									const AudioTimeStamp					& inTimeStamp,
+									UInt32									inNumberFrames,
+									UInt32									inNumberInputBufferLists,
+									const AudioBufferList **				inInputBufferLists,
+									UInt32									inNumberOutputBufferLists,
+									AudioBufferList **						ioOutputBufferLists)
+{
+#if defined(__MAC_10_7) || defined(__IPHONE_4_0)
+	return AudioUnitProcessMultiple (AU(), &ioActionFlags, &inTimeStamp, inNumberFrames, 
+				inNumberInputBufferLists, inInputBufferLists, inNumberOutputBufferLists, ioOutputBufferLists);
+#else
+	return -4/*unimpErr*/;
+#endif
 }
 
 #pragma mark __CAAUChanHelper
@@ -1255,3 +1323,25 @@ void		CAAudioUnit::Print (FILE* file) const
 		fprintf (file, "\tnode=%ld\t", (long)GetAUNode()); Comp().Print (file);
 	}
 }
+
+#if CA_AU_USE_FAST_DISPATCH
+// Handle  GetComponentInstanceStorage(ComponentInstance aComponentInstance)
+static void *LoadGetComponentInstanceStorage (void *inst)
+{
+	typedef void* (*GetComponentInstanceStorageProc)(void* aComponentInstance);
+	static GetComponentInstanceStorageProc sGetComponentInstanceStorageProc = NULL;
+	
+	static int sDoCSLoad = 1;
+	if (sDoCSLoad) {
+		sDoCSLoad = 0;
+		void *theImage = dlopen("/System/Library/Frameworks/CoreServices.framework/CoreServices", RTLD_LAZY);
+		if (!theImage) return NULL;
+	
+		sGetComponentInstanceStorageProc = (GetComponentInstanceStorageProc) dlsym(theImage, "GetComponentInstanceStorage");
+	}
+	if (sGetComponentInstanceStorageProc)
+		return (*sGetComponentInstanceStorageProc)(inst);
+	return NULL;
+}
+#endif
+
