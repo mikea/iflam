@@ -10,6 +10,7 @@
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <boost/preprocessor.hpp>
+#include <boost/smart_ptr.hpp>
 
 #include "common.h"
 

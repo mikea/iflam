@@ -110,10 +110,6 @@ static size_t BytesPerRow(size_t width) {
 }
 
 
-- (void)dealloc {
-  [super dealloc];
-}
-
 - (void)magnifyWithEvent:(NSEvent *)event {
   /*
   double magnification = [event magnification];

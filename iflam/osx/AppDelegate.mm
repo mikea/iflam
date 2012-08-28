@@ -330,10 +330,6 @@ Genome* LoadRandomSheep() {
   animator_->Randomize(*_genome);
 }
 
-- (void)dealloc {
-    [super dealloc];
-}
-
 - (void)setRandomAnimator {
 }
 

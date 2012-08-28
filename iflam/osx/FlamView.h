@@ -27,7 +27,7 @@ class FlamComponent;
 }
 
 @property (assign) FlamComponent* component;
-@property (assign) IBOutlet id delegate;
+@property (retain) IBOutlet id delegate;
 
 -(void)resetDefaults;
 
