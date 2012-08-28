@@ -88,6 +88,9 @@ class RenderState {
     void Reseed();
     void IterateImpl(int iterations);
 
+    int DoIterationRound(int i);
+    void UpdateBuffer(Float x, Float y, Float a, Float opacity);
+
     void CreateXformDist(int xi, int xf);
     const Xform& PickRandomXform();
 
@@ -105,6 +108,11 @@ class RenderState {
     const Float view_bottom_;
     const Float view_height_;
     const Float view_width_;
+
+
+    Float rotate1_;
+    Float rotate2_;
+    int consequent_errors_;
 
     boost::scoped_array<int> xform_distrib_;  // xforms.size() * kChooseXformGrain
     bool chaos_enabled_;

@@ -5,6 +5,11 @@ project(iflam_core)
 include(../CMakeFunctions.txt)
 
 ADD_BOOST()
+
+if (APPLE)
+  FIND_PACKAGE(OPENCL REQUIRED)
+endif()
+
 ########################################################
 add_definitions(-DTIXML_USE_STL)
 

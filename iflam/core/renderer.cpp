@@ -220,82 +220,92 @@ void RenderState::Iterate(int iterations) {
   }
 }
 
+void RenderState::UpdateBuffer(Float x, Float y, Float a, Float opacity) {
+  // todo: use round
+  int x1 = (int) ((x - view_left_) *
+      buffer_->width() / view_width_ + 0.5);
+  int y1 = (int) ((y - view_bottom_) *
+      buffer_->height() / view_height_ + 0.5);
+
+  // todo: move check into Update.
+  if (x1 >= 0 && y1 >= 0) {
+    buffer_->Update(
+        x1,
+        y1,
+        genome_.color((int) std::min(std::max(a * Float(255.0),
+              Float(0.0)), Float(255.0))),
+        opacity);
+  }
+}
+
+int RenderState::DoIterationRound(int i) {
+  Float xyc2[3];
+
+  const Xform& xform = PickRandomXform();
+  if (!xform.Apply(xyc_.c_array(), xyc_.c_array(), &rnd)) {
+    xyc_[0] = rnd.crnd();
+    xyc_[1] = rnd.crnd();
+    xyc_[2] = rnd.crnd();
+    ++consequent_errors_;
+    if (consequent_errors_ < 200) {
+      return i - 4;
+    } else {
+      BOOST_THROW_EXCEPTION(error()
+          << error_message("Too many consequent errors"));
+    }
+  }
+
+  consequent_errors_ = 0;
+
+  if (i <= 0) {
+    return i;
+  }
+
+
+  if (genome_.has_final_xform()) {
+    genome_.final_xform().Apply(xyc_.c_array(), xyc2, &rnd);
+  } else {
+    xyc2[0] = xyc_[0];
+    xyc2[1] = xyc_[1];
+    xyc2[2] = xyc_[2];
+  }
+
+  if (genome_.rotate() != 0) {
+    //todo: optimize
+    Float x1 = xyc2[0] - genome_.center()[0];
+    Float y1 = xyc2[1] - genome_.center()[1];
+    Float x = rotate1_ * x1 - rotate2_ * y1 + genome_.center()[0];
+    Float y = rotate2_ * x1 + rotate1_ * y1 + genome_.center()[1];
+    xyc2[0] = x;
+    xyc2[1] = y;
+  }
+
+  Float opacity = xform.get_opacity();
+  if (opacity != 1.0) {
+    opacity = AdjustPercentage(opacity);
+  }
+  UpdateBuffer(xyc2[0], xyc2[1], xyc2[2], opacity);
+
+  return i;
+}
+
+
 void RenderState::IterateImpl(int iterations) {
   Reseed();
 
-  int consequent_errors_ = 0;
-  array<Float, 3> xyc2;
-
-  Float rotate1 = 0;
-  Float rotate2 = 0;
+  consequent_errors_ = 0;
 
   if (genome_.rotate() != 0) {
-    rotate1 = cos(genome_.rotate() * 2 * kPI / 360.0);
-    rotate2 = sin(genome_.rotate() * 2 * kPI / 360.0);
+    rotate1_ = cos(genome_.rotate() * 2 * kPI / 360.0);
+    rotate2_ = sin(genome_.rotate() * 2 * kPI / 360.0);
+  } else {
+    rotate1_ =  0;
+    rotate2_ = 0;
   }
 
+
   for (int i = -20; i < iterations; ++i) {
-    const Xform& xform = PickRandomXform();
-    if (!xform.Apply(xyc_.c_array(), xyc_.c_array(), &rnd)) {
-      xyc_[0] = rnd.crnd();
-      xyc_[1] = rnd.crnd();
-      xyc_[2] = rnd.crnd();
-      ++consequent_errors_;
-      if (consequent_errors_ < 200) {
-        i -= 4;
-        continue;
-      } else {
-        BOOST_THROW_EXCEPTION(error()
-            << error_message("Too many consequent errors"));
-      }
-    }
-
-    consequent_errors_ = 0;
-
-    if (i <= 0) {
-      continue;
-    }
-
-    Float opacity = xform.get_opacity();
-
-    if (opacity != 1.0) {
-      opacity = AdjustPercentage(opacity);
-    }
-
-    if (genome_.has_final_xform()) {
-      genome_.final_xform().Apply(xyc_.c_array(), xyc2.c_array(), &rnd);
-    } else {
-      xyc2[0] = xyc_[0];
-      xyc2[1] = xyc_[1];
-      xyc2[2] = xyc_[2];
-    }
-
-    if (genome_.rotate() != 0) {
-      //todo: optimize
-      Float x1 = xyc2[0] - genome_.center()[0];
-      Float y1 = xyc2[1] - genome_.center()[1];
-      Float x = rotate1 * x1 - rotate2 * y1 + genome_.center()[0];
-      Float y = rotate2 * x1 + rotate1 * y1 + genome_.center()[1];
-      xyc2[0] = x;
-      xyc2[1] = y;
-    }
-    {
-      // todo: use round
-      int x1 = (int) ((xyc2[0] - view_left_) *
-          buffer_->width() / view_width_ + 0.5);
-      int y1 = (int) ((xyc2[1] - view_bottom_) *
-          buffer_->height() / view_height_ + 0.5);
-
-      // todo: move check into Update.
-      if (x1 >= 0 && y1 >= 0) {
-        buffer_->Update(
-            x1,
-            y1,
-            genome_.color((int) std::min(std::max(xyc2[2] * Float(255.0),
-                  Float(0.0)), Float(255.0))),
-            opacity);
-      }
-    }
+    i = DoIterationRound(i);
   }
 }
 

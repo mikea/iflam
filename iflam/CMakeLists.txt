@@ -7,7 +7,7 @@ endif()
 
 project(iflam)
 
-
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_INCLUDE_PATH "$ENV{HOME}/homebrew/include")
 set(CMAKE_LIBRARY_PATH "$ENV{HOME}/homebrew/lib")
 
