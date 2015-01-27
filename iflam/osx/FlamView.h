@@ -13,7 +13,7 @@ class FlamComponent;
 
 @protocol FlamViewDelegate
 @optional
-- (void)onMouseDown:(NSEvent*) anEvent;
+- (void)onMouseDown:(NSEvent*)anEvent;
 @end
 
 @interface FlamView : NSView {
@@ -26,9 +26,9 @@ class FlamComponent;
     id delegate;
 }
 
-@property (assign) FlamComponent* component;
-@property (retain) IBOutlet id delegate;
+@property(assign) FlamComponent* component;
+@property(retain) IBOutlet id delegate;
 
--(void)resetDefaults;
+- (void)resetDefaults;
 
 @end

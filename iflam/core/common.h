@@ -16,9 +16,9 @@ typedef double Float;
 // Initialized array
 template<typename T, std::size_t N>
 class array : public boost::array<T, N> {
-  public:
+public:
     array() {
-      memset(this->elems, 0, sizeof(this->elems));
+        memset(this->elems, 0, sizeof(this->elems));
     }
 };
 
@@ -29,27 +29,35 @@ const Float kPI = boost::math::constants::pi<Float>();
 const Float kEpsilon = 1e-10;
 
 class Random {
-  public:
+public:
+
     Random();
 
     size_t irnd(size_t max);
 
     Float rnd();
+
     Float crnd();
+
     bool brnd();
-    void seed(int s) { rng_.seed(s); }
-  private:
+
+    void seed(int s) {
+        rng_.seed(s);
+    }
+private:
     boost::random::mt19937 rng_;
 };
 
 double WallTime();
 
 class Stopwatch {
-  public:
+public:
+
     Stopwatch(const std::string& name, long count = -1, std::string unit = "");
+
     ~Stopwatch();
 
-  private:
+private:
     std::string message_;
     long count_;
     std::string unit_;
@@ -60,7 +68,7 @@ class Stopwatch {
     (std::string("Bad value for ") + #x + ": " + \
      boost::lexical_cast<std::string>(x)).c_str())
 
-#if defined(BOOST_DISABLE_ASSERTS) || ( !defined(BOOST_ENABLE_ASSERT_HANDLER) && defined(NDEBUG) )
+#if defined(BOOST_DISABLE_ASSERTS) || (!defined(BOOST_ENABLE_ASSERT_HANDLER) && defined(NDEBUG) )
 #define BOOST_VERIFY_MSG(expr, msg) ((void)(expr))
 #else
 #define BOOST_VERIFY_MSG(expr, msg) BOOST_ASSERT_MSG(expr, msg)
@@ -80,9 +88,9 @@ class Stopwatch {
 #endif
 
 inline double round6(double x) {
-  x *= 1e6;
-  if (x < 0) x -= 1.0;
-  return 1e-6*(int)(x+0.5);
+    x *= 1e6;
+    if (x < 0) x -= 1.0;
+    return 1e-6 * (int) (x + 0.5);
 }
 
 #endif

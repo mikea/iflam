@@ -11,30 +11,41 @@ class Genome;
 class Model;
 
 class FlamComponent {
-  public:
+public:
+
     FlamComponent(boost::shared_ptr<Controller> controller);
+
     void Tick();
+
     void SetSize(size_t width, size_t height);
 
     boost::shared_ptr<Genome> genome() const {
-      return genome_;
+        return genome_;
     }
 
     boost::shared_ptr<RenderBuffer> render_buffer() const {
-      return buffer_;
+        return buffer_;
     }
 
     boost::shared_ptr<Controller> controller() const {
-      return controller_;
+        return controller_;
     }
 
-    size_t width() const { return width_; }
-    size_t height() const { return height_; }
+    size_t width() const {
+        return width_;
+    }
+
+    size_t height() const {
+        return height_;
+    }
 
     template<typename Image>
-    void Render(Image* image) { buffer_->Render(*genome_, image); }
+    void Render(Image* image) {
+        buffer_->Render(*genome_, image);
+    }
 
-  private:
+private:
+
     void Reset(boost::shared_ptr<Genome> genome);
 
     boost::shared_ptr<Controller> controller_;

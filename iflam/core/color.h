@@ -4,8 +4,8 @@
 #include "common.h"
 
 void rgb2hsv(Float* rgb, Float* hsv);
-void hsv2rgb(Float* hsv, Float* rgb);
 
+void hsv2rgb(Float* hsv, Float* rgb);
 
 
 #endif

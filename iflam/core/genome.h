@@ -18,7 +18,7 @@ class TiXmlElement;
 
 template<typename Type>
 struct PropertyInfo {
-  typedef Type type;
+    typedef Type type;
 };
 
 /*
@@ -83,9 +83,13 @@ struct PropertyInfo {
   BOOST_PP_SEQ_FOR_EACH(_DEFINE_PROPERTY, _Container, _properties)
 
 class Xform {
-  public:
-    enum { kVariationsCount = 99 };
+public:
+    enum {
+        kVariationsCount = 99
+    };
+
     Xform();
+
     explicit Xform(const Xform& genome);
 
     ~Xform();
@@ -94,8 +98,10 @@ class Xform {
 
     bool Apply(Float* in, Float* out, Random* rnd) const;
 
-    array<Float, 6>* mutable_coefs() { return &coefs_; }
-  private:
+    array<Float, 6>* mutable_coefs() {
+        return &coefs_;
+    }
+private:
     friend class Genome;
 
     void Init();
@@ -106,59 +112,61 @@ class Xform {
     boost::scoped_ptr<array<Float, 6> > post_;
 
     DECLARE_PROPERTIES(Xform,
-        PROPERTY(Float, animate) // is it bool?
-        PROPERTY(Float, blob_low)
-        PROPERTY(Float, blob_high)
-        PROPERTY(Float, blob_waves)
-        PROPERTY(Float, color)
-        PROPERTY(Float, color_speed)
-        PROPERTY(Float, conic_eccentricity)
-        PROPERTY(Float, conic_holes)
-        PROPERTY(Float, curl_c1)
-        PROPERTY(Float, curl_c2)
-        PROPERTY(Float, disc2_rot)
-        PROPERTY(Float, disc2_twist)
-        PROPERTY(Float, fan2_x)
-        PROPERTY(Float, fan2_y)
-        PROPERTY(Float, flower_holes)
-        PROPERTY(Float, flower_petals)
-        PROPERTY(Float, julian_dist)
-        PROPERTY(Float, julian_power)
-        PROPERTY(Float, juliascope_dist)
-        PROPERTY(Float, juliascope_power)
-        PROPERTY(Float, ngon_circle)
-        PROPERTY(Float, ngon_corners)
-        PROPERTY(Float, ngon_power)
-        PROPERTY(Float, ngon_sides)
-        PROPERTY(Float, opacity)
-        PROPERTY(Float, parabola_height)
-        PROPERTY(Float, parabola_width)
-        PROPERTY(Float, pdj_a)
-        PROPERTY(Float, pdj_b)
-        PROPERTY(Float, pdj_c)
-        PROPERTY(Float, pdj_d)
-        PROPERTY(Float, perspective_angle)
-        PROPERTY(Float, perspective_dist)
-        PROPERTY(Float, pie_rotation)
-        PROPERTY(Float, pie_slices)
-        PROPERTY(Float, pie_thickness)
-        PROPERTY(Float, radial_blur_angle)
-        PROPERTY(Float, rectangles_x)
-        PROPERTY(Float, rectangles_y)
-        PROPERTY(Float, rings2_val)
-        PROPERTY(Float, super_shape_holes)
-        PROPERTY(Float, super_shape_m)
-        PROPERTY(Float, super_shape_n1)
-        PROPERTY(Float, super_shape_n2)
-        PROPERTY(Float, super_shape_n3)
-        PROPERTY(Float, super_shape_rnd)
-        PROPERTY(Float, weight)
-        );
+    PROPERTY(Float, animate) // is it bool?
+    PROPERTY(Float, blob_low)
+    PROPERTY(Float, blob_high)
+    PROPERTY(Float, blob_waves)
+    PROPERTY(Float, color)
+    PROPERTY(Float, color_speed)
+    PROPERTY(Float, conic_eccentricity)
+    PROPERTY(Float, conic_holes)
+    PROPERTY(Float, curl_c1)
+    PROPERTY(Float, curl_c2)
+    PROPERTY(Float, disc2_rot)
+    PROPERTY(Float, disc2_twist)
+    PROPERTY(Float, fan2_x)
+    PROPERTY(Float, fan2_y)
+    PROPERTY(Float, flower_holes)
+    PROPERTY(Float, flower_petals)
+    PROPERTY(Float, julian_dist)
+    PROPERTY(Float, julian_power)
+    PROPERTY(Float, juliascope_dist)
+    PROPERTY(Float, juliascope_power)
+    PROPERTY(Float, ngon_circle)
+    PROPERTY(Float, ngon_corners)
+    PROPERTY(Float, ngon_power)
+    PROPERTY(Float, ngon_sides)
+    PROPERTY(Float, opacity)
+    PROPERTY(Float, parabola_height)
+    PROPERTY(Float, parabola_width)
+    PROPERTY(Float, pdj_a)
+    PROPERTY(Float, pdj_b)
+    PROPERTY(Float, pdj_c)
+    PROPERTY(Float, pdj_d)
+    PROPERTY(Float, perspective_angle)
+    PROPERTY(Float, perspective_dist)
+    PROPERTY(Float, pie_rotation)
+    PROPERTY(Float, pie_slices)
+    PROPERTY(Float, pie_thickness)
+    PROPERTY(Float, radial_blur_angle)
+    PROPERTY(Float, rectangles_x)
+    PROPERTY(Float, rectangles_y)
+    PROPERTY(Float, rings2_val)
+    PROPERTY(Float, super_shape_holes)
+    PROPERTY(Float, super_shape_m)
+    PROPERTY(Float, super_shape_n1)
+    PROPERTY(Float, super_shape_n2)
+    PROPERTY(Float, super_shape_n3)
+    PROPERTY(Float, super_shape_rnd)
+    PROPERTY(Float, weight)
+    );
 };
 
 class Genome {
 public:
+
     Genome();
+
     explicit Genome(const Genome& genome);
 
     ~Genome();
@@ -168,35 +176,94 @@ public:
     // Throws error.
     void Read(std::string file_name);
 
-    const array<Float, 2>& center() const { return center_; }
-    Float pixels_per_unit() const { return pixels_per_unit_; }
-    Float zoom() const { return zoom_; }
-    const boost::ptr_vector<Xform>& xforms() const { return xforms_; }
-    bool is_chaos_enabled() const { return false; }  // todo: chaos
-    bool has_final_xform() const { return final_xform_.get() != NULL; }
-    const Xform& final_xform() const { return *final_xform_; }
-    const Color& color(size_t c) const { return colors_[c]; }
-    Float vibrancy() const { return vibrancy_; }
-    Float gamma_threshold() const { return gamma_threshold_; }
-    Float gamma() const { return gamma_; }
-    Float highlight_power() const { return highlight_power_; }
-    Float contrast() const { return contrast_; }
-    Float brightness() const { return brightness_; }
-    const Color& background() const { return background_; }
-    const array<int, 2>& size() const { return size_; }
-    Float rotate() const {return rotate_; }
-
-    void Magnify(Float magnification) { zoom_ += magnification; }
-    void Rotate(Float rotation) { rotate_ += rotation; }
-    void Move(Float deltaX, Float deltaY) {
-      center_[0] += deltaX;
-      center_[1] += deltaY;
+    const array<Float, 2>& center() const {
+        return center_;
     }
 
-    boost::ptr_vector<Xform>* mutable_xforms() { return &xforms_;}
+    Float pixels_per_unit() const {
+        return pixels_per_unit_;
+    }
+
+    Float zoom() const {
+        return zoom_;
+    }
+
+    const boost::ptr_vector<Xform>& xforms() const {
+        return xforms_;
+    }
+
+    bool is_chaos_enabled() const {
+        return false;
+    }  // todo: chaos
+    bool has_final_xform() const {
+        return final_xform_.get() != NULL;
+    }
+
+    const Xform& final_xform() const {
+        return *final_xform_;
+    }
+
+    const Color& color(size_t c) const {
+        return colors_[c];
+    }
+
+    Float vibrancy() const {
+        return vibrancy_;
+    }
+
+    Float gamma_threshold() const {
+        return gamma_threshold_;
+    }
+
+    Float gamma() const {
+        return gamma_;
+    }
+
+    Float highlight_power() const {
+        return highlight_power_;
+    }
+
+    Float contrast() const {
+        return contrast_;
+    }
+
+    Float brightness() const {
+        return brightness_;
+    }
+
+    const Color& background() const {
+        return background_;
+    }
+
+    const array<int, 2>& size() const {
+        return size_;
+    }
+
+    Float rotate() const {
+        return rotate_;
+    }
+
+    void Magnify(Float magnification) {
+        zoom_ += magnification;
+    }
+
+    void Rotate(Float rotation) {
+        rotate_ += rotation;
+    }
+
+    void Move(Float deltaX, Float deltaY) {
+        center_[0] += deltaX;
+        center_[1] += deltaY;
+    }
+
+    boost::ptr_vector<Xform>* mutable_xforms() {
+        return &xforms_;
+    }
 
 private:
+
     void Init();
+
     void AddSymmetry(int kind);
 
     Float brightness_;
@@ -237,7 +304,6 @@ private:
 
     DECLARE_PROPERTIES(Genome,
         PROPERTY(Float, estimator_radius));
-
 };
 
 

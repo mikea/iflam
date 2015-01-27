@@ -6,9 +6,9 @@
 #import "component.h"
 
 static size_t BytesPerRow(size_t width) {
-  size_t bytes_per_row = width * 4;
-  bytes_per_row += (16 - bytes_per_row % 16) % 16;
-  return bytes_per_row;
+    size_t bytes_per_row = width * 4;
+    bytes_per_row += (16 - bytes_per_row % 16) % 16;
+    return bytes_per_row;
 }
 
 
@@ -32,86 +32,84 @@ static size_t BytesPerRow(size_t width) {
     return self;
 }
 
--(void)awakeFromNib {
-  NSLog(@"awakeFromNib");
+- (void)awakeFromNib {
+    NSLog(@"awakeFromNib");
 }
 
--(void)resetDefaults {
-  lock = [[NSLock alloc] init];
+- (void)resetDefaults {
+    lock = [[NSLock alloc] init];
 }
 
--(void)update {
-  [self setNeedsDisplay: YES];
+- (void)update {
+    [self setNeedsDisplay:YES];
 }
 
-- (void) drawRect:(NSRect)rect {
-  if (self.component == nil) {
-    [self performSelectorOnMainThread:@selector(update)
-                           withObject:nil
-                        waitUntilDone:false];
-    return;
-  }
-
-  [lock lock];
- // NSLog(@"drawRect");
-
-  NSRect bounds = self.bounds;
-  size_t width = bounds.size.width;
-  size_t height = bounds.size.height;
-
-  if (self.component->width() != width ||
-      self.component->height() != height) {
-    if (_data != nil) {
-      free(_data);
-      CGContextRelease(_bitmapContext);
+- (void)drawRect:(NSRect)rect {
+    if (self.component == nil) {
+        [self performSelectorOnMainThread:@selector(update)
+                               withObject:nil waitUntilDone:false];
+        return;
     }
-    _data = (uint8_t*) calloc(BytesPerRow(width) * height, 1);
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    _bitmapContext = CGBitmapContextCreate(
-        _data,
-        width,
-        height,
-        8,
-        BytesPerRow(width),
-        colorSpace,
-        kCGImageAlphaNoneSkipLast);
+    [lock lock];
+    // NSLog(@"drawRect");
 
-    CGColorSpaceRelease(colorSpace);
-  }
+    NSRect bounds = self.bounds;
+    size_t width = bounds.size.width;
+    size_t height = bounds.size.height;
 
-  self.component->SetSize(width, height);
-  self.component->Tick();
+    if (self.component->width() != width ||
+            self.component->height() != height) {
+        if (_data != nil) {
+            free(_data);
+            CGContextRelease(_bitmapContext);
+        }
+        _data = (uint8_t*) calloc(BytesPerRow(width) * height, 1);
 
-  RGBA8Image image(
-      _data,
-      BytesPerRow(width),
-      height);
-  self.component->Render(&image);
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        _bitmapContext = CGBitmapContextCreate(
+                _data,
+                width,
+                height,
+                8,
+                BytesPerRow(width),
+                colorSpace,
+                kCGImageAlphaNoneSkipLast);
 
-  CGImageRef im = CGBitmapContextCreateImage(_bitmapContext);
+        CGColorSpaceRelease(colorSpace);
+    }
 
-  CGContextRef context = (CGContextRef)
-    [[NSGraphicsContext currentContext] graphicsPort];
+    self.component->SetSize(width, height);
+    self.component->Tick();
 
-  CGContextDrawImage(context,
-      CGRectMake(
-        bounds.origin.x,
-        bounds.origin.y,
-        bounds.size.width,
-        bounds.size.height),
-      im);
-  CGImageRelease(im);
+    RGBA8Image image(
+            _data,
+            BytesPerRow(width),
+            height);
+    self.component->Render(&image);
 
-  [lock unlock];
-  [self performSelectorOnMainThread:@selector(update)
-                         withObject:nil
-                      waitUntilDone:false];
+    CGImageRef im = CGBitmapContextCreateImage(_bitmapContext);
+
+    CGContextRef context = (CGContextRef)
+            [[NSGraphicsContext currentContext] graphicsPort];
+
+    CGContextDrawImage(context,
+            CGRectMake(
+                    bounds.origin.x,
+                    bounds.origin.y,
+                    bounds.size.width,
+                    bounds.size.height),
+            im);
+    CGImageRelease(im);
+
+    [lock unlock];
+    [self performSelectorOnMainThread:@selector(update)
+                           withObject:nil waitUntilDone:false];
 }
 
 
-- (void)magnifyWithEvent:(NSEvent *)event {
-  /*
+- (void)magnifyWithEvent:(NSEvent*)event {
+    /*
   double magnification = [event magnification];
 
   [lock lock];
@@ -122,8 +120,8 @@ static size_t BytesPerRow(size_t width) {
   [self setGenome: genome];*/
 }
 
-- (void)rotateWithEvent:(NSEvent *)event {
- /* double rotation = [event rotation];
+- (void)rotateWithEvent:(NSEvent*)event {
+    /* double rotation = [event rotation];
   NSLog(@"rotate: %f", rotation);
   [lock lock];
   Genome* genome = new Genome(*_genome);
@@ -133,7 +131,7 @@ static size_t BytesPerRow(size_t width) {
   [self setGenome: genome];*/
 }
 
--(void)scrollWheel:(NSEvent *)event {
+- (void)scrollWheel:(NSEvent*)event {
 /*  double deltaX = [event deltaY];
   double deltaY = [event deltaX];
   if (deltaX == 0 && deltaY == 0) {
@@ -152,14 +150,14 @@ static size_t BytesPerRow(size_t width) {
   [self setGenome: genome];*/
 }
 
--(BOOL)isOpaque {
-  return YES;
+- (BOOL)isOpaque {
+    return YES;
 }
 
-- (void)mouseDown:(NSEvent*) anEvent {
-  if (delegate && [delegate respondsToSelector:@selector(onMouseDown:)]) {
-    [delegate onMouseDown: anEvent];
-  }
+- (void)mouseDown:(NSEvent*)anEvent {
+    if (delegate && [delegate respondsToSelector:@selector(onMouseDown:)]) {
+        [delegate onMouseDown:anEvent];
+    }
 }
 
 @end

@@ -8,13 +8,19 @@ class Genome;
 class Random;
 
 class Signal {
-  public:
+public:
     Signal(double time, double max_vol)
-      : time_(time), max_vol_(max_vol) { }
+    : time_(time), max_vol_(max_vol) {
+    }
 
-    double max_vol() const { return max_vol_; }
-    double time() const { return time_; }
-  private:
+    double max_vol() const {
+        return max_vol_;
+    }
+
+    double time() const {
+        return time_;
+    }
+private:
     friend class Animator;
     double time_;
     double max_vol_;
@@ -22,27 +28,37 @@ class Signal {
 
 
 class PrimitiveAnimator {
-  public:
+public:
+
     PrimitiveAnimator();
+
     virtual ~PrimitiveAnimator();
+
     virtual void Animate(const Signal& signal, Genome* genome) const = 0;
+
     virtual void Randomize(const Genome& genome, Random* random) = 0;
+
     virtual std::ostream& Print(std::ostream &os) const = 0;
+
 };
 
-inline std::ostream& operator<< (std::ostream& os, const PrimitiveAnimator& a) {
-  return a.Print(os);
+inline std::ostream& operator << (std::ostream& os, const PrimitiveAnimator& a) {
+    return a.Print(os);
 }
 
 class Animator {
-  public:
-    Animator() { }
-    ~Animator() { }
+public:
+    Animator() {
+    }
+
+    ~Animator() {
+    }
 
     void Animate(const Signal& signal, Genome* genome) const;
 
     void Randomize(const Genome& genome);
-  private:
+
+private:
     // todo; ptr_vector
     std::vector<PrimitiveAnimator*> animators_;
 };
