@@ -1,6 +1,7 @@
 package flam.util;
 
-import org.apache.commons.math.util.FastMath;
+
+import org.apache.commons.math3.util.FastMath;
 
 /**
  */
@@ -11,8 +12,8 @@ public class MyMath {
         return FastMath.floor(d);
     }
 
-    public static double atan2(double y, double x) {
-        return fastAtan2(y, x);
+    public static double atan2(double x, double y) {
+        return fastAtan2(x, y);
     }
 
     public static double sin(double x) {
