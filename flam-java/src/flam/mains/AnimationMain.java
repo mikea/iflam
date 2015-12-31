@@ -22,7 +22,7 @@ public class AnimationMain {
         frame = new JFrame();
 
         animationProvider = new AnimationProvider();
-        openGenome("../sheeps/510.flam3");
+        openGenome("../sheeps/11000.flam3");
 
 
         frame.setPreferredSize(new Dimension(500, 500));

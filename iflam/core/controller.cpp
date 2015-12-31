@@ -1,4 +1,5 @@
 #include "controller.h"
+#include <iostream>
 
 #include <vector>
 
@@ -66,5 +67,3 @@ void AnimatingController::Next() {
 std::string AnimatingController::GetWindowTitle() {
     return delegate_->GetWindowTitle();
 }
-
-

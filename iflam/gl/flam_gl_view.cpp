@@ -1,4 +1,5 @@
 #include "flam_gl_view.h"
+#include <iostream>
 
 #define CHECK_GL_ERROR() \
   do { \
@@ -245,7 +246,7 @@ void FlamGLView::CopyBufferToTexture() {
       GL_RGBA,  // data format
       GL_FLOAT,
       data_.get());
-    
+
   CHECK_GL_ERROR();
 }
 
@@ -276,5 +277,3 @@ void FlamGLView::GLCheckProgramLog() {
     BOOST_ASSERT_MSG(0, log);
   }
 }
-
-

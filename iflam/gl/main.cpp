@@ -13,6 +13,7 @@
 #include "controller.h"
 #include "component.h"
 #include "flam_gl_view.h"
+#include <iostream>
 
 namespace po = boost::program_options;
 using std::string;
@@ -96,4 +97,3 @@ int main(int argc, char *argv[]) {
 
   return 1;
 }
-

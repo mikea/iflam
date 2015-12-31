@@ -1,14 +1,22 @@
 <component name="libraryTable">
   <library name="jogl-all-natives-linux-amd64">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/jogl-all-natives-linux-amd64.jar!/" />
-      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/jogl.all.jar!/" />
-      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/gluegen-rt.jar!/" />
-      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jar/gluegen.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/jogl-all.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/jogl-all-noawt-natives-linux-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/gluegen.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/gluegen-rt.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/joal-natives-linux-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/gluegen-rt-natives-linux-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/joal.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/jocl-natives-linux-amd64.jar!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jar/jocl.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/Packages/jogamp-linux-amd64/jogl-java-src.zip!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/gluegen-java-src.zip!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/joal-java-src.zip!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jocl-java-src.zip!/" />
+      <root url="jar://$USER_HOME$/Packages/jogamp-all-platforms/jogl-java-src.zip!/" />
     </SOURCES>
   </library>
 </component>

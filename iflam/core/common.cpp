@@ -1,6 +1,7 @@
 #include "common.h"
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <sys/time.h>
+#include <iostream>
 
 namespace {
     boost::random::uniform_real_distribution<> rndDist(0, 1);
@@ -65,4 +66,3 @@ void UnhandledExceptionHandler() {
     std::cerr << "Unhandled exception:\n";
     std::cerr << boost::diagnostic_information(boost::current_exception());
 }
-

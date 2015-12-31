@@ -1,5 +1,6 @@
 #include "animator.h"
 #include "genome.h"
+#include <iostream>
 
 PrimitiveAnimator::PrimitiveAnimator() {
 }
@@ -164,4 +165,3 @@ void Animator::Randomize(const Genome& genome) {
         std::cout << "Animator: " << i << " " << *animator << "\n";
     }
 }
-

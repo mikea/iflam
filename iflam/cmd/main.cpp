@@ -9,6 +9,7 @@
 #include "renderer.h"
 #include <boost/gil/gil_all.hpp>
 #include <boost/gil/extension/io/png_io.hpp>
+#include <iostream>
 
 namespace po = boost::program_options;
 using std::string;
@@ -87,4 +88,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-

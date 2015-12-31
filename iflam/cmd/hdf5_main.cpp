@@ -1,6 +1,7 @@
 #include <boost/program_options.hpp>
 #include <exception>
 #include <hdf5.h>
+#include <iostream>
 
 #include "common.h"
 #include "genome.h"
@@ -180,5 +181,3 @@ int main(int argc, char *argv[]) {
   BOOST_VERIFY(!H5Sclose(attr_dataspace_id));
   BOOST_VERIFY(!H5Fclose(file_id));
 }
-
-

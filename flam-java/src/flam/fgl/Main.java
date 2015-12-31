@@ -1,16 +1,10 @@
 package flam.fgl;
 
-import com.jogamp.opengl.util.FBObject;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLEventListener;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.gl2.GLUgl2;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.glu.gl2.GLUgl2;
 import javax.swing.*;
 
 /**
@@ -18,8 +12,8 @@ import javax.swing.*;
 public class Main implements GLEventListener {
 // ------------------------------ FIELDS ------------------------------
 
-    private FBObject fbo1;
-    private FBObject fbo2;
+    private Fbo fbo1;
+    private Fbo fbo2;
 
 // ------------------------ INTERFACE METHODS ------------------------
 
@@ -34,7 +28,7 @@ public class Main implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-        fbo1.destroy(gl);
+        fbo1.object.destroy(gl);
     }
 
     @Override
@@ -46,33 +40,43 @@ public class Main implements GLEventListener {
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL2 gl = drawable.getGL().getGL2();
         if (fbo1 != null) {
-            fbo1.destroy(gl);
+            fbo1.object.destroy(gl);
         }
         fbo1 = createFBO(width, height, gl);
         if (fbo2 != null) {
-            fbo2.destroy(gl);
+            fbo2.object.destroy(gl);
         }
         fbo2 = createFBO(width, height, gl);
     }
 
 // -------------------------- OTHER METHODS --------------------------
 
-    private FBObject createFBO(int width, int height, GL2 gl) {
-        FBObject fbo = new FBObject(width, height);
-        fbo.init(gl);
-        fbo.attachTexture2D(gl, 0, GL2.GL_LINEAR, GL2.GL_LINEAR, 0, 0);
+    private static class Fbo {
+        private final FBObject object;
+        private final FBObject.TextureAttachment textureAttachment;
+
+        public Fbo(FBObject object, FBObject.TextureAttachment textureAttachment) {
+            this.object = object;
+            this.textureAttachment = textureAttachment;
+        }
+    }
+
+    private Fbo createFBO(int width, int height, GL2 gl) {
+        FBObject fbo = new FBObject();
+        fbo.init(gl, width, height, 0);
+        FBObject.TextureAttachment textureAttachment = fbo.attachTexture2D(gl, 0, GL2.GL_LINEAR, GL2.GL_LINEAR, 0, 0, 0, 0, 0);
         if (!fbo.isStatusValid()) {
             throw new IllegalStateException();
         }
         fbo.unbind(gl);
-        return fbo;
+        return new Fbo(fbo, textureAttachment);
     }
 
-    private void iter(final GL2 gl, final FBObject src, FBObject dst) {
+    private void iter(final GL2 gl, final Fbo src, Fbo dst) {
         renderToFBO(gl, dst, new Runnable() {
             @Override
             public void run() {
-                useFbo(gl, src, 0, new Runnable() {
+                useFbo(gl, src.object, src.textureAttachment, new Runnable() {
                     @Override
                     public void run() {
                         gl.glClearColor(0, 0, 0, 0);
@@ -98,8 +102,7 @@ public class Main implements GLEventListener {
                                 new double[]{-0.2848, -0.0141,  0.0141, -0.2848, 0.3362,  0.8164, 0.3780, 0.4087, 1.3398},
                                 new double[]{ 0.3672,  0.0051, -0.0051,  0.3672, 0.0776,  0.1726, 1.1901, 1.2867, 1.339},
                         };
-                        for (int i = 0; i < coefs.length; ++i) {
-                            double[] row = coefs[i];
+                        for (double[] row : coefs) {
                             renderRow(row);
                         }
 
@@ -175,24 +178,24 @@ public class Main implements GLEventListener {
 
         for (int i = 0; i < 10; ++i) {
             iter(gl, fbo1, fbo2);
-            FBObject tmp = fbo1;
+            Fbo tmp = fbo1;
             fbo1 = fbo2;
             fbo2 = tmp;
         }
 
-        showFBO(gl, fbo1, 0);
+        showFBO(gl, fbo1.object, fbo1.textureAttachment);
     }
 
-    private static void renderToFBO(GL2 gl, FBObject fbo, Runnable runnable) {
-        fbo.bind(gl);
+    private static void renderToFBO(GL2 gl, Fbo fbo, Runnable runnable) {
+        fbo.object.bind(gl);
         try {
             runnable.run();
         } finally {
-            fbo.unbind(gl);
+            fbo.object.unbind(gl);
         }
     }
 
-    private static void showFBO(final GL2 gl, FBObject fbo, int texture) {
+    private static void showFBO(final GL2 gl, FBObject fbo, FBObject.TextureAttachment texture) {
         useFbo(gl, fbo, texture, new Runnable() {
             @Override
             public void run() {
@@ -219,7 +222,7 @@ public class Main implements GLEventListener {
         });
     }
 
-    private static void useFbo(GL2 gl, FBObject fbo, int texture, Runnable runnable) {
+    private static void useFbo(GL2 gl, FBObject fbo, FBObject.TextureAttachment texture, Runnable runnable) {
         gl.glEnable(GL.GL_TEXTURE_2D);
         fbo.use(gl, texture);
         try {

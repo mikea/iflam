@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="AnimationMain" type="Application" factoryName="Application">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="flam.mains.AnimationMain" />
     <option name="VM_PARAMETERS" value="-agentlib:hprof=cpu=samples,interval=3" />
     <option name="PROGRAM_PARAMETERS" value="" />
