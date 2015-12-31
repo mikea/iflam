@@ -24,9 +24,8 @@ public class AnimationMain {
         animationProvider = new AnimationProvider();
         openGenome("../sheeps/11000.flam3");
 
-
         frame.setPreferredSize(new Dimension(500, 500));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         frame.getContentPane().setLayout(new BorderLayout());
 
@@ -34,7 +33,6 @@ public class AnimationMain {
         flamComponent.setFps(10);
 
         frame.getContentPane().add(flamComponent, BorderLayout.CENTER);
-
 
         JMenuBar menuBar = new JMenuBar();
 

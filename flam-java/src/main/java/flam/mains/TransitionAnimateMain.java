@@ -13,12 +13,12 @@ import java.io.IOException;
 public class TransitionAnimateMain {
     public static void main(String[] args) throws IOException, SAXException {
         final Genome genome1 = Genome.parse("flams/e_4.flam3");
-        final Genome genome2 = Genome.parse("sheeps/1006.flam3");
+        final Genome genome2 = Genome.parse("../sheeps/1006.flam3");
 
         final JFrame frame = new JFrame();
 
         frame.setPreferredSize(new Dimension(500, 500));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         frame.getContentPane().setLayout(new BorderLayout());
 
