@@ -8,14 +8,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author mike
  */
 public class FlamComponent extends JComponent {
-
-    private RenderState state;
-    private RenderBuffer buffer;
     private GenomeProvider provider;
     private double fps = 10;
     public long iterTime = 0;
@@ -76,13 +75,32 @@ public class FlamComponent extends JComponent {
         this.fps = fps;
     }
 
-    private void resetState(Genome newGenome) {
-        if (buffer == null || buffer.getWidth() != getWidth() || buffer.getHeight() != getHeight()) {
-            buffer = renderer.newBuffer(getWidth(), getHeight());
-        } else {
-            buffer.reset();
+    private static class State {
+        private final RenderState state;
+        private final RenderBuffer buffer;
+
+        public State(RenderState state, RenderBuffer buffer) {
+            this.state = state;
+            this.buffer = buffer;
         }
-        state = renderer.newState(newGenome, buffer);
+    }
+
+    private State state;
+    private static Map<Genome, State> states = new HashMap<>();
+
+    private void resetState(Genome genome) {
+        State state = states.get(genome);
+        if (state != null) {
+            if (state.buffer.getWidth() == getWidth() && state.buffer.getHeight() == getHeight()) {
+                this.state = state;
+                return;
+            } else {
+                states.remove(genome);
+            }
+        }
+
+        RenderBuffer buffer = renderer.newBuffer(getWidth(), getHeight());
+        this.state = new State(renderer.newState(genome, buffer), buffer);
     }
 
 
@@ -95,22 +113,26 @@ public class FlamComponent extends JComponent {
         if (batches > 0) {
             allottedIterTime -= renderTime / batches;
         }
-        renderer.iterate(state, buffer,  allottedIterTime);
+        renderer.iterate(state.state, state.buffer,  allottedIterTime);
         long batchFinish = System.currentTimeMillis();
         iterTime += (batchFinish - start);
-        renderer.render(state, buffer);
+        renderer.render(state.state, state.buffer);
         long bltFinish = System.currentTimeMillis();
         renderTime += (bltFinish - batchFinish);
         batches++;
-        graphics.drawImage(buffer.getImage(), 0, 0, null);
+        graphics.drawImage(state.buffer.getImage(), 0, 0, null);
         repaint();
     }
 
     private void updateGenome() {
         Genome newGenome = provider.getGenome();
-        if (state == null || buffer.getWidth() != getWidth() || buffer.getHeight() != getHeight() || state.getGenome() != newGenome) {
-            resetState(newGenome);
+        if (state != null
+                && state.buffer.getWidth() == getWidth()
+                && state.buffer.getHeight() == getHeight()
+                && state.state.getGenome() == newGenome) {
+            return;
         }
+        resetState(newGenome);
     }
 
     public void setRenderer(Renderer renderer) {

@@ -8,13 +8,10 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
 public class AnimationMain {
-
     private static AnimationProvider animationProvider;
     private static JFrame frame;
 
@@ -41,16 +38,13 @@ public class AnimationMain {
 
         frame.setJMenuBar(menuBar);
 
-        openMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File("../sheeps"));
-                fileChooser.setFileFilter(new FileNameExtensionFilter("flam3", "flam3"));
-                int val = fileChooser.showOpenDialog(frame);
-                if (val == JFileChooser.APPROVE_OPTION) {
-                    openGenome(fileChooser.getSelectedFile().getAbsolutePath());
-                }
+        openMenuItem.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File("../sheeps"));
+            fileChooser.setFileFilter(new FileNameExtensionFilter("flam3", "flam3"));
+            int val = fileChooser.showOpenDialog(frame);
+            if (val == JFileChooser.APPROVE_OPTION) {
+                openGenome(fileChooser.getSelectedFile().getAbsolutePath());
             }
         });
 
@@ -63,9 +57,7 @@ public class AnimationMain {
         try {
             frame.setTitle(path);
             animationProvider.setGenome(Genome.parse(path));
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        } catch (SAXException e) {
+        } catch (IOException | SAXException e) {
             throw new IllegalArgumentException(e);
         }
     }
